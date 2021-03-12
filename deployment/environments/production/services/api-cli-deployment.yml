@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api-cli-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: api-cli
+  template:
+    metadata:
+      labels:
+        app: api-cli
+    spec:
+      containers:
+        - image: gcr.io/tectonic/tectonic-services-api-cli
+          imagePullPolicy: Always
+          name: api-cli
+          env:
+            - name: ENV_NAME
+              value: "production"
+            - name: NODE_ENV
+              value: "production"
+            - name: MONGO_URI
+              value: "mongodb://mongo:27017/tectonic_production"
+            - name: APP_DOMAIN
+              value: "tectonic.io"
+            - name: APP_URL
+              value: "https://tectonic.io"
+            - name: POSTMARK_FROM
+              value: "no-reply@tectonic.io"
+            - name: POSTMARK_APIKEY
+              value: "abc"
+            - name: UPLOADS_STORE
+              value: "gcs"
+            - name: UPLOADS_GCS_BUCKET
+              value: "tectonic-production-uploads"
+          volumeMounts:
+            - name: jobs-cache
+              mountPath: /workdir/data
+      volumes:
+        - name: jobs-cache
+          emptyDir: {}

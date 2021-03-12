@@ -1,0 +1,68 @@
+{
+  "name": "tectonic-api",
+  "version": "0.0.1",
+  "license": "MIT",
+  "engines": {
+    "node": ">=12"
+  },
+  "pre-commit": [
+    "lint"
+  ],
+  "scripts": {
+    "start": "nodemon -w src --exec \"MOCK_EMAIL=true node src/index.js | pino-pretty\"",
+    "start:production": "node src/index",
+    "docs": "node scripts/generate-openapi",
+    "emails": "node emails/build",
+    "lint": "eslint src scripts",
+    "test": "jest",
+    "test:watch": "jest --watch -i",
+    "generate": "cd ../../generator && yarn install && yarn generate"
+  },
+  "dependencies": {
+    "@bedrockio/config": "^2.0.3",
+    "@bedrockio/instrumentation": "^1.0.2",
+    "@google-cloud/storage": "^5.1.2",
+    "@hapi/joi": "^17.1.1",
+    "@koa/cors": "^3.1.0",
+    "@koa/router": "^9.3.1",
+    "@sentry/node": "^6.2.1",
+    "bcrypt": "^5.0.0",
+    "fast-csv": "^4.3.6",
+    "joi": "^17.3.0",
+    "jsonwebtoken": "^8.5.1",
+    "koa": "^2.13.0",
+    "koa-body": "^4.2.0",
+    "koa-logger": "^3.2.1",
+    "lodash": "^4.17.19",
+    "mongoose": "^5.9.26",
+    "mongoose-autopopulate": "^0.12.2",
+    "pino": "^6.11.0",
+    "postmark": "^2.5.4",
+    "snyk": "^1.359.1"
+  },
+  "devDependencies": {
+    "@shelf/jest-mongodb": "^1.2.2",
+    "@yeongjet/joi-to-json-schema": "^1.0.4",
+    "eslint": "^7.5.0",
+    "eslint-config-prettier": "^6.11.0",
+    "eslint-plugin-jest": "^23.19.0",
+    "jest": "^26.1.0",
+    "juice": "^7.0.0",
+    "mongodb": "^3.6.2",
+    "nodemon": "^2.0.4",
+    "pino-pretty": "^4.3.0",
+    "pre-commit": "^1.2.2",
+    "prettier": "^2.0.5",
+    "prettier-eslint": "^11.0.0",
+    "supertest": "^4.0.2"
+  },
+  "jest": {
+    "setupFiles": [
+      "<rootDir>/src/test-helpers/setup-tests.js"
+    ]
+  },
+  "volta": {
+    "node": "14.15.1",
+    "yarn": "1.22.5"
+  }
+}

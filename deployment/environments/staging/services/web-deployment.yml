@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web-deployment
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: web
+  template:
+    metadata:
+      labels:
+        app: web
+    spec:
+      containers:
+        - image: gcr.io/tectonic/tectonic-services-web
+          imagePullPolicy: Always
+          name: main
+          env:
+            - name: ENV_NAME
+              value: "staging"
+            - name: NODE_ENV
+              value: "production"
+            - name: DOMAIN
+              value: tectonic.io
+            - name: API_URL
+              value: "https://api.tectonic.io"
+          ports:
+            - name: http-server
+              containerPort: 2200
