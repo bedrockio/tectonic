@@ -11,12 +11,11 @@ import Overview from './Overview';
 import Products from './Products';
 // --- Generator: end
 
-export default class ShopDetail extends React.Component {
-
+export default class DatalakeDetail extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      shop: null,
+      datalake: null,
       error: null,
       loading: true,
       onSave: this.onSave,
@@ -24,21 +23,21 @@ export default class ShopDetail extends React.Component {
   }
 
   componentDidMount() {
-    this.fetchShop();
+    this.fetchDatalake();
   }
 
   componentDidUpdate(lastProps) {
     const { id } = this.props.match.params;
     if (id !== lastProps.match.params.id) {
-      this.fetchShop();
+      this.fetchDatalake();
     }
   }
 
   onSave = () => {
-    this.fetchShop();
-  }
+    this.fetchDatalake();
+  };
 
-  async fetchShop() {
+  async fetchDatalake() {
     const { id } = this.props.match.params;
     try {
       this.setState({
@@ -47,10 +46,10 @@ export default class ShopDetail extends React.Component {
       });
       const { data } = await request({
         method: 'GET',
-        path: `/1/shops/${id}`,
+        path: `/1/datalakes/${id}`,
       });
       this.setState({
-        shop: data,
+        datalake: data,
         loading: false,
       });
     } catch (error) {
@@ -64,17 +63,15 @@ export default class ShopDetail extends React.Component {
   render() {
     const { loading, error } = this.state;
     if (loading) {
-      return (
-        <Loader active>Loading</Loader>
-      );
+      return <Loader active>Loading</Loader>;
     } else if (error) {
       return (
         <React.Fragment>
           <Breadcrumbs
-            link={<Link to="/shops">Shops</Link>}
+            link={<Link to="/datalakes">Datalakes</Link>}
             active="Not Found"
           />
-          <Header content="Sorry that shop wasn't found." />
+          <Header content="Sorry that datalake wasn't found." />
         </React.Fragment>
       );
     }
@@ -82,18 +79,14 @@ export default class ShopDetail extends React.Component {
       <Switch>
         <Route
           exact
-          path="/shops/:id"
-          render={(props) => (
-            <Overview {...props} {...this.state}  />
-          )}
+          path="/datalakes/:id"
+          render={(props) => <Overview {...props} {...this.state} />}
         />
         {/* --- Generator: routes */}
         <Route
           exact
-          path="/shops/:id/products"
-          render={(props) => (
-            <Products {...props} {...this.state} />
-          )}
+          path="/datalakes/:id/products"
+          render={(props) => <Products {...props} {...this.state} />}
         />
         {/* --- Generator: end */}
       </Switch>

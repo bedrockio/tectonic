@@ -3,17 +3,17 @@ const Joi = require('@hapi/joi');
 const validate = require('../utils/middleware/validate');
 const { authenticate, fetchUser } = require('../utils/middleware/authenticate');
 const { NotFoundError } = require('../utils/errors');
-const { Shop } = require('../models');
+const { Datalake } = require('../models');
 
 const router = new Router();
 
 router
   .use(authenticate({ type: 'user' }))
   .use(fetchUser)
-  .param('shopId', async (id, ctx, next) => {
-    const shop = await Shop.findById(id);
-    ctx.state.shop = shop;
-    if (!shop) {
+  .param('datalakeId', async (id, ctx, next) => {
+    const datalake = await Datalake.findById(id);
+    ctx.state.datalake = datalake;
+    if (!datalake) {
       throw new NotFoundError();
     }
     return next();
@@ -21,19 +21,19 @@ router
   .post(
     '/',
     validate({
-      body: Shop.getValidator(),
+      body: Datalake.getValidator(),
     }),
     async (ctx) => {
-      const shop = await Shop.create(ctx.request.body);
+      const datalake = await Datalake.create(ctx.request.body);
       ctx.body = {
-        data: shop,
+        data: datalake,
       };
     }
   )
-  .get('/:shopId', async (ctx) => {
-    const shop = ctx.state.shop;
+  .get('/:datalakeId', async (ctx) => {
+    const datalake = ctx.state.datalake;
     ctx.body = {
-      data: shop,
+      data: datalake,
     };
   })
   .post(
@@ -89,12 +89,12 @@ router
           query.createdAt.$lte = endAt;
         }
       }
-      const data = await Shop.find(query)
+      const data = await Datalake.find(query)
         .sort({ [sort.field]: sort.order === 'desc' ? -1 : 1 })
         .skip(skip)
         .limit(limit);
 
-      const total = await Shop.countDocuments(query);
+      const total = await Datalake.countDocuments(query);
       ctx.body = {
         data,
         meta: {
@@ -106,21 +106,21 @@ router
     }
   )
   .patch(
-    '/:shopId',
+    '/:datalakeId',
     validate({
-      body: Shop.getPatchValidator(),
+      body: Datalake.getPatchValidator(),
     }),
     async (ctx) => {
-      const shop = ctx.state.shop;
-      shop.assign(ctx.request.body);
-      await shop.save();
+      const datalake = ctx.state.datalake;
+      datalake.assign(ctx.request.body);
+      await datalake.save();
       ctx.body = {
-        data: shop,
+        data: datalake,
       };
     }
   )
-  .delete('/:shopId', async (ctx) => {
-    await ctx.state.shop.delete();
+  .delete('/:datalakeId', async (ctx) => {
+    await ctx.state.datalake.delete();
     ctx.status = 204;
   });
 

@@ -1,25 +1,25 @@
 {
   "objects": [
     {
-      "name": "Shop",
+      "name": "Datalake",
       "attributes": [
         {
           "name": "id",
-          "description": "Unique ID of the Shop",
+          "description": "Unique ID of the Datalake",
           "schema": {
             "type": "string"
           }
         },
         {
           "name": "name",
-          "description": "Name of the Shop",
+          "description": "Name of the Datalake",
           "schema": {
             "type": "string"
           }
         },
         {
           "name": "description",
-          "description": "Description of the Shop",
+          "description": "Description of the Datalake",
           "schema": {
             "type": "string"
           }
@@ -77,7 +77,7 @@
       "requestBody": [
         {
           "name": "name",
-          "description": "Name of the Shop",
+          "description": "Name of the Datalake",
           "required": true,
           "schema": {
             "type": "string"
@@ -85,7 +85,7 @@
         },
         {
           "name": "description",
-          "description": "Description of the Shop",
+          "description": "Description of the Datalake",
           "required": false,
           "schema": {
             "type": "string"
@@ -125,9 +125,9 @@
       "responseBody": [
         {
           "name": "data",
-          "description": "Created Shop object",
+          "description": "Created Datalake object",
           "schema": {
-            "type": "Shop"
+            "type": "Datalake"
           }
         }
       ],
@@ -135,13 +135,13 @@
     },
     {
       "method": "GET",
-      "path": "/:shopId",
+      "path": "/:datalakeId",
       "responseBody": [
         {
           "name": "data",
-          "description": "Shop object",
+          "description": "Datalake object",
           "schema": {
-            "type": "Shop"
+            "type": "Datalake"
           }
         }
       ],
@@ -196,11 +196,11 @@
       "responseBody": [
         {
           "name": "data",
-          "description": "List of Shop objects",
+          "description": "List of Datalake objects",
           "schema": {
             "type": "array",
             "items": {
-              "type": "Shop"
+              "type": "Datalake"
             }
           }
         }
@@ -209,11 +209,11 @@
     },
     {
       "method": "PATCH",
-      "path": "/:shopId",
+      "path": "/:datalakeId",
       "requestBody": [
         {
           "name": "name",
-          "description": "Name of the Shop",
+          "description": "Name of the Datalake",
           "required": true,
           "schema": {
             "type": "string"
@@ -221,7 +221,7 @@
         },
         {
           "name": "description",
-          "description": "Description of the Shop",
+          "description": "Description of the Datalake",
           "required": false,
           "schema": {
             "type": "string"
@@ -261,9 +261,9 @@
       "responseBody": [
         {
           "name": "data",
-          "description": "Updated Shop object",
+          "description": "Updated Datalake object",
           "schema": {
-            "type": "Shop"
+            "type": "Datalake"
           }
         }
       ],
@@ -271,7 +271,7 @@
     },
     {
       "method": "DELETE",
-      "path": "/:shopId",
+      "path": "/:datalakeId",
       "responseBody": [],
       "examples": []
     }

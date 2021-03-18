@@ -1,5 +1,12 @@
 import React from 'react';
-import { Table, Message, Loader, Image, Button, Header } from 'semantic-ui-react';
+import {
+  Table,
+  Message,
+  Loader,
+  Image,
+  Button,
+  Header,
+} from 'semantic-ui-react';
 import { formatDateTime } from 'utils/date';
 import { request } from 'utils/api';
 import { screen } from 'helpers';
@@ -12,40 +19,57 @@ import EditProduct from 'modals/EditProduct';
 import Menu from './Menu';
 
 @screen
-export default class ShopProducts extends React.Component {
+export default class DatalakeProducts extends React.Component {
   onDataNeeded = async (params) => {
-    const { shop } = this.props;
+    const { datalake } = this.props;
     return await request({
       method: 'POST',
       path: '/1/products/search',
       body: {
         ...params,
-        shop: shop.id,
+        datalake: datalake.id,
       },
     });
   };
 
   render() {
-    const { shop } = this.props;
+    const { datalake } = this.props;
     return (
       <React.Fragment>
         <Menu {...this.props} />
-        {shop ? (
+        {datalake ? (
           <SearchProvider onDataNeeded={this.onDataNeeded}>
-            {({ items: products, filters, setFilters, getSorted, setSort, reload }) => {
+            {({
+              items: products,
+              filters,
+              setFilters,
+              getSorted,
+              setSort,
+              reload,
+            }) => {
               return (
                 <React.Fragment>
                   <Header as="h2">
                     <Layout horizontal center spread>
                       Products
                       <Layout.Group>
-                        <Filters size="tiny" onSave={setFilters} filters={filters}>
+                        <Filters
+                          size="tiny"
+                          onSave={setFilters}
+                          filters={filters}>
                           <Filters.Text label="Name" name="name" />
                         </Filters>
                         <EditProduct
-                          shop={shop}
+                          datalake={datalake}
                           onSave={reload}
-                          trigger={<Button primary size="tiny" content="Add Product" icon="plus" />}
+                          trigger={
+                            <Button
+                              primary
+                              size="tiny"
+                              content="Add Product"
+                              icon="plus"
+                            />
+                          }
                         />
                       </Layout.Group>
                     </Layout>
@@ -58,19 +82,29 @@ export default class ShopProducts extends React.Component {
                         <Table.Row>
                           {/* --- Generator: list-header-cells */}
                           <Table.HeaderCell width={2}>Image</Table.HeaderCell>
-                          <Table.HeaderCell width={3} sorted={getSorted('name')} onClick={() => setSort('name')}>
+                          <Table.HeaderCell
+                            width={3}
+                            sorted={getSorted('name')}
+                            onClick={() => setSort('name')}>
                             Name
                           </Table.HeaderCell>
-                          <Table.HeaderCell width={3}>Description</Table.HeaderCell>
+                          <Table.HeaderCell width={3}>
+                            Description
+                          </Table.HeaderCell>
                           {/* --- Generator: end */}
                           <Table.HeaderCell
                             width={3}
                             sorted={getSorted('createdAt')}
                             onClick={() => setSort('createdAt')}>
                             Created
-                            <HelpTip title="Created" text="This is the date and time the item was created." />
+                            <HelpTip
+                              title="Created"
+                              text="This is the date and time the item was created."
+                            />
                           </Table.HeaderCell>
-                          <Table.HeaderCell textAlign="center">Actions</Table.HeaderCell>
+                          <Table.HeaderCell textAlign="center">
+                            Actions
+                          </Table.HeaderCell>
                         </Table.Row>
                       </Table.Header>
                       <Table.Body>
@@ -80,19 +114,30 @@ export default class ShopProducts extends React.Component {
                               {/* --- Generator: list-body-cells */}
                               <Table.Cell>
                                 {product.images[0] && (
-                                  <Image style={{ width: '100%' }} src={urlForUpload(product.images[0], true)} />
+                                  <Image
+                                    style={{ width: '100%' }}
+                                    src={urlForUpload(product.images[0], true)}
+                                  />
                                 )}
                               </Table.Cell>
                               <Table.Cell>{product.name}</Table.Cell>
                               <Table.Cell>{product.description}</Table.Cell>
                               {/* --- Generator: end */}
-                              <Table.Cell>{formatDateTime(product.createdAt)}</Table.Cell>
+                              <Table.Cell>
+                                {formatDateTime(product.createdAt)}
+                              </Table.Cell>
                               <Table.Cell textAlign="center">
                                 <EditProduct
-                                  shop={shop}
+                                  datalake={datalake}
                                   product={product}
                                   onSave={reload}
-                                  trigger={<Button style={{ marginLeft: '20px' }} basic icon="edit" />}
+                                  trigger={
+                                    <Button
+                                      style={{ marginLeft: '20px' }}
+                                      basic
+                                      icon="edit"
+                                    />
+                                  }
                                 />
                                 <Confirm
                                   negative

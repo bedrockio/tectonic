@@ -216,7 +216,7 @@ describe('createSchema', () => {
           password: { type: String, access: 'private' },
         })
       );
-      const Shop = createTestModel(
+      const Datalake = createTestModel(
         createSchema({
           user: {
             ref: User.modelName,
@@ -224,18 +224,18 @@ describe('createSchema', () => {
           },
         })
       );
-      const shop = new Shop({
+      const datalake = new Datalake({
         user: '5f63b1b88f09266f237e9d29',
       });
-      await shop.save();
+      await datalake.save();
 
-      let data = JSON.parse(JSON.stringify(shop));
+      let data = JSON.parse(JSON.stringify(datalake));
       expect(data.user).toBe('5f63b1b88f09266f237e9d29');
-      shop.assign({
+      datalake.assign({
         user: '',
       });
-      await shop.save();
-      data = JSON.parse(JSON.stringify(shop));
+      await datalake.save();
+      data = JSON.parse(JSON.stringify(datalake));
       expect('user' in data).toBe(false);
     });
 
@@ -245,7 +245,7 @@ describe('createSchema', () => {
           password: { type: String, access: 'private' },
         })
       );
-      const Shop = createTestModel(
+      const Datalake = createTestModel(
         createSchema({
           users: [
             {
@@ -255,21 +255,20 @@ describe('createSchema', () => {
           ],
         })
       );
-      const shop = new Shop({
+      const datalake = new Datalake({
         users: ['5f63b1b88f09266f237e9d29', '5f63b1b88f09266f237e9d29'],
       });
-      await shop.save();
+      await datalake.save();
 
-      let data = JSON.parse(JSON.stringify(shop));
+      let data = JSON.parse(JSON.stringify(datalake));
       expect(data.users).toEqual(['5f63b1b88f09266f237e9d29', '5f63b1b88f09266f237e9d29']);
-      shop.assign({
+      datalake.assign({
         users: [],
       });
-      await shop.save();
-      data = JSON.parse(JSON.stringify(shop));
+      await datalake.save();
+      data = JSON.parse(JSON.stringify(datalake));
       expect(data.users).toEqual([]);
     });
-
   });
 
   describe('autopopulate', () => {
@@ -279,7 +278,7 @@ describe('createSchema', () => {
           password: { type: String, access: 'private' },
         })
       );
-      const shopSchema = createSchema({
+      const datalakeSchema = createSchema({
         user: {
           ref: User.modelName,
           type: mongoose.Schema.Types.ObjectId,
@@ -287,20 +286,20 @@ describe('createSchema', () => {
         },
       });
 
-      shopSchema.plugin(require('mongoose-autopopulate'));
-      const Shop = createTestModel(shopSchema);
+      datalakeSchema.plugin(require('mongoose-autopopulate'));
+      const Datalake = createTestModel(datalakeSchema);
 
       const user = new User();
       user.password = 'fake password';
       await user.save();
 
-      let shop = new Shop();
-      shop.user = user;
-      await shop.save();
+      let datalake = new Datalake();
+      datalake.user = user;
+      await datalake.save();
 
-      shop = await Shop.findById(shop.id);
+      datalake = await Datalake.findById(datalake.id);
 
-      const data = JSON.parse(JSON.stringify(shop));
+      const data = JSON.parse(JSON.stringify(datalake));
 
       expect(data.user.id).toBe(user.id);
       expect(data.user._id).toBeUndefined();
@@ -315,7 +314,7 @@ describe('createSchema', () => {
         })
       );
 
-      const shopSchema = createSchema({
+      const datalakeSchema = createSchema({
         user: {
           ref: User.modelName,
           type: mongoose.Schema.Types.ObjectId,
@@ -323,21 +322,21 @@ describe('createSchema', () => {
         },
       });
 
-      shopSchema.plugin(require('mongoose-autopopulate'));
-      const Shop = createTestModel(shopSchema);
+      datalakeSchema.plugin(require('mongoose-autopopulate'));
+      const Datalake = createTestModel(datalakeSchema);
 
       const user = new User({
         secret: 'foo',
       });
       await user.save();
 
-      let shop = new Shop();
-      shop.user = user;
-      await shop.save();
+      let datalake = new Datalake();
+      datalake.user = user;
+      await datalake.save();
 
-      shop = await Shop.findById(shop.id);
+      datalake = await Datalake.findById(datalake.id);
 
-      const data = shop.toObject();
+      const data = datalake.toObject();
 
       expect(data.user.id).toBe(user.id);
       expect(data.user._id).toBeUndefined();
@@ -352,7 +351,7 @@ describe('createSchema', () => {
         })
       );
 
-      const shopSchema = createSchema({
+      const datalakeSchema = createSchema({
         user: {
           ref: User.modelName,
           type: mongoose.Schema.Types.ObjectId,
@@ -360,21 +359,21 @@ describe('createSchema', () => {
         },
       });
 
-      shopSchema.plugin(require('mongoose-autopopulate'));
-      const Shop = createTestModel(shopSchema);
+      datalakeSchema.plugin(require('mongoose-autopopulate'));
+      const Datalake = createTestModel(datalakeSchema);
 
       const user = new User({
         secret: 'foo',
       });
       await user.save();
 
-      let shop = new Shop();
-      shop.user = user;
-      await shop.save();
+      let datalake = new Datalake();
+      datalake.user = user;
+      await datalake.save();
 
-      shop = await Shop.findById(shop.id);
+      datalake = await Datalake.findById(datalake.id);
 
-      const data = shop.toObject({
+      const data = datalake.toObject({
         private: true,
       });
 

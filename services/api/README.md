@@ -117,20 +117,20 @@ router
   .use(authenticate({ type: 'user' }))
   .use(fetchUser)
   // Only allow access to users that have write permissions for this organization
-  .use(requirePermissions({ endpoint: 'shops', level: 'write', context: 'organization' }))
+  .use(requirePermissions({ endpoint: 'datalakes', level: 'write', context: 'organization' }))
   .post(
     '/',
     validate({
       body: schema,
     }),
     async (ctx) => {
-      const shop = await Shop.create({
+      const datalake = await Datalake.create({
         // Set the organization for each object created
         organization: ctx.state.organization,
         ...ctx.request.body,
       });
       ctx.body = {
-        data: shop,
+        data: datalake,
       };
     }
   );

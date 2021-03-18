@@ -1,7 +1,7 @@
 const { setupDb, teardownDb, request, createUser } = require('../../utils/testing');
 
 // --- Generator: requires
-const { Shop, Upload } = require('../../models');
+const { Datalake, Upload } = require('../../models');
 // --- Generator: end
 
 beforeAll(async () => {
@@ -25,103 +25,101 @@ const createUpload = () => {
 };
 // --- Generator: end
 
-describe('/1/shops', () => {
-
+describe('/1/datalakes', () => {
   describe('POST /search', () => {
-    it('should list out shops', async () => {
+    it('should list out datalakes', async () => {
       // --- Generator: test-search
       const user = await createUser();
 
-      const shop1 = await Shop.create({
+      const datalake1 = await Datalake.create({
         name: 'test 1',
-        description: 'Some description'
+        description: 'Some description',
       });
 
-      const shop2 = await Shop.create({
+      const datalake2 = await Datalake.create({
         name: 'test 2',
-        description: 'Some description'
+        description: 'Some description',
       });
 
-      const response = await request('POST', '/1/shops/search', {}, { user });
+      const response = await request('POST', '/1/datalakes/search', {}, { user });
 
       expect(response.status).toBe(200);
       const body = response.body;
-      expect(body.data[1].name).toBe(shop1.name);
-      expect(body.data[0].name).toBe(shop2.name);
+      expect(body.data[1].name).toBe(datalake1.name);
+      expect(body.data[0].name).toBe(datalake2.name);
       expect(body.meta.total).toBe(2);
       // --- Generator: end
     });
   });
 
-  describe('GET /:shop', () => {
-    it('should be able to access shop', async () => {
+  describe('GET /:datalake', () => {
+    it('should be able to access datalake', async () => {
       // --- Generator: test-get
       const user = await createUser();
-      const shop = await Shop.create({
-        name: 'new shop',
+      const datalake = await Datalake.create({
+        name: 'new datalake',
       });
-      const response = await request('GET', `/1/shops/${shop.id}`, {}, { user });
+      const response = await request('GET', `/1/datalakes/${datalake.id}`, {}, { user });
       expect(response.status).toBe(200);
-      expect(response.body.data.name).toBe(shop.name);
+      expect(response.body.data.name).toBe(datalake.name);
       // --- Generator: end
     });
   });
 
   describe('POST /', () => {
-    it('should be able to create shop', async () => {
+    it('should be able to create datalake', async () => {
       // --- Generator: test-post
       const user = await createUser();
       const upload = await createUpload();
       const response = await request(
         'POST',
-        '/1/shops',
+        '/1/datalakes',
         {
-          name: 'shop name',
+          name: 'datalake name',
           images: [upload.id],
         },
         { user }
       );
       const data = response.body.data;
       expect(response.status).toBe(200);
-      expect(data.name).toBe('shop name');
+      expect(data.name).toBe('datalake name');
       expect(data.images[0].id).toBe(upload.id);
       expect(data.images[0].hash).toBe('test');
       // --- Generator: end
     });
   });
 
-  describe('DELETE /:shop', () => {
-    it('should be able to delete shop', async () => {
+  describe('DELETE /:datalake', () => {
+    it('should be able to delete datalake', async () => {
       // --- Generator: test-delete
       const user = await createUser();
-      let shop = await Shop.create({
+      let datalake = await Datalake.create({
         name: 'test 1',
         description: 'Some description',
       });
-      const response = await request('DELETE', `/1/shops/${shop.id}`, {}, { user });
+      const response = await request('DELETE', `/1/datalakes/${datalake.id}`, {}, { user });
       expect(response.status).toBe(204);
-      shop = await Shop.findById(shop.id);
-      expect(shop.deletedAt).toBeDefined();
+      datalake = await Datalake.findById(datalake.id);
+      expect(datalake.deletedAt).toBeDefined();
       // --- Generator: end
     });
   });
 
-  describe('PATCH /:shop', () => {
-    it('should be able to update shop', async () => {
+  describe('PATCH /:datalake', () => {
+    it('should be able to update datalake', async () => {
       // --- Generator: test-patch
       const user = await createUser();
-      let shop = await Shop.create({
-        name: 'shop name',
+      let datalake = await Datalake.create({
+        name: 'datalake name',
         description: 'Some description',
       });
-      shop.name = 'new name';
-      const response = await request('PATCH', `/1/shops/${shop.id}`, shop.toJSON(), { user });
+      datalake.name = 'new name';
+      const response = await request('PATCH', `/1/datalakes/${datalake.id}`, datalake.toJSON(), { user });
       expect(response.status).toBe(200);
       expect(response.body.data.name).toBe('new name');
-      shop = await Shop.findById(shop.id);
-      expect(shop.name).toEqual('new name');
+      datalake = await Datalake.findById(datalake.id);
+      expect(datalake.name).toEqual('new name');
       // --- Generator: end
     });
   });
-
 });

@@ -1,4 +1,4 @@
-const { User, Product, Shop, Upload, Category } = require('./models');
+const { User, Product, Datalake, Upload, Category } = require('./models');
 const config = require('@bedrockio/config');
 const { storeUploadedFile } = require('./utils/uploads');
 const { logger } = require('./utils/logging');
@@ -62,15 +62,15 @@ const createFixtures = async () => {
   });
   console.info(`Added admin user ${adminUser.email} to database`);
 
-  const shop = await Shop.create({
+  const datalake = await Datalake.create({
     name: 'Demo',
-    images: [await createUpload(adminUser, 'Shop.jpg')],
+    images: [await createUpload(adminUser, 'Datalake.jpg')],
   });
 
   for (let i = 0; i < 15; i++) {
     await Product.create({
       name: `Product ${i + 1}`,
-      shop,
+      datalake,
       images: [await createUpload(adminUser, `Product ${i + 1}.jpg`)],
     });
   }

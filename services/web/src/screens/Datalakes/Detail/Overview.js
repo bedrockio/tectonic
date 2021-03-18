@@ -9,18 +9,18 @@ import { urlForUpload } from 'utils/uploads';
 // --- Generator: end
 
 @screen
-export default class ShopOverview extends React.Component {
+export default class DatalakeOverview extends React.Component {
   render() {
-    const { shop } = this.props;
+    const { datalake } = this.props;
     return (
       <React.Fragment>
         <Menu {...this.props} />
         {/* --- Generator: overview-fields */}
-        <Header as="h1">{shop.name}</Header>
-        <p>{shop.description}</p>
+        <Header as="h1">{datalake.name}</Header>
+        <p>{datalake.description}</p>
         <Header as="h3">Images</Header>
         <Image.Group size="large">
-          {shop.images.map((image) => (
+          {datalake.images.map((image) => (
             <Image key={image.id} src={urlForUpload(image)} />
           ))}
         </Image.Group>
@@ -32,7 +32,7 @@ export default class ShopOverview extends React.Component {
             <Table.Row>
               <Table.Cell>Categories</Table.Cell>
               <Table.Cell>
-                {shop.categories.map((category) => (
+                {datalake.categories.map((category) => (
                   <Label key={category.id} content={category.name} />
                 ))}
               </Table.Cell>
@@ -40,15 +40,11 @@ export default class ShopOverview extends React.Component {
             {/* --- Generator: end */}
             <Table.Row>
               <Table.Cell>Created At</Table.Cell>
-              <Table.Cell>
-                {formatDateTime(shop.createdAt)}
-              </Table.Cell>
+              <Table.Cell>{formatDateTime(datalake.createdAt)}</Table.Cell>
             </Table.Row>
             <Table.Row>
               <Table.Cell>Updated At</Table.Cell>
-              <Table.Cell>
-                {formatDateTime(shop.updatedAt)}
-              </Table.Cell>
+              <Table.Cell>{formatDateTime(datalake.updatedAt)}</Table.Cell>
             </Table.Row>
           </Table.Body>
         </Table>

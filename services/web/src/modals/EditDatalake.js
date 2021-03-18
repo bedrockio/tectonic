@@ -9,35 +9,34 @@ import CountriesField from 'components/form-fields/Countries';
 import CategoriesField from 'components/form-fields/Categories';
 // --- Generator: end
 
-export default class EditShop extends React.Component {
-
+export default class EditDatalake extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       open: false,
       error: null,
       loading: false,
-      shop: props.shop || {},
+      datalake: props.datalake || {},
     };
   }
 
   componentDidUpdate(lastProps) {
-    const { shop } = this.props;
-    if (shop && shop !== lastProps.shop) {
+    const { datalake } = this.props;
+    if (datalake && datalake !== lastProps.datalake) {
       this.setState({
-        shop,
+        datalake,
       });
     }
   }
 
   isUpdate() {
-    return !!this.props.shop;
+    return !!this.props.datalake;
   }
 
   setField = (evt, { name, value }) => {
     this.setState({
-      shop: {
-        ...this.state.shop,
+      datalake: {
+        ...this.state.datalake,
         [name]: value,
       },
     });
@@ -57,21 +56,21 @@ export default class EditShop extends React.Component {
         error: null,
         loading: true,
       });
-      const { shop } = this.state;
+      const { datalake } = this.state;
       if (this.isUpdate()) {
         await request({
           method: 'PATCH',
-          path: `/1/shops/${shop.id}`,
-          body: shop,
+          path: `/1/datalakes/${datalake.id}`,
+          body: datalake,
         });
       } else {
         await request({
           method: 'POST',
-          path: '/1/shops',
-          body: shop,
+          path: '/1/datalakes',
+          body: datalake,
         });
         this.setState({
-          shop: {},
+          datalake: {},
         });
       }
       this.setState({
@@ -89,7 +88,7 @@ export default class EditShop extends React.Component {
 
   render() {
     const { trigger } = this.props;
-    const { shop, open, loading, error } = this.state;
+    const { datalake, open, loading, error } = this.state;
     return (
       <Modal
         closeIcon
@@ -98,12 +97,14 @@ export default class EditShop extends React.Component {
         closeOnDimmerClick={false}
         onOpen={() => this.setState({ open: true })}
         onClose={() => this.setState({ open: false })}>
-        <Modal.Header>{this.isUpdate() ? `Edit "${shop.name}"` : 'New Shop'}</Modal.Header>
+        <Modal.Header>
+          {this.isUpdate() ? `Edit "${datalake.name}"` : 'New Datalake'}
+        </Modal.Header>
         <Modal.Content scrolling>
           <AutoFocus>
             <Form
               noValidate
-              id="edit-shop"
+              id="edit-datalake"
               error={!!error}
               onSubmit={this.onSubmit}>
               {error && <Message error content={error.message} />}
@@ -113,22 +114,31 @@ export default class EditShop extends React.Component {
                 type="text"
                 name="name"
                 label="Name"
-                value={shop.name || ''}
+                value={datalake.name || ''}
                 onChange={this.setField}
               />
               <Form.TextArea
                 name="description"
                 label="Description"
                 type="text"
-                value={shop.description || ''}
+                value={datalake.description || ''}
                 onChange={this.setField}
               />
-              <CountriesField label="Country" name="country" value={shop.country || 'US'} onChange={this.setField} />
-              <CategoriesField name="categories" value={shop.categories || []} onChange={this.setField} />
+              <CountriesField
+                label="Country"
+                name="country"
+                value={datalake.country || 'US'}
+                onChange={this.setField}
+              />
+              <CategoriesField
+                name="categories"
+                value={datalake.categories || []}
+                onChange={this.setField}
+              />
               <UploadsField
                 name="images"
                 label="Images"
-                value={shop.images || []}
+                value={datalake.images || []}
                 onChange={(data) => this.setField(null, data)}
                 onError={(error) => this.setState({ error })}
               />
@@ -139,7 +149,7 @@ export default class EditShop extends React.Component {
         <Modal.Actions>
           <Button
             primary
-            form="edit-shop"
+            form="edit-datalake"
             loading={loading}
             disabled={loading}
             content={this.isUpdate() ? 'Update' : 'Create'}

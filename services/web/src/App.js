@@ -11,7 +11,7 @@ import Docs from 'screens/Docs';
 import Invites from 'screens/Invites';
 import NotFound from 'screens/NotFound';
 import Settings from 'screens/Settings';
-import Shops from 'screens/Shops';
+import Datalakes from 'screens/Datalakes';
 import Users from 'screens/Users';
 
 import AcceptInvite from 'screens/Auth/AcceptInvite';
@@ -24,7 +24,7 @@ import Signup from 'screens/Auth/Signup';
 const App = () => (
   <Switch>
     <AuthSwitch path="/" loggedIn={Dashboard} loggedOut={Login} exact />
-    <Protected path="/shops/:id?" allowed={Shops} />
+    <Protected path="/datalakes/:id?" allowed={Datalakes} />
     <Protected path="/settings" allowed={Settings} exact />
     <Protected path="/invites" allowed={Invites} exact />
     <Protected path="/users/:id?" allowed={Users} />

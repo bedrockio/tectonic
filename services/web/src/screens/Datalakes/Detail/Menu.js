@@ -4,27 +4,32 @@ import { Menu, Divider, Button } from 'semantic-ui-react';
 import { NavLink } from 'react-router-dom';
 import { Breadcrumbs } from 'components';
 
-import EditShop from 'modals/EditShop';
+import EditDatalake from 'modals/EditDatalake';
 
-export default ({ shop, onSave }) => {
+export default ({ datalake, onSave }) => {
   return (
     <React.Fragment>
       <Breadcrumbs
-        link={<Link to="/shops">Shops</Link>}
-        active={shop.name || 'Loading...'}>
-        <EditShop
-          shop={shop}
+        link={<Link to="/datalakes">Datalakes</Link>}
+        active={datalake.name || 'Loading...'}>
+        <EditDatalake
+          datalake={datalake}
           onSave={onSave}
           trigger={<Button primary icon="setting" content="Settings" />}
         />
       </Breadcrumbs>
       <Divider hidden />
       <Menu tabular>
-        <Menu.Item name="Overview" to={`/shops/${shop.id}`} as={NavLink} exact />
+        <Menu.Item
+          name="Overview"
+          to={`/datalakes/${datalake.id}`}
+          as={NavLink}
+          exact
+        />
         {/* --- Generator: menus */}
         <Menu.Item
           name="Products"
-          to={`/shops/${shop.id}/products`}
+          to={`/datalakes/${datalake.id}/products`}
           as={NavLink}
           exact
         />

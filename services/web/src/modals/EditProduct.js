@@ -10,7 +10,6 @@ import CurrencyField from 'components/form-fields/Currency';
 // --- Generator: end
 
 export default class EditProduct extends React.Component {
-
   constructor(props) {
     super(props);
     this.state = {
@@ -60,9 +59,9 @@ export default class EditProduct extends React.Component {
           body: {
             ...product,
             // --- Generator: refs
-            shop: this.props.shop.id,
+            datalake: this.props.datalake.id,
             // --- Generator: end
-          }
+          },
         });
       } else {
         await request({
@@ -71,7 +70,7 @@ export default class EditProduct extends React.Component {
           body: {
             ...product,
             // --- Generator: refs
-            shop: this.props.shop.id,
+            datalake: this.props.datalake.id,
             // --- Generator: end
           },
         });
@@ -103,7 +102,9 @@ export default class EditProduct extends React.Component {
         closeOnDimmerClick={false}
         onOpen={() => this.setState({ open: true })}
         onClose={() => this.setState({ open: false })}>
-        <Modal.Header>{this.isUpdate() ? `Edit "${product.name}"` : 'New Product'}</Modal.Header>
+        <Modal.Header>
+          {this.isUpdate() ? `Edit "${product.name}"` : 'New Product'}
+        </Modal.Header>
         <Modal.Content scrolling>
           <AutoFocus>
             <Form
@@ -164,7 +165,7 @@ export default class EditProduct extends React.Component {
                 onAddItem={(evt, { name, value }) => {
                   this.setField(evt, {
                     name,
-                    value: [...product.sellingPoints || [], value],
+                    value: [...(product.sellingPoints || []), value],
                   });
                 }}
                 onChange={this.setField}

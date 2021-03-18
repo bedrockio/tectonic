@@ -50,18 +50,18 @@ router
           order: 'desc',
         }),
         ids: Joi.array().items(Joi.string()),
-        shop: Joi.string(),
+        datalake: Joi.string(),
         limit: Joi.number().positive().default(50),
       }),
     }),
     async (ctx) => {
-      const { ids = [], sort, name, skip, limit, shop } = ctx.request.body;
+      const { ids = [], sort, name, skip, limit, datalake } = ctx.request.body;
       const query = {
         ...(ids.length ? { _id: { $in: ids } } : {}),
         deletedAt: { $exists: false },
       };
-      if (shop) {
-        query.shop = shop;
+      if (datalake) {
+        query.datalake = datalake;
       }
       if (name) {
         query.name = {

@@ -2,7 +2,7 @@
 
 - [Components Documentation](src/components)
 - [Utils Documentation](src/utils)
-- [CRUD View Example](src/screens/Shops/index.js)
+- [CRUD View Example](src/screens/Datalakes/index.js)
 - [Analytics](src/utils/analytics/README.md)
 - [Stores](src/stores/README.md)
 
