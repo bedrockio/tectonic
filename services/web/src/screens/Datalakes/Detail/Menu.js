@@ -28,8 +28,8 @@ export default ({ datalake, onSave }) => {
         />
         {/* --- Generator: menus */}
         <Menu.Item
-          name="Products"
-          to={`/datalakes/${datalake.id}/products`}
+          name="Collections"
+          to={`/datalakes/${datalake.id}/collections`}
           as={NavLink}
           exact
         />

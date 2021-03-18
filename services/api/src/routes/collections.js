@@ -3,17 +3,17 @@ const Joi = require('@hapi/joi');
 const validate = require('../utils/middleware/validate');
 const { authenticate, fetchUser } = require('../utils/middleware/authenticate');
 const { NotFoundError } = require('../utils/errors');
-const { Product } = require('../models');
+const { Collection } = require('../models');
 
 const router = new Router();
 
 router
   .use(authenticate({ type: 'user' }))
   .use(fetchUser)
-  .param('productId', async (id, ctx, next) => {
-    const product = await Product.findById(id);
-    ctx.state.product = product;
-    if (!product) {
+  .param('collectionId', async (id, ctx, next) => {
+    const collection = await Collection.findById(id);
+    ctx.state.collection = collection;
+    if (!collection) {
       throw new NotFoundError();
     }
     return next();
@@ -21,19 +21,19 @@ router
   .post(
     '/',
     validate({
-      body: Product.getValidator(),
+      body: Collection.getValidator(),
     }),
     async (ctx) => {
-      const product = await Product.create(ctx.request.body);
+      const collection = await Collection.create(ctx.request.body);
       ctx.body = {
-        data: product,
+        data: collection,
       };
     }
   )
-  .get('/:productId', async (ctx) => {
-    const { product } = await ctx.state;
+  .get('/:collectionId', async (ctx) => {
+    const { collection } = await ctx.state;
     ctx.body = {
-      data: product,
+      data: collection,
     };
   })
   .post(
@@ -69,12 +69,12 @@ router
           $options: 'i',
         };
       }
-      const data = await Product.find(query)
+      const data = await Collection.find(query)
         .sort({ [sort.field]: sort.order === 'desc' ? -1 : 1 })
         .skip(skip)
         .limit(limit);
 
-      const total = await Product.countDocuments(query);
+      const total = await Collection.countDocuments(query);
       ctx.body = {
         data,
         meta: {
@@ -86,22 +86,22 @@ router
     }
   )
   .patch(
-    '/:productId',
+    '/:collectionId',
     validate({
-      body: Product.getPatchValidator(),
+      body: Collection.getPatchValidator(),
     }),
     async (ctx) => {
-      const product = ctx.state.product;
-      product.assign(ctx.request.body);
-      await product.save();
+      const collection = ctx.state.collection;
+      collection.assign(ctx.request.body);
+      await collection.save();
       ctx.body = {
-        data: product,
+        data: collection,
       };
     }
   )
-  .delete('/:productId', async (ctx) => {
-    const product = ctx.state.product;
-    await product.delete();
+  .delete('/:collectionId', async (ctx) => {
+    const collection = ctx.state.collection;
+    await collection.delete();
     ctx.status = 204;
   });
 

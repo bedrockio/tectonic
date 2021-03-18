@@ -8,7 +8,7 @@ import { request } from 'utils/api';
 import Overview from './Overview';
 
 // --- Generator: imports
-import Products from './Products';
+import Collections from './Collections';
 // --- Generator: end
 
 export default class DatalakeDetail extends React.Component {
@@ -85,8 +85,8 @@ export default class DatalakeDetail extends React.Component {
         {/* --- Generator: routes */}
         <Route
           exact
-          path="/datalakes/:id/products"
-          render={(props) => <Products {...props} {...this.state} />}
+          path="/datalakes/:id/collections"
+          render={(props) => <Collections {...props} {...this.state} />}
         />
         {/* --- Generator: end */}
       </Switch>

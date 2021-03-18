@@ -2,7 +2,7 @@
   "paths": [
     {
       "method": "GET",
-      "path": "/:productId",
+      "path": "/:collectionId",
       "responseBody": [],
       "examples": []
     },
@@ -32,43 +32,6 @@
           "required": false,
           "schema": {
             "type": "string"
-          }
-        },
-        {
-          "name": "expiresAt",
-          "description": "",
-          "required": false,
-          "schema": {
-            "type": "string"
-          }
-        },
-        {
-          "name": "priceUsd",
-          "description": "",
-          "required": false,
-          "schema": {
-            "type": "number",
-            "minimum": 0.1,
-            "maximum": 1000000
-          }
-        },
-        {
-          "name": "isFeatured",
-          "description": "",
-          "required": false,
-          "schema": {
-            "type": "boolean"
-          }
-        },
-        {
-          "name": "sellingPoints",
-          "description": "",
-          "required": false,
-          "schema": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
           }
         }
       ],
@@ -136,7 +99,7 @@
 
     {
       "method": "PATCH",
-      "path": "/:productId",
+      "path": "/:collectionId",
       "requestBody": [
         {
           "name": "description",
@@ -240,7 +203,7 @@
     },
     {
       "method": "DELETE",
-      "path": "/:productId",
+      "path": "/:collectionId",
       "responseBody": [],
       "examples": []
     }

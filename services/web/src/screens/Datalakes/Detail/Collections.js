@@ -14,17 +14,17 @@ import { urlForUpload } from 'utils/uploads';
 import { Layout, Confirm, HelpTip, SearchProvider } from 'components';
 
 import Filters from 'modals/Filters';
-import EditProduct from 'modals/EditProduct';
+import EditCollection from 'modals/EditCollection';
 
 import Menu from './Menu';
 
 @screen
-export default class DatalakeProducts extends React.Component {
+export default class DatalakeCollections extends React.Component {
   onDataNeeded = async (params) => {
     const { datalake } = this.props;
     return await request({
       method: 'POST',
-      path: '/1/products/search',
+      path: '/1/collections/search',
       body: {
         ...params,
         datalake: datalake.id,
@@ -40,7 +40,7 @@ export default class DatalakeProducts extends React.Component {
         {datalake ? (
           <SearchProvider onDataNeeded={this.onDataNeeded}>
             {({
-              items: products,
+              items: collections,
               filters,
               setFilters,
               getSorted,
@@ -51,7 +51,7 @@ export default class DatalakeProducts extends React.Component {
                 <React.Fragment>
                   <Header as="h2">
                     <Layout horizontal center spread>
-                      Products
+                      Collections
                       <Layout.Group>
                         <Filters
                           size="tiny"
@@ -59,14 +59,14 @@ export default class DatalakeProducts extends React.Component {
                           filters={filters}>
                           <Filters.Text label="Name" name="name" />
                         </Filters>
-                        <EditProduct
+                        <EditCollection
                           datalake={datalake}
                           onSave={reload}
                           trigger={
                             <Button
                               primary
                               size="tiny"
-                              content="Add Product"
+                              content="Add Collection"
                               icon="plus"
                             />
                           }
@@ -74,8 +74,8 @@ export default class DatalakeProducts extends React.Component {
                       </Layout.Group>
                     </Layout>
                   </Header>
-                  {products.length === 0 ? (
-                    <Message>No products added yet</Message>
+                  {collections.length === 0 ? (
+                    <Message>No collections added yet</Message>
                   ) : (
                     <Table celled>
                       <Table.Header>
@@ -108,28 +108,31 @@ export default class DatalakeProducts extends React.Component {
                         </Table.Row>
                       </Table.Header>
                       <Table.Body>
-                        {products.map((product) => {
+                        {collections.map((collection) => {
                           return (
-                            <Table.Row key={product.id}>
+                            <Table.Row key={collection.id}>
                               {/* --- Generator: list-body-cells */}
                               <Table.Cell>
-                                {product.images[0] && (
+                                {collection.images[0] && (
                                   <Image
                                     style={{ width: '100%' }}
-                                    src={urlForUpload(product.images[0], true)}
+                                    src={urlForUpload(
+                                      collection.images[0],
+                                      true
+                                    )}
                                   />
                                 )}
                               </Table.Cell>
-                              <Table.Cell>{product.name}</Table.Cell>
-                              <Table.Cell>{product.description}</Table.Cell>
+                              <Table.Cell>{collection.name}</Table.Cell>
+                              <Table.Cell>{collection.description}</Table.Cell>
                               {/* --- Generator: end */}
                               <Table.Cell>
-                                {formatDateTime(product.createdAt)}
+                                {formatDateTime(collection.createdAt)}
                               </Table.Cell>
                               <Table.Cell textAlign="center">
-                                <EditProduct
+                                <EditCollection
                                   datalake={datalake}
-                                  product={product}
+                                  collection={collection}
                                   onSave={reload}
                                   trigger={
                                     <Button
@@ -142,13 +145,13 @@ export default class DatalakeProducts extends React.Component {
                                 <Confirm
                                   negative
                                   confirmText="Delete"
-                                  header={`Are you sure you want to delete "${product.name}"?`}
+                                  header={`Are you sure you want to delete "${collection.name}"?`}
                                   content="All data will be permanently deleted"
                                   trigger={<Button basic icon="trash" />}
                                   onConfirm={async () => {
                                     await request({
                                       method: 'DELETE',
-                                      path: `/1/products/${product.id}`,
+                                      path: `/1/collections/${collection.id}`,
                                     });
                                     reload();
                                   }}

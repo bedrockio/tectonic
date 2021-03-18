@@ -1,4 +1,4 @@
-const { User, Product, Datalake, Upload, Category } = require('./models');
+const { User, Collection, Datalake, Upload, Category } = require('./models');
 const config = require('@bedrockio/config');
 const { storeUploadedFile } = require('./utils/uploads');
 const { logger } = require('./utils/logging');
@@ -26,31 +26,7 @@ const createFixtures = async () => {
 
   logger.info('Creating DB fixtures');
 
-  [
-    'jewelry',
-    'toy',
-    'florist',
-    'hairdresser',
-    'barber',
-    'shoe',
-    'clothes',
-    'hardware',
-    'delicatessen',
-    'books',
-    'pets',
-    'chemist',
-    'fishmonger',
-    'butcher',
-    'baker',
-    'supermarket',
-    'grocer',
-    'department',
-    'tea',
-    'music',
-    'optician',
-    'travel',
-    'design',
-  ].forEach(async (name) => {
+  ['streaming', 'edge', 'IOT', 'metrics'].forEach(async (name) => {
     await Category.create({
       name,
     });
@@ -67,11 +43,11 @@ const createFixtures = async () => {
     images: [await createUpload(adminUser, 'Datalake.jpg')],
   });
 
-  for (let i = 0; i < 15; i++) {
-    await Product.create({
-      name: `Product ${i + 1}`,
+  for (let i = 0; i < 1; i++) {
+    await Collection.create({
+      name: `Collection ${i + 1}`,
       datalake,
-      images: [await createUpload(adminUser, `Product ${i + 1}.jpg`)],
+      images: [await createUpload(adminUser, `Collection ${i + 1}.jpg`)],
     });
   }
   return true;

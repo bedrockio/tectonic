@@ -9,34 +9,34 @@ import UploadsField from 'components/form-fields/Uploads';
 import CurrencyField from 'components/form-fields/Currency';
 // --- Generator: end
 
-export default class EditProduct extends React.Component {
+export default class EditCollection extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       open: false,
       error: null,
       loading: false,
-      product: props.product || {},
+      collection: props.collection || {},
     };
   }
 
   componentDidUpdate(lastProps) {
-    const { product } = this.props;
-    if (product && product !== lastProps.product) {
+    const { collection } = this.props;
+    if (collection && collection !== lastProps.collection) {
       this.setState({
-        product,
+        collection,
       });
     }
   }
 
   isUpdate() {
-    return !!this.props.product;
+    return !!this.props.collection;
   }
 
   setField = (evt, { name, value }) => {
     this.setState({
-      product: {
-        ...this.state.product,
+      collection: {
+        ...this.state.collection,
         [name]: value,
       },
     });
@@ -51,13 +51,13 @@ export default class EditProduct extends React.Component {
       this.setState({
         loading: true,
       });
-      const { product } = this.state;
+      const { collection } = this.state;
       if (this.isUpdate()) {
         await request({
           method: 'PATCH',
-          path: `/1/products/${product.id}`,
+          path: `/1/collections/${collection.id}`,
           body: {
-            ...product,
+            ...collection,
             // --- Generator: refs
             datalake: this.props.datalake.id,
             // --- Generator: end
@@ -66,16 +66,16 @@ export default class EditProduct extends React.Component {
       } else {
         await request({
           method: 'POST',
-          path: '/1/products',
+          path: '/1/collections',
           body: {
-            ...product,
+            ...collection,
             // --- Generator: refs
             datalake: this.props.datalake.id,
             // --- Generator: end
           },
         });
         this.setState({
-          product: {},
+          collection: {},
         });
       }
       this.setState({
@@ -93,7 +93,7 @@ export default class EditProduct extends React.Component {
 
   render() {
     const { trigger } = this.props;
-    const { product, open, loading, error } = this.state;
+    const { collection, open, loading, error } = this.state;
     return (
       <Modal
         closeIcon
@@ -103,13 +103,13 @@ export default class EditProduct extends React.Component {
         onOpen={() => this.setState({ open: true })}
         onClose={() => this.setState({ open: false })}>
         <Modal.Header>
-          {this.isUpdate() ? `Edit "${product.name}"` : 'New Product'}
+          {this.isUpdate() ? `Edit "${collection.name}"` : 'New Collection'}
         </Modal.Header>
         <Modal.Content scrolling>
           <AutoFocus>
             <Form
               noValidate
-              id="edit-product"
+              id="edit-collection"
               error={!!error}
               onSubmit={this.onSubmit}>
               {error && <Message error content={error.message} />}
@@ -119,31 +119,31 @@ export default class EditProduct extends React.Component {
                 type="text"
                 name="name"
                 label="Name"
-                value={product.name || ''}
+                value={collection.name || ''}
                 onChange={this.setField}
               />
               <Form.TextArea
                 name="description"
                 label="Description"
-                value={product.description || ''}
+                value={collection.description || ''}
                 onChange={this.setField}
               />
               <Form.Checkbox
                 name="isFeatured"
                 label="Is Featured?"
-                checked={product.isFeatured || false}
+                checked={collection.isFeatured || false}
                 onChange={this.setCheckedField}
               />
               <CurrencyField
                 name="priceUsd"
                 label="Price"
-                value={product.priceUsd || ''}
+                value={collection.priceUsd || ''}
                 onChange={this.setField}
               />
               <DateField
                 time
                 name="expiresAt"
-                value={product.expiresAt}
+                value={collection.expiresAt}
                 label="Expiration Date and Time"
                 onChange={this.setField}
               />
@@ -154,7 +154,7 @@ export default class EditProduct extends React.Component {
                 multiple
                 allowAdditions
                 options={
-                  product.sellingPoints?.map((value) => {
+                  collection.sellingPoints?.map((value) => {
                     return {
                       value,
                       text: value,
@@ -165,16 +165,16 @@ export default class EditProduct extends React.Component {
                 onAddItem={(evt, { name, value }) => {
                   this.setField(evt, {
                     name,
-                    value: [...(product.sellingPoints || []), value],
+                    value: [...(collection.sellingPoints || []), value],
                   });
                 }}
                 onChange={this.setField}
-                value={product.sellingPoints || []}
+                value={collection.sellingPoints || []}
               />
               <UploadsField
                 name="images"
                 label="Images"
-                value={product.images || []}
+                value={collection.images || []}
                 onChange={(data) => this.setField(null, data)}
                 onError={(error) => this.setState({ error })}
               />
@@ -185,7 +185,7 @@ export default class EditProduct extends React.Component {
         <Modal.Actions>
           <Button
             primary
-            form="edit-product"
+            form="edit-collection"
             loading={loading}
             disabled={loading}
             content={this.isUpdate() ? 'Update' : 'Create'}
