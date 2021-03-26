@@ -9,6 +9,7 @@ import Overview from './Overview';
 
 // --- Generator: imports
 import Collections from './Collections';
+import Batches from './Batches';
 // --- Generator: end
 
 export default class DatalakeDetail extends React.Component {
@@ -87,6 +88,11 @@ export default class DatalakeDetail extends React.Component {
           exact
           path="/datalakes/:id/collections"
           render={(props) => <Collections {...props} {...this.state} />}
+        />
+        <Route
+          exact
+          path="/datalakes/:id/batches"
+          render={(props) => <Batches {...props} {...this.state} />}
         />
         {/* --- Generator: end */}
       </Switch>

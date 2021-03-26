@@ -33,6 +33,12 @@ export default ({ datalake, onSave }) => {
           as={NavLink}
           exact
         />
+        <Menu.Item
+          name="Batches"
+          to={`/datalakes/${datalake.id}/batches`}
+          as={NavLink}
+          exact
+        />
         {/* --- Generator: end */}
       </Menu>
       <Divider hidden />

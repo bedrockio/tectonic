@@ -4,9 +4,6 @@ import { request } from 'utils/api';
 import AutoFocus from 'components/AutoFocus';
 
 // --- Generator: imports
-import DateField from 'components/form-fields/Date';
-import UploadsField from 'components/form-fields/Uploads';
-import CurrencyField from 'components/form-fields/Currency';
 // --- Generator: end
 
 export default class EditCollection extends React.Component {
@@ -128,55 +125,21 @@ export default class EditCollection extends React.Component {
                 value={collection.description || ''}
                 onChange={this.setField}
               />
-              <Form.Checkbox
-                name="isFeatured"
-                label="Is Featured?"
-                checked={collection.isFeatured || false}
-                onChange={this.setCheckedField}
-              />
-              <CurrencyField
-                name="priceUsd"
-                label="Price"
-                value={collection.priceUsd || ''}
+              <Form.Input
+                required
+                type="text"
+                name="ingest"
+                label="Ingest"
+                value={collection.ingest || ''}
                 onChange={this.setField}
               />
-              <DateField
-                time
-                name="expiresAt"
-                value={collection.expiresAt}
-                label="Expiration Date and Time"
+              <Form.Input
+                required
+                type="text"
+                name="raw"
+                label="Raw"
+                value={collection.raw || ''}
                 onChange={this.setField}
-              />
-              <Form.Dropdown
-                name="sellingPoints"
-                search
-                selection
-                multiple
-                allowAdditions
-                options={
-                  collection.sellingPoints?.map((value) => {
-                    return {
-                      value,
-                      text: value,
-                    };
-                  }) || []
-                }
-                label="Selling Points"
-                onAddItem={(evt, { name, value }) => {
-                  this.setField(evt, {
-                    name,
-                    value: [...(collection.sellingPoints || []), value],
-                  });
-                }}
-                onChange={this.setField}
-                value={collection.sellingPoints || []}
-              />
-              <UploadsField
-                name="images"
-                label="Images"
-                value={collection.images || []}
-                onChange={(data) => this.setField(null, data)}
-                onError={(error) => this.setState({ error })}
               />
               {/* --- Generator: end */}
             </Form>

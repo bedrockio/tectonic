@@ -8,6 +8,7 @@ const invites = require('./invites');
 const categories = require('./categories');
 const status = require('./status');
 const events = require('./events');
+const batches = require('./batches');
 
 const router = new Router();
 
@@ -20,5 +21,6 @@ router.use('/invites', invites.routes());
 router.use('/categories', categories.routes());
 router.use('/status', status.routes());
 router.use('/events', events.routes());
+router.use('/batches', batches.routes());
 
 module.exports = router;
