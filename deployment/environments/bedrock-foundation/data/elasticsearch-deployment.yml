@@ -13,7 +13,7 @@ spec:
         app: elasticsearch
     spec:
       containers:
-        - image: elasticsearch:5
+        - image: elasticsearch:7.11
           name: elasticsearch
           env:
             - name: NAMESPACE
@@ -21,7 +21,7 @@ spec:
                 fieldRef:
                   fieldPath: metadata.namespace
             - name: "CLUSTER_NAME"
-              value: "cluster-1-elasticsearch"
+              value: "cluster-1-tectonic"
             - name: NODE_MASTER
               value: "false"
             - name: NODE_DATA
@@ -43,5 +43,5 @@ spec:
       volumes:
         - name: elasticsearch-persistent-storage
           gcePersistentDisk:
-            pdName: elasticsearch-disk
+            pdName: tectonic-elasticsearch-disk
             fsType: ext4

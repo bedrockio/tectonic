@@ -25,7 +25,7 @@
       "ref": "Datalake",
       "type": "ObjectId",
       "required": true,
-      "autopopulate": true
+      "autopopulate": false
     },
     "images": [
       {

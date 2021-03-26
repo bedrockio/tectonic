@@ -20,7 +20,8 @@
   },
   "dependencies": {
     "@bedrockio/config": "^2.0.3",
-    "@bedrockio/instrumentation": "^1.0.2",
+    "@bedrockio/instrumentation": "1.0.2",
+    "@google-cloud/pubsub": "^2.10.0",
     "@google-cloud/storage": "^5.1.2",
     "@hapi/joi": "^17.1.1",
     "@koa/cors": "^3.1.0",
@@ -34,7 +35,7 @@
     "koa-body": "^4.2.0",
     "koa-logger": "^3.2.1",
     "lodash": "^4.17.19",
-    "mongoose": "^5.9.26",
+    "mongoose": "^5.12.2",
     "mongoose-autopopulate": "^0.12.2",
     "pino": "^6.11.0",
     "postmark": "^2.5.4",
@@ -62,7 +63,7 @@
     ]
   },
   "volta": {
-    "node": "14.15.1",
+    "node": "14.16.0",
     "yarn": "1.22.5"
   }
 }

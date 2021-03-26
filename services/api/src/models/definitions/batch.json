@@ -1,0 +1,36 @@
+{
+  "attributes": {
+    "datalakeId": {
+      "type": "String",
+      "required": true
+    },
+    "collectionId": {
+      "type": "String",
+      "required": true
+    },
+    "ingestedAt": {
+      "type": "Date",
+      "required": true
+    },
+    "numEvents": {
+      "type": "Number",
+      "required": true
+    },
+    "memorySize": {
+      "type": "String",
+      "required": true
+    },
+    "minOccurredAt": {
+      "type": "Date",
+      "required": true
+    },
+    "maxOccurredAt": {
+      "type": "Date",
+      "required": true
+    },
+    "rawUrl": {
+      "type": "String",
+      "required": false
+    }
+  }
+}

@@ -23,3 +23,17 @@ module "gcp-buckets" {
 
   global = local.global
 }
+
+resource "google_compute_disk" "mongo_disk" {
+  name  = "tectonic-mongo-disk"
+  type  = "pd-ssd"
+  zone  = var.zone
+  size  = 300
+}
+
+resource "google_compute_disk" "elasticsearch_disk" {
+  name  = "tectonic-elasticsearch-disk"
+  type  = "pd-ssd"
+  zone  = var.zone
+  size  = 300
+}
