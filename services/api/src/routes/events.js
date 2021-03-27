@@ -8,6 +8,7 @@ const validate = require('../utils/middleware/validate');
 const { Batch, Collection } = require('../models');
 const { logger } = require('../utils/logging');
 const { storeBatchEvents } = require('../utils/batch');
+const { createHash } = require('crypto');
 
 const router = new Router();
 //const rawEventsTopic = config.get('PUBSUB_RAW_EVENTS_TOPIC');
@@ -40,6 +41,10 @@ router.post(
       throw new NotFoundError(`CollectionId ${collectionId} not found`);
     }
 
+    const hash = createHash('sha256')
+      .update(`${collectionId}-${JSON.stringify(events)}`)
+      .digest('base64');
+
     // 1: Create and store mongo batch
 
     const batch = {
@@ -50,6 +55,7 @@ router.post(
       minOccurredAt: events[0].occurredAt,
       maxOccurredAt: events[0].occurredAt,
       memorySize: memorySizeOf(events),
+      hash,
     };
 
     for (const { occurredAt } of events.slice(1)) {

@@ -68,13 +68,10 @@ export default class DatalakeBatches extends React.Component {
                             onClick={() => setSort('id')}>
                             BatchId
                           </Table.HeaderCell>
-                          <Table.HeaderCell width={1}>
-                            NumEvents
-                          </Table.HeaderCell>
+                          <Table.HeaderCell width={1}>#Events</Table.HeaderCell>
                           <Table.HeaderCell width={3}>RawUrl</Table.HeaderCell>
-                          <Table.HeaderCell width={1}>
-                            memorySize
-                          </Table.HeaderCell>
+                          <Table.HeaderCell width={1}>Hash</Table.HeaderCell>
+                          <Table.HeaderCell width={1}>Memory</Table.HeaderCell>
                           <Table.HeaderCell
                             width={3}
                             sorted={getSorted('ingestedAt')}
@@ -86,16 +83,6 @@ export default class DatalakeBatches extends React.Component {
                             />
                           </Table.HeaderCell>
                           {/* --- Generator: end */}
-                          <Table.HeaderCell
-                            width={3}
-                            sorted={getSorted('createdAt')}
-                            onClick={() => setSort('createdAt')}>
-                            Created
-                            <HelpTip
-                              title="Created"
-                              text="This is the date and time the item was created."
-                            />
-                          </Table.HeaderCell>
                           <Table.HeaderCell textAlign="center">
                             Actions
                           </Table.HeaderCell>
@@ -109,14 +96,12 @@ export default class DatalakeBatches extends React.Component {
                               <Table.Cell>{batch.id}</Table.Cell>
                               <Table.Cell>{batch.numEvents}</Table.Cell>
                               <Table.Cell>{batch.rawUrl}</Table.Cell>
+                              <Table.Cell>{batch.hash}</Table.Cell>
                               <Table.Cell>{batch.memorySize}</Table.Cell>
                               <Table.Cell>
                                 {formatDateTime(batch.ingestedAt)}
                               </Table.Cell>
                               {/* --- Generator: end */}
-                              <Table.Cell>
-                                {formatDateTime(batch.createdAt)}
-                              </Table.Cell>
                               <Table.Cell textAlign="center">
                                 <Confirm
                                   negative

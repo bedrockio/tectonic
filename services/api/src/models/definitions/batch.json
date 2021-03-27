@@ -31,6 +31,10 @@
     "rawUrl": {
       "type": "String",
       "required": false
+    },
+    "hash": {
+      "type": "String",
+      "required": false
     }
   }
 }
