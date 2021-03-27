@@ -404,6 +404,60 @@ function loadJsonStreamFile(path) {
     .map((line) => JSON.parse(line));
 }
 
+const indexExists = async (index) => {
+  const { body: exists } = await elasticsearchClient.indices.exists({ index });
+  return exists;
+};
+
+const deleteIndex = async (index) => {
+  const exists = await indexExists(index);
+  if (exists) {
+    console.info('Deleting index:', index);
+    await elasticsearchClient.indices.delete({ index });
+  }
+};
+
+const dynamic_templates = [
+  {
+    strings_as_keywords: {
+      match_mapping_type: 'string',
+      mapping: {
+        type: 'keyword',
+      },
+    },
+  },
+];
+
+const ensureEventsIndex = async (index) => {
+  const exists = await indexExists(index);
+  if (!exists) {
+    console.info(index, 'index does not exist yet. Creating now...');
+    try {
+      await elasticsearchClient.indices.create({
+        index,
+        body: {
+          mappings: {
+            dynamic_templates,
+          },
+        },
+      });
+    } catch (e) {
+      console.error(e);
+      return false;
+    }
+  }
+  return true;
+};
+
+const bulkIndexEvents = async (events, indexName = 'events') => {
+  // console.info('events:', events);
+  const body = events.flatMap((doc) => [{ index: { _index: indexName } }, doc]);
+  await elasticsearchClient.bulk({
+    body,
+    refresh: true,
+  });
+};
+
 module.exports = {
   terms,
   timeSeries,
@@ -418,4 +472,8 @@ module.exports = {
   ensureIndex,
   loadJsonStreamFile,
   listIndices,
+  indexExists,
+  deleteIndex,
+  ensureEventsIndex,
+  bulkIndexEvents,
 };
