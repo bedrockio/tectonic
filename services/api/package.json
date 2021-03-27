@@ -21,6 +21,7 @@
   "dependencies": {
     "@bedrockio/config": "^2.0.3",
     "@bedrockio/instrumentation": "1.0.2",
+    "@elastic/elasticsearch": "^7.12.0",
     "@google-cloud/pubsub": "^2.10.0",
     "@google-cloud/storage": "^5.1.2",
     "@hapi/joi": "^17.1.1",
