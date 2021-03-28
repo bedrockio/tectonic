@@ -2,6 +2,7 @@ const { User, Collection, Datalake, Upload, Category } = require('./models');
 const config = require('@bedrockio/config');
 const { storeUploadedFile } = require('./utils/uploads');
 const { logger } = require('./utils/logging');
+const { ensureCollectionIndex } = require('./utils/analytics');
 
 const adminConfig = {
   name: config.get('ADMIN_NAME'),
@@ -44,11 +45,12 @@ const createFixtures = async () => {
   });
 
   for (let i = 0; i < 1; i++) {
-    await Collection.create({
+    let collection = await Collection.create({
       name: `Collection ${i + 1}`,
       datalake,
       images: [await createUpload(adminUser, `Collection ${i + 1}.jpg`)],
     });
+    await ensureCollectionIndex(collection.id);
   }
   return true;
 };

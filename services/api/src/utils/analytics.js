@@ -428,7 +428,9 @@ const dynamic_templates = [
   },
 ];
 
-const ensureEventsIndex = async (index) => {
+const ensureCollectionIndex = async (collectionId, collectionIndexName) => {
+  let index = `tectonic-collection-${collectionId}`;
+  if (collectionIndexName) index += `-${collectionIndexName}`;
   const exists = await indexExists(index);
   if (!exists) {
     console.info(index, 'index does not exist yet. Creating now...');
@@ -474,6 +476,6 @@ module.exports = {
   listIndices,
   indexExists,
   deleteIndex,
-  ensureEventsIndex,
+  ensureCollectionIndex,
   bulkIndexEvents,
 };

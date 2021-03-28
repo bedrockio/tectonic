@@ -4,6 +4,7 @@ const validate = require('../utils/middleware/validate');
 const { authenticate, fetchUser } = require('../utils/middleware/authenticate');
 const { NotFoundError } = require('../utils/errors');
 const { Collection } = require('../models');
+const { ensureCollectionIndex } = require('../utils/analytics');
 
 const router = new Router();
 
@@ -25,6 +26,7 @@ router
     }),
     async (ctx) => {
       const collection = await Collection.create(ctx.request.body);
+      await ensureCollectionIndex(collection.id);
       ctx.body = {
         data: collection,
       };

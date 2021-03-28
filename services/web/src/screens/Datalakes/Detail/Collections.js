@@ -91,6 +91,7 @@ export default class DatalakeCollections extends React.Component {
                           <Table.HeaderCell width={3}>
                             Description
                           </Table.HeaderCell>
+                          <Table.HeaderCell width={1}>Id</Table.HeaderCell>
                           {/* --- Generator: end */}
                           <Table.HeaderCell
                             width={3}
@@ -125,6 +126,7 @@ export default class DatalakeCollections extends React.Component {
                               </Table.Cell>
                               <Table.Cell>{collection.name}</Table.Cell>
                               <Table.Cell>{collection.description}</Table.Cell>
+                              <Table.Cell>{collection.id}</Table.Cell>
                               {/* --- Generator: end */}
                               <Table.Cell>
                                 {formatDateTime(collection.createdAt)}
