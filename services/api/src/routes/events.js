@@ -4,11 +4,13 @@ const config = require('@bedrockio/config');
 // const { chunk } = require('lodash');
 const { NotFoundError } = require('../utils/errors');
 const validate = require('../utils/middleware/validate');
-// const { publishMessage } = require('../utils/pubsub');
+const { publishMessage } = require('../lib/pubsub');
 const { Batch, Collection } = require('../models');
-const { logger } = require('../utils/logging');
+// const { logger } = require('../utils/logging');
 const { storeBatchEvents } = require('../utils/batch');
 const { createHash } = require('crypto');
+
+const PUBSUB_RAW_EVENTS_TOPIC = config.get('PUBSUB_RAW_EVENTS_TOPIC');
 
 const router = new Router();
 //const rawEventsTopic = config.get('PUBSUB_RAW_EVENTS_TOPIC');
@@ -74,18 +76,11 @@ router.post(
 
     // 3: push events to PUBSUB topic
 
+    await publishMessage(PUBSUB_RAW_EVENTS_TOPIC, JSON.stringify(batch));
+
     ctx.body = {
       batch: dbBatch,
     };
-
-    // try {
-    //   await publishMessage(ingestTopic, JSON.stringify(message));
-    //   // console.log(JSON.stringify(message));
-    //   ctx.status = 204;
-    // } catch (e) {
-    //   console.error(e);
-    //   return (ctx.status = 500);
-    // }
   }
 );
 

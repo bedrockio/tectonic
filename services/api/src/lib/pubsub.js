@@ -2,6 +2,8 @@ const { PubSub } = require('@google-cloud/pubsub');
 const config = require('@bedrockio/config');
 
 const ENV_NAME = config.get('ENV_NAME');
+const PUBSUB_RAW_EVENTS_TOPIC = config.get('PUBSUB_RAW_EVENTS_TOPIC');
+const PUBSUB_RAW_EVENTS_SUB_ELASTICSEARCH = config.get('PUBSUB_RAW_EVENTS_SUB_ELASTICSEARCH');
 
 let noPubSub = false;
 
@@ -10,6 +12,15 @@ if (ENV_NAME === 'development') {
   if (!pubsubEmulator) {
     console.warn('PUBSUB_EMULATOR is set to False. Messages will not be published to pubsub.');
     noPubSub = true;
+  }
+}
+
+async function init() {
+  if (noPubSub) {
+    console.warn('PUBSUB_EMULATOR is set to False. Topics are not initialized');
+  } else {
+    console.info(`Create subscription: ${PUBSUB_RAW_EVENTS_SUB_ELASTICSEARCH}`);
+    await createSubscription(PUBSUB_RAW_EVENTS_TOPIC, PUBSUB_RAW_EVENTS_SUB_ELASTICSEARCH);
   }
 }
 
@@ -48,8 +59,10 @@ async function createSubscription(topicName, subscriptionName) {
 }
 
 module.exports = {
+  pubSubClient,
   createSubscription,
   createTopic,
   getTopic,
   publishMessage,
+  init,
 };

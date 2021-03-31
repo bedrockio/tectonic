@@ -3,7 +3,7 @@ const Joi = require('@hapi/joi');
 const validate = require('../utils/middleware/validate');
 const { authenticate, fetchUser } = require('../utils/middleware/authenticate');
 const { requirePermissions } = require('../utils//middleware/permissions');
-const { terms, timeSeries, search, fetch, stats, cardinality, listIndices } = require('../utils/analytics');
+const { terms, timeSeries, search, fetch, stats, cardinality, listIndices } = require('../lib/analytics');
 const mongoose = require('mongoose');
 
 const router = new Router();

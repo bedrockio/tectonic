@@ -460,6 +460,23 @@ const bulkIndexEvents = async (events, indexName = 'events') => {
   });
 };
 
+const bulkErrorLog = async (bulkResult, events) => {
+  if (!bulkResult || !bulkResult.body || !bulkResult.body.items) {
+    console.error('Missing bulkResult.body.items');
+    return;
+  }
+  const items = bulkResult.body.items;
+  if (events.length != items.length) {
+    console.error('Events.length does not equal items length');
+    return;
+  }
+  items.forEach((item, index) => {
+    if (item.index.status == 400) {
+      console.error({ event: events[index], error: item.index.error });
+    }
+  });
+};
+
 module.exports = {
   terms,
   timeSeries,
@@ -478,4 +495,5 @@ module.exports = {
   deleteIndex,
   ensureCollectionIndex,
   bulkIndexEvents,
+  bulkErrorLog,
 };

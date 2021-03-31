@@ -1,4 +1,5 @@
 const { initalize } = require('@bedrockio/instrumentation');
+const { init: initPubSub } = require('./lib/pubsub');
 initalize();
 
 const { init } = require('./utils/database');
@@ -13,14 +14,13 @@ const HOST = config.get('BIND_HOST');
 
 module.exports = (async () => {
   await init();
-  if (ENV_NAME === 'development') {
-    await createFixtures();
-  }
 
-  app.listen(PORT, HOST, () => {
+  app.listen(PORT, HOST, async () => {
     console.info(`Started on port //${HOST}:${PORT}`);
     if (ENV_NAME === 'development') {
       console.info('-----------------------------------------------------------------');
+      await createFixtures();
+      await initPubSub();
       console.info(
         `${config.get('APP_NAME')} Admin Login ${config.get('ADMIN_EMAIL')}:${config.get(
           'ADMIN_PASSWORD'
