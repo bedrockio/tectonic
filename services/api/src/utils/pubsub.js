@@ -5,12 +5,10 @@ const ENV_NAME = config.get('ENV_NAME');
 
 let noPubSub = false;
 
-if (ENV_NAME === 'development' || ENV_NAME === 'test') {
-  const emulatorHost = config.get('PUBSUB_EMULATOR_HOST');
-  if (!emulatorHost) {
-    if (ENV_NAME == 'development') {
-      console.warn('PUBSUB_EMULATOR_HOST is not set. Messages will not be published to pubsub.');
-    }
+if (ENV_NAME === 'development') {
+  const pubsubEmulator = config.get('PUBSUB_EMULATOR');
+  if (!pubsubEmulator) {
+    console.warn('PUBSUB_EMULATOR is set to False. Messages will not be published to pubsub.');
     noPubSub = true;
   }
 }
