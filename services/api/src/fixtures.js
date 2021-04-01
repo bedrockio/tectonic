@@ -1,7 +1,7 @@
 const { User, Collection, Datalake, Upload, Category } = require('./models');
 const config = require('@bedrockio/config');
 const { storeUploadedFile } = require('./utils/uploads');
-const { logger } = require('./utils/logging');
+const { logger } = require('@bedrockio/instrumentation');
 const { ensureCollectionIndex } = require('./lib/analytics');
 
 const adminConfig = {

@@ -2,7 +2,7 @@ const config = require('@bedrockio/config');
 const fs = require('fs');
 const path = require('path');
 const os = require('os');
-const { createLogger } = require('./logging');
+const { logger } = require('@bedrockio/instrumentation');
 const { Storage } = require('@google-cloud/storage');
 
 function storeLocalFile(fileName, contentString) {
@@ -14,7 +14,6 @@ function storeLocalFile(fileName, contentString) {
 }
 
 async function storeGcsFile(fileName, contentString) {
-  const logger = createLogger();
   const storage = new Storage();
   const bucketName = config.get('BATCHES_GCS_BUCKET');
   const bucket = storage.bucket(bucketName);

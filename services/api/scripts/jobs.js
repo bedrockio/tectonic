@@ -1,5 +1,5 @@
 const process = require('process');
-const { logger } = require('./../src/utils/logging');
+const { logger } = require('@bedrockio/instrumentation');
 const { init } = require('./../src/utils/database');
 
 async function run() {

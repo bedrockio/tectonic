@@ -1,7 +1,7 @@
-const { initalize } = require('@bedrockio/instrumentation');
-const { init: initPubSub } = require('./lib/pubsub');
-initalize();
+const { setupTelemetry } = require('@bedrockio/instrumentation');
+setupTelemetry();
 
+const { init: initPubSub } = require('./lib/pubsub');
 const { init } = require('./utils/database');
 const { createFixtures } = require('./fixtures');
 const app = require('./app');

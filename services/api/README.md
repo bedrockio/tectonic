@@ -155,11 +155,10 @@ By default the log level in `development` is set to info, but can be overwritten
 To access the logger you can use the `ctx.logger` or if don't have easy access to the ctx (koa request context) then do
 
 ```
-const { createLogger } = require('../utils/logging');
+const { logger } = require('@bedrockio/instrumentation');
 
 // do this
 function someWork() {
-  const logger = createLogger();
   logger.info("something")
 }
 
