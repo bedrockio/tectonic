@@ -9,6 +9,8 @@ variable "buckets" {
   default = [
     "uploads",
     "uploads-backup",
-    "mongodb-backups"
+    "mongodb-backups",
+    "pubsub",
+    "batches"
   ]
 }

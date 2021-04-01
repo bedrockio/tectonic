@@ -49,11 +49,11 @@ async function createTopic(topicName) {
   return topic;
 }
 
-async function createSubscription(topicName, subscriptionName) {
+async function createSubscription(topicName, subscriptionName, subscriptionOptions = { ackDeadlineSeconds: 599 }) {
   const [subscriptions] = await pubSubClient.getSubscriptions();
   if (subscriptions.filter((sub) => sub.name && sub.name.split('/').slice(-1)[0] == subscriptionName).length == 0) {
     await createTopic(topicName);
-    await pubSubClient.topic(topicName).createSubscription(subscriptionName);
+    await pubSubClient.topic(topicName).createSubscription(subscriptionName, subscriptionOptions);
     console.info(`Subscription "${subscriptionName}" created for topic "${topicName}".`);
   }
 }

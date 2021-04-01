@@ -1,7 +1,7 @@
 const Router = require('@koa/router');
 const Joi = require('@hapi/joi');
 const config = require('@bedrockio/config');
-// const { chunk } = require('lodash');
+const { chunk } = require('lodash');
 const { NotFoundError } = require('../utils/errors');
 const validate = require('../utils/middleware/validate');
 const { publishMessage } = require('../lib/pubsub');
@@ -11,6 +11,7 @@ const { storeBatchEvents } = require('../utils/batch');
 const { createHash } = require('crypto');
 
 const PUBSUB_RAW_EVENTS_TOPIC = config.get('PUBSUB_RAW_EVENTS_TOPIC');
+const EVENTS_CHUNK_SIZE = 10;
 
 const router = new Router();
 //const rawEventsTopic = config.get('PUBSUB_RAW_EVENTS_TOPIC');
@@ -74,15 +75,27 @@ router.post(
     dbBatch.rawUrl = filePath;
     await dbBatch.save();
 
-    // 3: push events to PUBSUB topic
+    // 3: push events to PUBSUB topic (in chunks)
 
-    await publishMessage(PUBSUB_RAW_EVENTS_TOPIC, JSON.stringify(batch));
+    const chunkedEvents = chunk(events, EVENTS_CHUNK_SIZE);
+
+    await chunkedEvents.reduce(async (previousChunk, currentChunk /*, index*/) => {
+      await previousChunk;
+      // console.log(`Processing chunk ${index}...`);
+      const currentChunkPromises = currentChunk.map(async (event) => await publishRawEvent(dbBatch, event));
+      await Promise.all(currentChunkPromises);
+    }, Promise.resolve());
 
     ctx.body = {
       batch: dbBatch,
     };
   }
 );
+
+async function publishRawEvent(batch, event) {
+  const message = { batch, event };
+  await publishMessage(PUBSUB_RAW_EVENTS_TOPIC, JSON.stringify(message));
+}
 
 function memorySizeOf(obj) {
   var bytes = 0;

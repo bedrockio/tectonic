@@ -24,3 +24,23 @@ variable "bucket_prefix" {
 variable "cluster_name" {
   default = "cluster-1"
 }
+
+variable "node_pool_count" {
+  default = 3
+}
+
+variable "min_node_count" {
+  default = 3
+}
+
+variable "max_node_count" {
+  default = 6
+}
+
+variable "preemptible" {
+  default = false
+}
+
+variable "machine_type" {
+  default = "c2-standard-8"
+}

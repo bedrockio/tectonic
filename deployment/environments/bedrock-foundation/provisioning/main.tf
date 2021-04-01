@@ -6,7 +6,12 @@ locals {
     environment      = var.environment,
     location         = "${var.region}-${var.zone}",
     bucket_prefix    = var.bucket_prefix,
-    cluster_name     = var.cluster_name
+    cluster_name     = var.cluster_name,
+    node_pool_count  = var.node_pool_count,
+    min_node_count   = var.min_node_count,
+    max_node_count   = var.max_node_count,
+    machine_type     = var.machine_type,
+    preemptible      = var.preemptible
   }
 }
 
@@ -14,8 +19,6 @@ module "gke-cluster" {
   source = "../../../provisioning/gke-cluster-module"
 
   global = local.global
-  preemptible = true
-  node_pool_count = 2
 }
 
 module "gcp-buckets" {
