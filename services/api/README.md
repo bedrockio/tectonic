@@ -230,3 +230,31 @@ Here's an example of an API call definition:
 All information in `src/routes/__openapi__` is exposed through the API and used by the Markdown-powered documentation portal in `/services/web/src/docs`.
 
 See [../../services/web](../../services/web) for more info on customizing documentation.
+
+## CURL examples
+
+```bash
+curl -s -X POST http://localhost:2300/1/events \
+-H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsInR5cGUiOiJ1c2VyIiwia2lkIjoidXNlciIsImlhdCI6MTYwMTg4ODEyOSwiZXhwIjoyNjQzMjg4OTI5fQ.50yZwfOMlyFcFZTWR1ptre1yHxwhR59U8PgPCd9ZcW8' \
+-H 'Content-Type: application/json' \
+-d '{"collectionId": "606078c674e2fb4edf19075b", "events":[{"test":"me", "type": "click", "occurredAt": "2020-10-12T12:17:01.341Z" }, {"test": "you", "field2": "additional", "type": "login", "occurredAt": "2020-10-12T12:17:01.341Z"}]}' | jq
+```
+Result:
+```json
+{
+  "batch": {
+    "datalakeId": "606078c674e2fb4edf190759",
+    "collectionId": "606078c674e2fb4edf19075b",
+    "ingestedAt": "2021-04-01T15:13:23.562Z",
+    "numEvents": 2,
+    "minOccurredAt": "2020-10-12T12:17:01.341Z",
+    "maxOccurredAt": "2020-10-12T12:17:01.341Z",
+    "memorySize": "146 bytes",
+    "hash": "0K4ZQ3BTGEtkggz6RRx2FnX3eJ0UMPttBzdXmIJcjRM=",
+    "createdAt": "2021-04-01T15:13:23.616Z",
+    "updatedAt": "2021-04-01T15:13:23.647Z",
+    "rawUrl": "/var/folders/t9/f90dw0zs6x96js5ssqs4q8x00000gn/T/606078c674e2fb4edf190759-606078c674e2fb4edf19075b-2021-04-01-17-13-23-6065e31335b94b0a329ec57e.ndjson",
+    "id": "6065e31335b94b0a329ec57e"
+  }
+}
+```

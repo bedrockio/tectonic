@@ -81,7 +81,7 @@ router.post(
 
     await chunkedEvents.reduce(async (previousChunk, currentChunk /*, index*/) => {
       await previousChunk;
-      // console.log(`Processing chunk ${index}...`);
+      // logger.info(`Processing chunk ${index}...`);
       const currentChunkPromises = currentChunk.map(async (event) => await publishRawEvent(dbBatch, event));
       await Promise.all(currentChunkPromises);
     }, Promise.resolve());
