@@ -3,6 +3,7 @@ const elasticsearch = require('@elastic/elasticsearch');
 const config = require('@bedrockio/config');
 const { get: objectGet } = require('lodash');
 const { createHash } = require('crypto');
+const { logger } = require('@bedrockio/instrumentation');
 
 const elasticsearchClient = new elasticsearch.Client({
   node: config.get('ELASTICSEARCH_URI'),
@@ -433,7 +434,7 @@ const ensureCollectionIndex = async (collectionId, collectionIndexName) => {
   if (collectionIndexName) index += `-${collectionIndexName}`;
   const exists = await indexExists(index);
   if (!exists) {
-    console.info(index, 'index does not exist yet. Creating now...');
+    logger.info(index, 'index does not exist yet. Creating now...');
     try {
       await elasticsearchClient.indices.create({
         index,
@@ -444,7 +445,7 @@ const ensureCollectionIndex = async (collectionId, collectionIndexName) => {
         },
       });
     } catch (e) {
-      console.error(e);
+      logger.error(e);
       return false;
     }
   }
@@ -462,17 +463,17 @@ const bulkIndexEvents = async (events, indexName = 'events') => {
 
 const bulkErrorLog = async (bulkResult, events) => {
   if (!bulkResult || !bulkResult.body || !bulkResult.body.items) {
-    console.error('Missing bulkResult.body.items');
+    logger.error('Missing bulkResult.body.items');
     return;
   }
   const items = bulkResult.body.items;
   if (events.length != items.length) {
-    console.error('Events.length does not equal items length');
+    logger.error('Events.length does not equal items length');
     return;
   }
   items.forEach((item, index) => {
     if (item.index.status == 400) {
-      console.error({ event: events[index], error: item.index.error });
+      logger.error({ event: events[index], error: item.index.error });
     }
   });
 };

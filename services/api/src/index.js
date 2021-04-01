@@ -1,4 +1,4 @@
-const { setupTelemetry } = require('@bedrockio/instrumentation');
+const { setupTelemetry, logger } = require('@bedrockio/instrumentation');
 setupTelemetry();
 
 const { init: initPubSub } = require('./lib/pubsub');
@@ -16,17 +16,17 @@ module.exports = (async () => {
   await init();
 
   app.listen(PORT, HOST, async () => {
-    console.info(`Started on port //${HOST}:${PORT}`);
+    logger.info(`Started on port //${HOST}:${PORT}`);
     if (ENV_NAME === 'development') {
-      console.info('-----------------------------------------------------------------');
+      logger.info('-----------------------------------------------------------------');
       await createFixtures();
       await initPubSub();
-      console.info(
+      logger.info(
         `${config.get('APP_NAME')} Admin Login ${config.get('ADMIN_EMAIL')}:${config.get(
           'ADMIN_PASSWORD'
         )} (dev env only)`
       );
-      console.info('-----------------------------------------------------------------');
+      logger.info('-----------------------------------------------------------------');
     }
   });
 

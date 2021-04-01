@@ -1,5 +1,6 @@
 const config = require('@bedrockio/config');
 const { pubSubClient, createSubscription } = require('../lib/pubsub');
+const { logger } = require('@bedrockio/instrumentation');
 // const { bulkErrorLog, bulkIndexEvents } = require('../lib/analytics');
 
 const ENV_NAME = config.get('ENV_NAME');
@@ -37,23 +38,23 @@ function listenForMessages(subscriptionName, index, maxMilliseconds = 2000) {
 
     // const bulkResult = await bulkIndexEvents(parsedMessages, index);
     // await bulkErrorLog(bulkResult, parsedMessages);
-    console.info(`BULK INDEXED ${parsedMessages.length} messages`);
+    logger.info(`BULK INDEXED ${parsedMessages.length} messages`);
 
     messages.forEach((message) => {
       // "Ack" (acknowledge receipt of) the message
-      // console.log(`Acknowledged ${message.id}`);
+      // logger.info(`Acknowledged ${message.id}`);
       message.ack();
     });
     counter += messages.length;
-    console.info(`Acknowledged ${messages.length} messages (Counter: ${counter})`);
+    logger.info(`Acknowledged ${messages.length} messages (Counter: ${counter})`);
   };
 
   // Create an event handler to handle messages
   const messageHandler = async (message) => {
-    // console.log(`Received message ${message.id}:`);
-    // console.log(`\tData: ${message.data}`);
-    // console.log(`\tAttributes: ${message.attributes}`);
-    // console.log(message.id);
+    // logger.info(`Received message ${message.id}:`);
+    // logger.info(`\tData: ${message.data}`);
+    // logger.info(`\tAttributes: ${message.attributes}`);
+    // logger.info(message.id);
 
     bulk.push(message);
 
@@ -66,7 +67,7 @@ function listenForMessages(subscriptionName, index, maxMilliseconds = 2000) {
 
   const errorHandler = function (error) {
     // Do something with the error
-    console.error(`ERROR: ${error}`);
+    logger.error(`ERROR: ${error}`);
     throw error;
   };
 
@@ -83,14 +84,14 @@ async function run() {
     await createSubscription(enrichedEventsTopicName, subscriptionName);
   }
 
-  console.info(`listening for messages... (subscription: "${subscriptionName})"`);
+  logger.info(`listening for messages... (subscription: "${subscriptionName})"`);
   listenForMessages(subscriptionName);
 }
 
 module.exports = (async () => {
   run(...process.argv.slice(2)).catch((error) => {
-    console.error(`Fatal error: ${error.message}, exiting.`);
-    console.error(error.stack);
+    logger.error(`Fatal error: ${error.message}, exiting.`);
+    logger.error(error.stack);
     process.exit(1);
   });
 })();
