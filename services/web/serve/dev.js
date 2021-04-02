@@ -10,6 +10,7 @@ const app = new Koa();
 const { BIND_PORT, BIND_HOST } = require('../env');
 
 (async () => {
+
   // Manually loading webpack-dev-middleware and webpack-hot-middleware
   // until support for webpack v5 lands in koa-webpack:
   // https://github.com/shellscape/koa-webpack/issues/126
