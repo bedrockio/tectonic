@@ -1,6 +1,7 @@
 #!/bin/bash
 echo "" > /service/crontab.log
 ./scripts/fixtures/load
+./scripts/initialize-pubsub
 echo "" > /service/.motd
 echo "Welcome to the API CLI pod. All API code is available here." >> /service/.motd
 echo "" >> /service/.motd

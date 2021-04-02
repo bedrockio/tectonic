@@ -1,10 +1,12 @@
+#!/usr/bin/env node
+
 const process = require('process');
 const { logger } = require('@bedrockio/instrumentation');
-const { initialize } = require('./../src/utils/database');
+const { initialize } = require('./../src/lib/pubsub');
 
 async function run() {
   await initialize();
-  logger.info('Running jobs');
+  logger.info('Initialize pubsub topics and subscriptions');
 }
 
 run()

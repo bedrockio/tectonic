@@ -40,7 +40,7 @@ services:
       - api
 
   mongo:
-    image: mongo:4.2.8
+    image: mongo:4.4.4
     command: --serviceExecutor adaptive
     logging:
       driver: none
@@ -51,3 +51,10 @@ services:
       - ./data/db:/data/db
     ports:
       - 27017:27017
+
+  pubsub:
+    build:
+      context: ./services/pubsub-emulator
+      dockerfile: Dockerfile
+    ports:
+      - "8200:8200"
