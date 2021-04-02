@@ -1,12 +1,12 @@
 const Router = require('@koa/router');
 const Joi = require('@hapi/joi');
 const config = require('@bedrockio/config');
-const { chunk } = require('lodash');
 const { NotFoundError } = require('../utils/errors');
 const validate = require('../utils/middleware/validate');
 const { publishMessage } = require('../lib/pubsub');
 const { Batch, Collection } = require('../models');
 // const { logger } = require('@bedrockio/instrumentation');
+const { memorySizeOf, chunkedAsyncMap } = require('../lib/events');
 const { storeBatchEvents } = require('../lib/batch');
 const { createHash } = require('crypto');
 
@@ -14,7 +14,6 @@ const PUBSUB_RAW_EVENTS_TOPIC = config.get('PUBSUB_RAW_EVENTS_TOPIC');
 const EVENTS_CHUNK_SIZE = 10;
 
 const router = new Router();
-//const rawEventsTopic = config.get('PUBSUB_RAW_EVENTS_TOPIC');
 
 const eventSchema = Joi.object({
   type: Joi.string().required(),
@@ -76,15 +75,11 @@ router.post(
     await dbBatch.save();
 
     // 3: push events to PUBSUB topic (in chunks)
+    const publish = async (event) => {
+      await publishRawEvent(dbBatch, event);
+    };
 
-    const chunkedEvents = chunk(events, EVENTS_CHUNK_SIZE);
-
-    await chunkedEvents.reduce(async (previousChunk, currentChunk /*, index*/) => {
-      await previousChunk;
-      // logger.info(`Processing chunk ${index}...`);
-      const currentChunkPromises = currentChunk.map(async (event) => await publishRawEvent(dbBatch, event));
-      await Promise.all(currentChunkPromises);
-    }, Promise.resolve());
+    await chunkedAsyncMap(events, publish, EVENTS_CHUNK_SIZE);
 
     ctx.body = {
       batch: dbBatch,
@@ -95,45 +90,6 @@ router.post(
 async function publishRawEvent(batch, event) {
   const message = { batch, event };
   await publishMessage(PUBSUB_RAW_EVENTS_TOPIC, JSON.stringify(message));
-}
-
-function memorySizeOf(obj) {
-  var bytes = 0;
-
-  function sizeOf(obj) {
-    if (obj !== null && obj !== undefined) {
-      switch (typeof obj) {
-        case 'number':
-          bytes += 8;
-          break;
-        case 'string':
-          bytes += obj.length * 2;
-          break;
-        case 'boolean':
-          bytes += 4;
-          break;
-        case 'object':
-          var objClass = Object.prototype.toString.call(obj).slice(8, -1);
-          if (objClass === 'Object' || objClass === 'Array') {
-            for (var key in obj) {
-              if (!(key in obj)) continue;
-              sizeOf(obj[key]);
-            }
-          } else bytes += obj.toString().length * 2;
-          break;
-      }
-    }
-    return bytes;
-  }
-
-  function formatByteSize(bytes) {
-    if (bytes < 1024) return bytes + ' bytes';
-    else if (bytes < 1048576) return (bytes / 1024).toFixed(3) + ' KB';
-    else if (bytes < 1073741824) return (bytes / 1048576).toFixed(3) + ' MB';
-    else return (bytes / 1073741824).toFixed(3) + ' GB';
-  }
-
-  return formatByteSize(sizeOf(obj));
 }
 
 module.exports = router;
