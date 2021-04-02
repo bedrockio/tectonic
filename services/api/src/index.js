@@ -1,8 +1,8 @@
 const { setupTelemetry, logger } = require('@bedrockio/instrumentation');
 setupTelemetry();
 
-const { init: initPubSub } = require('./lib/pubsub');
-const { init } = require('./utils/database');
+const { initialize: initPubSub } = require('./lib/pubsub');
+const { initialize: initDB } = require('./utils/database');
 const { createFixtures } = require('./fixtures');
 const app = require('./app');
 
@@ -13,7 +13,7 @@ const PORT = config.get('BIND_PORT', 'number');
 const HOST = config.get('BIND_HOST');
 
 module.exports = (async () => {
-  await init();
+  await initDB();
 
   app.listen(PORT, HOST, async () => {
     logger.info(`Started on port //${HOST}:${PORT}`);

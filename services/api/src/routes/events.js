@@ -7,7 +7,7 @@ const validate = require('../utils/middleware/validate');
 const { publishMessage } = require('../lib/pubsub');
 const { Batch, Collection } = require('../models');
 // const { logger } = require('@bedrockio/instrumentation');
-const { storeBatchEvents } = require('../utils/batch');
+const { storeBatchEvents } = require('../lib/batch');
 const { createHash } = require('crypto');
 
 const PUBSUB_RAW_EVENTS_TOPIC = config.get('PUBSUB_RAW_EVENTS_TOPIC');

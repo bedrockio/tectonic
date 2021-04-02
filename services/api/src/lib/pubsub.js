@@ -16,7 +16,7 @@ if (ENV_NAME === 'development') {
   }
 }
 
-async function init() {
+async function initialize() {
   if (noPubSub) {
     logger.warn('PUBSUB_EMULATOR is set to False. Topics are not initialized');
   } else {
@@ -36,7 +36,7 @@ async function publishMessage(topicName, dataString) {
   const dataBuffer = Buffer.from(dataString);
 
   const messageId = await pubSubClient.topic(topicName).publish(dataBuffer);
-  // console.info(`Message ${messageId} published to topic ${topicName}`);
+  // logger.info(`Message ${messageId} published to topic ${topicName}`);
   return messageId;
 }
 
@@ -65,5 +65,5 @@ module.exports = {
   createTopic,
   getTopic,
   publishMessage,
-  init,
+  initialize,
 };

@@ -413,7 +413,7 @@ const indexExists = async (index) => {
 const deleteIndex = async (index) => {
   const exists = await indexExists(index);
   if (exists) {
-    console.info('Deleting index:', index);
+    logger.info('Deleting index:', index);
     await elasticsearchClient.indices.delete({ index });
   }
 };
