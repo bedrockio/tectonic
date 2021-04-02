@@ -1,6 +1,6 @@
 import React from 'react';
 import { request } from 'utils/api';
-import { Message, Menu, Segment, Dropdown, Icon } from 'semantic-ui-react';
+import { Message, Menu, Segment, Dropdown } from 'semantic-ui-react';
 
 const validIntervals = ['1w', '1d', '1h', '15m', '5m', '1m'];
 
@@ -39,7 +39,6 @@ function determineInterval(from, to) {
   const durationSeconds = (to - from) / 1000;
   const durationMinutes = durationSeconds / 60;
   const durationHours = durationMinutes / 60;
-  console.log(durationHours);
   if (durationHours > 6 * 30 * 24) {
     return '1w';
   }
@@ -63,7 +62,11 @@ function determineInterval(from, to) {
 
 function formatInterval(interval) {
   if (interval === '1m') return '1 minute';
-  return interval.replace(/m/, ' minutes').replace(/h/, ' hour').replace(/w/, ' week').replace(/d/, ' day');
+  return interval
+    .replace(/m/, ' minutes')
+    .replace(/h/, ' hour')
+    .replace(/w/, ' week')
+    .replace(/d/, ' day');
 }
 
 export default class TimeSelector extends React.Component {
@@ -77,7 +80,7 @@ export default class TimeSelector extends React.Component {
   }
 
   fetch() {
-    const { index, fields, filter = {} } = this.props;
+    const { index, filter = {} } = this.props;
     const body = {
       index,
       fields: ['occurredAt'],
@@ -91,11 +94,21 @@ export default class TimeSelector extends React.Component {
       .then((data) => {
         const { occurredAt } = data;
         if (!occurredAt || !occurredAt.min || !occurredAt.max) {
-          return this.setState({ error: new Error('No data found'), loading: false });
+          return this.setState({
+            error: new Error('No data found'),
+            loading: false,
+          });
         }
         const { min, max } = occurredAt;
         const interval = determineInterval(min, max);
-        this.setState({ data, error: null, loading: false, interval, min, max });
+        this.setState({
+          data,
+          error: null,
+          loading: false,
+          interval,
+          min,
+          max,
+        });
       })
       .catch((error) => {
         this.setState({ error, loading: false });
@@ -114,7 +127,10 @@ export default class TimeSelector extends React.Component {
       <div>
         <Menu attached="top">
           <Menu.Menu position="right">
-            <Dropdown item text={`Resolution: ${formatInterval(interval)}`} simple>
+            <Dropdown
+              item
+              text={`Resolution: ${formatInterval(interval)}`}
+              simple>
               <Dropdown.Menu>
                 {validIntervals.map((validInterval) => {
                   return (

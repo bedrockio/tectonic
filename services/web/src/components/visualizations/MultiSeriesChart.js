@@ -29,7 +29,8 @@ const fuse = (series, valueField) => {
         if (!byTs[item.timestamp]) {
           byTs[item.timestamp] = {};
         }
-        byTs[item.timestamp][`${index}-value`] = item[valueField || 'value'] || 0;
+        byTs[item.timestamp][`${index}-value`] =
+          item[valueField || 'value'] || 0;
       });
     });
   }
@@ -123,7 +124,9 @@ export default class MultiSeriesChart extends PureComponent {
                   tickMargin={8}
                 />
                 <YAxis
-                  tickFormatter={valueFieldFormatter || defaultValueFieldFormatter}
+                  tickFormatter={
+                    valueFieldFormatter || defaultValueFieldFormatter
+                  }
                   tick={{ fill: '#6C767B', fontSize: '13' }}
                   tickLine={{ fill: '#6C767B' }}
                   tickMargin={8}
@@ -133,6 +136,7 @@ export default class MultiSeriesChart extends PureComponent {
                   const color = finalColors[index % finalColors.length];
                   return (
                     <ChartGraph
+                      key={`${index}-key`}
                       type="monotone"
                       dataKey={`${index}-value`}
                       name={valueFieldNames ? valueFieldNames[index] : 'Value'}
@@ -147,8 +151,12 @@ export default class MultiSeriesChart extends PureComponent {
                 })}
                 {!bar && (
                   <Tooltip
-                    formatter={valueFieldFormatter || defaultValueFieldFormatter}
-                    labelFormatter={(unixTime) => moment(unixTime).format('YY/MM/DD LT')}
+                    formatter={
+                      valueFieldFormatter || defaultValueFieldFormatter
+                    }
+                    labelFormatter={(unixTime) =>
+                      moment(unixTime).format('YY/MM/DD LT')
+                    }
                   />
                 )}
               </Chart>
