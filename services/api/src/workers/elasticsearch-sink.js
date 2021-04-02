@@ -1,7 +1,7 @@
 const config = require('@bedrockio/config');
 const { pubSubClient, createSubscription } = require('../lib/pubsub');
 const { logger } = require('@bedrockio/instrumentation');
-// const { bulkErrorLog, bulkIndexEvents } = require('../lib/analytics');
+const { bulkErrorLog, bulkIndexBatchEvents } = require('../lib/analytics');
 
 const ENV_NAME = config.get('ENV_NAME');
 const maxInProgress = config.get('ELASTICSEARCH_SINK_WORKER_MAX_IN_PROGRESS', 'integer') || 100;
@@ -31,14 +31,15 @@ function listenForMessages(subscriptionName, index, maxMilliseconds = 2000) {
       pending = null;
     }
 
-    const parsedMessages = messages.flatMap((message) => {
+    const parsedMessages = messages.map((message) => {
       const data = Buffer.from(message.data, 'base64').toString('utf-8');
       return JSON.parse(data);
     });
 
-    // const bulkResult = await bulkIndexEvents(parsedMessages, index);
-    // await bulkErrorLog(bulkResult, parsedMessages);
     logger.info(`BULK INDEXED ${parsedMessages.length} messages`);
+    const bulkResult = await bulkIndexBatchEvents(parsedMessages);
+    // logger.info(bulkResult);
+    await bulkErrorLog(bulkResult, parsedMessages);
 
     messages.forEach((message) => {
       // "Ack" (acknowledge receipt of) the message

@@ -452,10 +452,22 @@ const ensureCollectionIndex = async (collectionId, collectionIndexName) => {
   return true;
 };
 
-const bulkIndexEvents = async (events, indexName = 'events') => {
-  // console.info('events:', events);
-  const body = events.flatMap((doc) => [{ index: { _index: indexName } }, doc]);
-  await elasticsearchClient.bulk({
+const bulkIndexBatchEvents = async (batchEvents) => {
+  // logger.info('events:', batchEvents);
+  const body = batchEvents.flatMap(({ batch, event }) => {
+    const { datalakeId, collectionId, id: batchId, ingestedAt } = batch;
+    const index = { _index: `tectonic-collection-${collectionId}` };
+    if (event.id) index._id = event.id;
+    const doc = {
+      datalakeId,
+      collectionId,
+      batchId,
+      ingestedAt,
+      event,
+    };
+    return [{ index }, doc];
+  });
+  return await elasticsearchClient.bulk({
     body,
     refresh: true,
   });
@@ -495,6 +507,6 @@ module.exports = {
   indexExists,
   deleteIndex,
   ensureCollectionIndex,
-  bulkIndexEvents,
+  bulkIndexBatchEvents,
   bulkErrorLog,
 };
