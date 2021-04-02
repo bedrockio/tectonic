@@ -9,9 +9,9 @@
     "lint"
   ],
   "scripts": {
-    "start": "nodemon -w src --exec \"MOCK_EMAIL=true node src/index.js | pino-pretty\"",
+    "start": "nodemon -w src --exec \"MOCK_EMAIL=true node src/index.js\"",
     "start:production": "node src/index",
-    "elasticsearch-sink:start": "nodemon -w src --exec \"node src/workers/elasticsearch-sink.js | pino-pretty\"",
+    "elasticsearch-sink:start": "nodemon -w src --exec \"node src/workers/elasticsearch-sink.js\"",
     "docs": "node scripts/generate-openapi",
     "emails": "node emails/build",
     "lint": "eslint src scripts",
