@@ -29,7 +29,9 @@ export default class DatalakeBatches extends React.Component {
       <React.Fragment>
         <Menu {...this.props} />
         {datalake ? (
-          <SearchProvider onDataNeeded={this.onDataNeeded}>
+          <SearchProvider
+            sort={{ order: 'desc', field: 'ingestedAt' }}
+            onDataNeeded={this.onDataNeeded}>
             {({
               items: batches,
               filters,
