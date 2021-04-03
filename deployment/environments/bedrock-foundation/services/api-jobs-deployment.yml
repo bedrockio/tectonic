@@ -13,22 +13,24 @@ spec:
         app: api-jobs
     spec:
       containers:
-        - image: gcr.io/tectonic/tectonic-services-api-jobs
+        - image: gcr.io/bedrock-foundation/tectonic-services-api-jobs
           imagePullPolicy: Always
           name: main
           env:
             - name: ENV_NAME
-              value: "staging"
+              value: staging
             - name: NODE_ENV
-              value: "production"
+              value: production
             - name: MONGO_URI
               value: "mongodb://mongo:27017/tectonic_staging"
+            - name: ELASTICSEARCH_URI
+              value: "http://elasticsearch:9200"
             - name: APP_DOMAIN
-              value: "tectonic.io"
+              value: tectonic.io
             - name: POSTMARK_FROM
-              value: "no-reply@tectonic.io"
+              value: no-reply@tectonic.io
             - name: POSTMARK_APIKEY
-              value: "abc"
+              value: abc
           volumeMounts:
             - name: cache
               mountPath: /service/data

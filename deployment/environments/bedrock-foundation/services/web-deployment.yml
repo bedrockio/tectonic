@@ -13,14 +13,14 @@ spec:
         app: web
     spec:
       containers:
-        - image: gcr.io/tectonic/tectonic-services-web
+        - image: gcr.io/bedrock-foundation/tectonic-services-web
           imagePullPolicy: Always
           name: main
           env:
             - name: ENV_NAME
-              value: "staging"
+              value: staging
             - name: NODE_ENV
-              value: "production"
+              value: production
             - name: DOMAIN
               value: tectonic.io
             - name: API_URL

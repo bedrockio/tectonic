@@ -1,9 +1,9 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: web
+  name: tectonic-web
   labels:
-    name: web
+    name: tectonic-web
 spec:
   type: LoadBalancer
   ports:
@@ -12,4 +12,4 @@ spec:
       protocol: TCP
   selector:
     app: web
-  loadBalancerIP: 0.0.0.0
+  loadBalancerIP: 35.227.92.99

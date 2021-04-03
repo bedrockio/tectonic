@@ -18,7 +18,7 @@ spec:
           name: main
           env:
             - name: GS_BUCKETS
-              value: "tectonic-staging-uploads tectonic-staging-mongodb-backups"
+              value: "bedrock-foundation-tectonic-uploads bedrock-foundation-tectonic-mongodb-backups"
             - name: POSTMARK_API_KEY
               value: "abc"
             - name: POSTMARK_FROM

@@ -13,7 +13,7 @@ spec:
         app: api
     spec:
       containers:
-        - image: gcr.io/tectonic/tectonic-services-api
+        - image: gcr.io/bedrock-foundation/tectonic-services-api
           imagePullPolicy: Always
           name: main
           env:
@@ -22,7 +22,9 @@ spec:
             - name: NODE_ENV
               value: production
             - name: MONGO_URI
-              value: 'mongodb://mongo:27017/tectonic_staging'
+              value: "mongodb://mongo:27017/tectonic_staging"
+            - name: ELASTICSEARCH_URI
+              value: "http://elasticsearch:9200"
             - name: ADMIN_EMAIL
               value: admin@tectonic.io
             - name: ADMIN_PASSWORD
@@ -32,7 +34,7 @@ spec:
             - name: APP_DOMAIN
               value: tectonic.io
             - name: APP_URL
-              value: 'https://tectonic.io'
+              value: "https://tectonic.io"
             - name: POSTMARK_FROM
               value: no-reply@tectonic.io
             - name: POSTMARK_APIKEY
@@ -40,7 +42,11 @@ spec:
             - name: UPLOADS_STORE
               value: gcs
             - name: UPLOADS_GCS_BUCKET
-              value: tectonic-staging-uploads
+              value: bedrock-foundation-tectonic-uploads
+            - name: BATCHES_STORE
+              value: gcs
+            - name: BATCHES_GCS_BUCKET
+              value: bedrock-foundation-tectonic-batches
             - name: LOG_LEVEL
               value: debug
           ports:

@@ -2,6 +2,7 @@ locals {
   global = {
     project          = var.project,
     region           = var.region,
+    multi_region     = "US",
     zone             = var.zone,
     environment      = var.environment,
     location         = "${var.region}-${var.zone}",
@@ -27,16 +28,18 @@ module "gcp-buckets" {
   global = local.global
 }
 
-resource "google_compute_disk" "mongo_disk" {
-  name  = "tectonic-mongo-disk"
-  type  = "pd-ssd"
-  zone  = var.zone
-  size  = 300
+resource "google_compute_disk" "tectonic_mongo_disk" {
+  project = var.project
+  name    = "tectonic-mongo-disk"
+  type    = "pd-ssd"
+  zone    = local.global.location
+  size    = 300
 }
 
-resource "google_compute_disk" "elasticsearch_disk" {
-  name  = "tectonic-elasticsearch-disk"
-  type  = "pd-ssd"
-  zone  = var.zone
-  size  = 300
+resource "google_compute_disk" "tectonic_elasticsearch_disk" {
+  project = var.project
+  name    = "tectonic-elasticsearch-disk"
+  type    = "pd-ssd"
+  zone    = local.global.location
+  size    = 300
 }

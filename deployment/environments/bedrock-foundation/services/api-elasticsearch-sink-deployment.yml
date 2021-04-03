@@ -13,7 +13,7 @@ spec:
         app: api-elasticsearch-sink
     spec:
       containers:
-        - image: gcr.io/tectonic/tectonic-services-api-elasticsearch-sink
+        - image: gcr.io/bedrock-foundation/tectonic-services-api-elasticsearch-sink
           imagePullPolicy: Always
           name: api-elasticsearch-sink
           env:
@@ -23,6 +23,8 @@ spec:
               value: "production"
             - name: MONGO_URI
               value: "mongodb://mongo:27017/tectonic_staging"
+            - name: ELASTICSEARCH_URI
+              value: "http://elasticsearch:9200"
             - name: APP_DOMAIN
               value: "tectonic.io"
             - name: APP_URL

@@ -13,28 +13,34 @@ spec:
         app: api-cli
     spec:
       containers:
-        - image: gcr.io/tectonic/tectonic-services-api-cli
+        - image: gcr.io/bedrock-foundation/tectonic-services-api-cli
           imagePullPolicy: Always
           name: api-cli
           env:
             - name: ENV_NAME
-              value: "staging"
+              value: staging
             - name: NODE_ENV
-              value: "production"
+              value: production
             - name: MONGO_URI
               value: "mongodb://mongo:27017/tectonic_staging"
+            - name: ELASTICSEARCH_URI
+              value: "http://elasticsearch:9200"
             - name: APP_DOMAIN
-              value: "tectonic.io"
+              value: tectonic.io
             - name: APP_URL
               value: "https://tectonic.io"
             - name: POSTMARK_FROM
-              value: "no-reply@tectonic.io"
+              value: no-reply@tectonic.io
             - name: POSTMARK_APIKEY
-              value: "abc"
+              value: abc
             - name: UPLOADS_STORE
-              value: "gcs"
+              value: gcs
             - name: UPLOADS_GCS_BUCKET
-              value: "tectonic-staging-uploads"
+              value: bedrock-foundation-tectonic-uploads
+            - name: BATCHES_STORE
+              value: gcs
+            - name: BATCHES_GCS_BUCKET
+              value: bedrock-foundation-tectonic-batches
           volumeMounts:
             - name: jobs-cache
               mountPath: /workdir/data
