@@ -25,10 +25,6 @@ spec:
               value: "mongodb://mongo:27017/tectonic_staging"
             - name: ELASTICSEARCH_URI
               value: "http://elasticsearch:9200"
-            - name: APP_DOMAIN
-              value: "tectonic.io"
-            - name: APP_URL
-              value: "https://tectonic.io"
             - name: PUBSUB_RAW_EVENTS_TOPIC
               value: "raw-events"
             - name: PUBSUB_RAW_EVENTS_SUB_ELASTICSEARCH

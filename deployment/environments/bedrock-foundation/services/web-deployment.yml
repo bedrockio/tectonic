@@ -22,9 +22,9 @@ spec:
             - name: NODE_ENV
               value: production
             - name: DOMAIN
-              value: tectonic.io
+              value: "bedrock.foundation"
             - name: API_URL
-              value: "https://api.tectonic.io"
+              value: "https://tectonic-api.bedrock.foundation"
           ports:
             - name: http-server
               containerPort: 2200

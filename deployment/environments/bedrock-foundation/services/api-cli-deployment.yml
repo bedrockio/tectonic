@@ -25,10 +25,14 @@ spec:
               value: "mongodb://mongo:27017/tectonic_staging"
             - name: ELASTICSEARCH_URI
               value: "http://elasticsearch:9200"
+            - name: ADMIN_EMAIL
+              value: admin@tectonic.io
+            - name: ADMIN_PASSWORD
+              value: Bedrock.lake!
             - name: APP_DOMAIN
-              value: tectonic.io
+              value: bedrock.foundation
             - name: APP_URL
-              value: "https://tectonic.io"
+              value: "https://tectonic.bedrock.foundation"
             - name: POSTMARK_FROM
               value: no-reply@tectonic.io
             - name: POSTMARK_APIKEY
