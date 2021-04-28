@@ -4,6 +4,8 @@ setupTelemetry();
 const { initialize: initPubSub } = require('./lib/pubsub');
 const { initialize: initDB } = require('./utils/database');
 const { createFixtures } = require('./fixtures');
+const { createUserLastingToken } = require('./lib/tokens');
+const { User } = require('./models');
 const app = require('./app');
 
 const config = require('@bedrockio/config');
@@ -11,6 +13,12 @@ const config = require('@bedrockio/config');
 const ENV_NAME = config.get('ENV_NAME');
 const PORT = config.get('BIND_PORT', 'number');
 const HOST = config.get('BIND_HOST');
+
+const adminConfig = {
+  name: config.get('ADMIN_NAME'),
+  email: config.get('ADMIN_EMAIL'),
+  password: config.get('ADMIN_PASSWORD'),
+};
 
 module.exports = (async () => {
   await initDB();
@@ -25,12 +33,9 @@ module.exports = (async () => {
       } catch (e) {
         console.error(e);
       }
-
-      logger.info(
-        `${config.get('APP_NAME')} Admin Login ${config.get('ADMIN_EMAIL')}:${config.get(
-          'ADMIN_PASSWORD'
-        )} (dev env only)`
-      );
+      logger.info(`${config.get('APP_NAME')} Admin Login ${adminConfig.email}:${adminConfig.password} (dev env only)`);
+      const adminUser = await User.findOne({ email: adminConfig.email });
+      logger.info(`Lasting dev User token: ${createUserLastingToken(adminUser)}`);
       logger.info('-----------------------------------------------------------------');
     }
   });
