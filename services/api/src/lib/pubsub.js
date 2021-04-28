@@ -20,7 +20,6 @@ async function initialize() {
   if (noPubSub) {
     logger.warn('PUBSUB_EMULATOR is set to False. Topics are not initialized');
   } else {
-    logger.info(`Create subscription: ${PUBSUB_RAW_EVENTS_SUB_ELASTICSEARCH}`);
     await createSubscription(PUBSUB_RAW_EVENTS_TOPIC, PUBSUB_RAW_EVENTS_SUB_ELASTICSEARCH);
   }
 }
@@ -56,9 +55,11 @@ async function createSubscription(topicName, subscriptionName, ackDeadlineSecond
     expirationPolicy: {},
   };
 
+  logger.info('PubSub getSubscriptions');
   const [subscriptions] = await pubSubClient.getSubscriptions();
 
   if (subscriptions.filter((sub) => sub.name && sub.name.split('/').slice(-1)[0] == subscriptionName).length == 0) {
+    logger.info(`Create subscription: ${subscriptionName}}`);
     await createTopic(topicName);
     await pubSubClient.topic(topicName).createSubscription(subscriptionName, subscriptionOptions);
     logger.info(`Subscription "${subscriptionName}" created for topic "${topicName}".`);

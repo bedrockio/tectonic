@@ -39,19 +39,46 @@ const createFixtures = async () => {
   });
   console.info(`Added admin user ${adminUser.email} to database`);
 
-  const datalake = await Datalake.create({
-    name: 'Demo',
-    images: [await createUpload(adminUser, 'Datalake.jpg')],
+  const testCategory = await Category.create({
+    name: 'test',
   });
 
-  for (let i = 0; i < 1; i++) {
-    let collection = await Collection.create({
-      name: `Collection ${i + 1}`,
-      datalake,
-      images: [await createUpload(adminUser, `Collection ${i + 1}.jpg`)],
-    });
-    await ensureCollectionIndex(collection.id);
-  }
+  const datalake = await Datalake.create({
+    name: 'Bar',
+    description: 'Demo Datalake with purchases',
+    images: [await createUpload(adminUser, 'Datalake.jpg')],
+    categories: [testCategory],
+  });
+
+  const collection = await Collection.create({
+    name: `Purchases`,
+    description: 'POS system purchases',
+    datalake,
+  });
+  await ensureCollectionIndex(collection.id);
+  //const events = loadJsonStreamFile(__dirname + './routes/policy/__tests__/fixtures/bar-purchases.ndjson');
+
+  const datalake2 = await Datalake.create({
+    name: 'EVSE',
+    description: 'Demo Datalake with controllers & metervalues',
+    images: [await createUpload(adminUser, 'Datalake.jpg')],
+    categories: [testCategory],
+  });
+
+  const collection2 = await Collection.create({
+    name: `EVSE controllers`,
+    description: 'MongoDB EVSE controller data',
+    datalake: datalake2,
+  });
+  await ensureCollectionIndex(collection2.id);
+
+  const collection3 = await Collection.create({
+    name: `EVSE meter values`,
+    description: 'MongoDB EVSE meter value event data',
+    datalake: datalake2,
+  });
+  await ensureCollectionIndex(collection3.id);
+
   return true;
 };
 

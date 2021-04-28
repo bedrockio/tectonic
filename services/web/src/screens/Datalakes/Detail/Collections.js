@@ -81,7 +81,6 @@ export default class DatalakeCollections extends React.Component {
                       <Table.Header>
                         <Table.Row>
                           {/* --- Generator: list-header-cells */}
-                          <Table.HeaderCell width={2}>Image</Table.HeaderCell>
                           <Table.HeaderCell
                             width={3}
                             sorted={getSorted('name')}
@@ -113,17 +112,6 @@ export default class DatalakeCollections extends React.Component {
                           return (
                             <Table.Row key={collection.id}>
                               {/* --- Generator: list-body-cells */}
-                              <Table.Cell>
-                                {collection.images[0] && (
-                                  <Image
-                                    style={{ width: '100%' }}
-                                    src={urlForUpload(
-                                      collection.images[0],
-                                      true
-                                    )}
-                                  />
-                                )}
-                              </Table.Cell>
                               <Table.Cell>{collection.name}</Table.Cell>
                               <Table.Cell>{collection.description}</Table.Cell>
                               <Table.Cell>{collection.id}</Table.Cell>

@@ -20,7 +20,12 @@ module.exports = (async () => {
     if (ENV_NAME === 'development') {
       logger.info('-----------------------------------------------------------------');
       await createFixtures();
-      await initPubSub();
+      try {
+        await initPubSub();
+      } catch (e) {
+        console.error(e);
+      }
+
       logger.info(
         `${config.get('APP_NAME')} Admin Login ${config.get('ADMIN_EMAIL')}:${config.get(
           'ADMIN_PASSWORD'

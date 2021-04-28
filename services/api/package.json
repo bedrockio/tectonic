@@ -9,7 +9,7 @@
     "lint"
   ],
   "scripts": {
-    "start": "nodemon -w src --exec \"MOCK_EMAIL=true node src/index.js\"",
+    "start": "nodemon -w src --exec \"MOCK_EMAIL=true PUBSUB_EMULATOR_HOST=localhost:8200 node src/index.js\"",
     "start:production": "node src/index",
     "elasticsearch-sink:start": "nodemon -w src --exec \"node src/workers/elasticsearch-sink.js\"",
     "docs": "node scripts/generate-openapi",

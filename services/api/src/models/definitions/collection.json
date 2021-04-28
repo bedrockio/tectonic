@@ -5,34 +5,20 @@
       "trim": true,
       "required": true
     },
-    "description": {
-      "type": "String",
-      "trim": true,
-      "required": false
-    },
-    "ingest": {
-      "type": "String"
-    },
-    "raw": {
-      "type": "String"
-    },
-    "indexes": [
-      {
-        "type": "String"
-      }
-    ],
     "datalake": {
       "ref": "Datalake",
       "type": "ObjectId",
       "required": true,
       "autopopulate": false
     },
-    "images": [
-      {
-        "type": "ObjectId",
-        "ref": "Upload",
-        "autopopulate": true
-      }
-    ]
+    "description": {
+      "type": "String",
+      "trim": true,
+      "required": false
+    },
+    "secondaryIndex": {
+      "type": "String",
+      "required": false
+    }
   }
 }
