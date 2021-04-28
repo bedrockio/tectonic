@@ -8,15 +8,14 @@ import { request } from 'utils/api';
 import Overview from './Overview';
 
 // --- Generator: imports
-import Collections from './Collections';
-import Batches from './Batches';
+
 // --- Generator: end
 
-export default class DatalakeDetail extends React.Component {
+export default class PolicyDetail extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      datalake: null,
+      policy: null,
       error: null,
       loading: true,
       onSave: this.onSave,
@@ -24,21 +23,21 @@ export default class DatalakeDetail extends React.Component {
   }
 
   componentDidMount() {
-    this.fetchDatalake();
+    this.fetchPolicy();
   }
 
   componentDidUpdate(lastProps) {
     const { id } = this.props.match.params;
     if (id !== lastProps.match.params.id) {
-      this.fetchDatalake();
+      this.fetchPolicy();
     }
   }
 
   onSave = () => {
-    this.fetchDatalake();
+    this.fetchPolicy();
   };
 
-  async fetchDatalake() {
+  async fetchPolicy() {
     const { id } = this.props.match.params;
     try {
       this.setState({
@@ -47,10 +46,10 @@ export default class DatalakeDetail extends React.Component {
       });
       const { data } = await request({
         method: 'GET',
-        path: `/1/datalakes/${id}`,
+        path: `/1/policies/${id}`,
       });
       this.setState({
-        datalake: data,
+        policy: data,
         loading: false,
       });
     } catch (error) {
@@ -69,10 +68,10 @@ export default class DatalakeDetail extends React.Component {
       return (
         <React.Fragment>
           <Breadcrumbs
-            link={<Link to="/datalakes">Data Lakes</Link>}
+            link={<Link to="/policies">Policies</Link>}
             active="Not Found"
           />
-          <Header content="Sorry that datalake wasn't found." />
+          <Header content="Sorry that policy wasn't found." />
         </React.Fragment>
       );
     }
@@ -80,20 +79,10 @@ export default class DatalakeDetail extends React.Component {
       <Switch>
         <Route
           exact
-          path="/datalakes/:id"
+          path="/policies/:id"
           render={(props) => <Overview {...props} {...this.state} />}
         />
         {/* --- Generator: routes */}
-        <Route
-          exact
-          path="/datalakes/:id/collections"
-          render={(props) => <Collections {...props} {...this.state} />}
-        />
-        <Route
-          exact
-          path="/datalakes/:id/batches"
-          render={(props) => <Batches {...props} {...this.state} />}
-        />
         {/* --- Generator: end */}
       </Switch>
     );

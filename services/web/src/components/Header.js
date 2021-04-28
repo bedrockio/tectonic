@@ -20,7 +20,10 @@ export default class Header extends React.Component {
               <img style={{ width: '30px' }} className="logo" src={`${logo}`} />
             </Menu.Item>
             <Menu.Item as={NavLink} to="/datalakes">
-              Datalakes
+              Data Lakes
+            </Menu.Item>
+            <Menu.Item as={NavLink} to="/policies">
+              Policies
             </Menu.Item>
             <Menu.Menu position="right">
               <Dropdown

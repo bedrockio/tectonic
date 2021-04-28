@@ -7,23 +7,17 @@ import { screen } from 'helpers';
 import { Confirm, HelpTip, Breadcrumbs, SearchProvider } from 'components';
 
 import Filters from 'modals/Filters';
-import EditDatalake from 'modals/EditDatalake';
+import EditPolicy from 'modals/EditPolicy';
 
 // --- Generator: list-imports
-import { getData } from 'country-list';
-const countries = getData().map(({ code, name }) => ({
-  value: code,
-  text: name,
-  key: code,
-}));
 // --- Generator: end
 
 @screen
-export default class DatalakeList extends React.Component {
+export default class PolicyList extends React.Component {
   onDataNeeded = async (params) => {
     return await request({
       method: 'POST',
-      path: '/1/datalakes/search',
+      path: '/1/policies/search',
       body: params,
     });
   };
@@ -32,7 +26,7 @@ export default class DatalakeList extends React.Component {
     return (
       <SearchProvider onDataNeeded={this.onDataNeeded}>
         {({
-          items: datalakes,
+          items: policies,
           getSorted,
           setSort,
           filters,
@@ -41,40 +35,31 @@ export default class DatalakeList extends React.Component {
         }) => {
           return (
             <React.Fragment>
-              <Breadcrumbs active="Data Lakes">
+              <Breadcrumbs active="Policies">
                 <Filters onSave={setFilters} filters={filters}>
                   {/* --- Generator: filters */}
                   <Filters.Text label="Name" name="name" />
-                  <Filters.Dropdown
-                    label="Country"
-                    name="country"
-                    options={countries}
-                    search
-                  />
                   {/* --- Generator: end */}
                 </Filters>
-                <EditDatalake
-                  trigger={
-                    <Button primary content="New Datalake" icon="plus" />
-                  }
+                <EditPolicy
+                  trigger={<Button primary content="New Policy" icon="plus" />}
                   onSave={reload}
                 />
               </Breadcrumbs>
               <Divider hidden />
-              {datalakes.length === 0 ? (
-                <Message>No datalakes created yet</Message>
+              {policies.length === 0 ? (
+                <Message>No policies created yet</Message>
               ) : (
                 <Table celled sortable>
                   <Table.Header>
                     <Table.Row>
                       {/* --- Generator: list-header-cells */}
                       <Table.HeaderCell
-                        width={3}
+                        width={10}
                         onClick={() => setSort('name')}
                         sorted={getSorted('name')}>
                         Name
                       </Table.HeaderCell>
-                      <Table.HeaderCell width={3}>Description</Table.HeaderCell>
                       {/* --- Generator: end */}
                       <Table.HeaderCell
                         onClick={() => setSort('createdAt')}
@@ -82,7 +67,7 @@ export default class DatalakeList extends React.Component {
                         Created
                         <HelpTip
                           title="Created"
-                          text="This is the date and time the datalake was created."
+                          text="This is the date and time the policy was created."
                         />
                       </Table.HeaderCell>
                       <Table.HeaderCell textAlign="center">
@@ -91,23 +76,22 @@ export default class DatalakeList extends React.Component {
                     </Table.Row>
                   </Table.Header>
                   <Table.Body>
-                    {datalakes.map((datalake) => {
+                    {policies.map((policy) => {
                       return (
-                        <Table.Row key={datalake.id}>
+                        <Table.Row key={policy.id}>
                           {/* --- Generator: list-body-cells */}
                           <Table.Cell>
-                            <Link to={`/datalakes/${datalake.id}`}>
-                              {datalake.name}
+                            <Link to={`/policies/${policy.id}`}>
+                              {policy.name}
                             </Link>
                           </Table.Cell>
-                          <Table.Cell>{datalake.description}</Table.Cell>
                           {/* --- Generator: end */}
                           <Table.Cell>
-                            {formatDateTime(datalake.createdAt)}
+                            {formatDateTime(policy.createdAt)}
                           </Table.Cell>
                           <Table.Cell textAlign="center">
-                            <EditDatalake
-                              datalake={datalake}
+                            <EditPolicy
+                              policy={policy}
                               trigger={
                                 <Button
                                   style={{ marginLeft: '20px' }}
@@ -120,13 +104,13 @@ export default class DatalakeList extends React.Component {
                             <Confirm
                               negative
                               confirmText="Delete"
-                              header={`Are you sure you want to delete "${datalake.name}"?`}
+                              header={`Are you sure you want to delete "${policy.name}"?`}
                               content="All data will be permanently deleted"
                               trigger={<Button basic icon="trash" />}
                               onConfirm={async () => {
                                 await request({
                                   method: 'DELETE',
-                                  path: `/1/datalakes/${datalake.id}`,
+                                  path: `/1/policies/${policy.id}`,
                                 });
                                 reload();
                               }}

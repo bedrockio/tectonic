@@ -4,16 +4,16 @@ import { Menu, Divider, Button } from 'semantic-ui-react';
 import { NavLink } from 'react-router-dom';
 import { Breadcrumbs } from 'components';
 
-import EditDatalake from 'modals/EditDatalake';
+import EditPolicy from 'modals/EditPolicy';
 
-export default ({ datalake, onSave }) => {
+export default ({ policy, onSave }) => {
   return (
     <React.Fragment>
       <Breadcrumbs
-        link={<Link to="/datalakes">Data Lakes</Link>}
-        active={datalake.name || 'Loading...'}>
-        <EditDatalake
-          datalake={datalake}
+        link={<Link to="/policies">Policies</Link>}
+        active={policy.name || 'Loading...'}>
+        <EditPolicy
+          policy={policy}
           onSave={onSave}
           trigger={<Button primary icon="setting" content="Settings" />}
         />
@@ -22,23 +22,11 @@ export default ({ datalake, onSave }) => {
       <Menu tabular>
         <Menu.Item
           name="Overview"
-          to={`/datalakes/${datalake.id}`}
+          to={`/policies/${policy.id}`}
           as={NavLink}
           exact
         />
         {/* --- Generator: menus */}
-        <Menu.Item
-          name="Collections"
-          to={`/datalakes/${datalake.id}/collections`}
-          as={NavLink}
-          exact
-        />
-        <Menu.Item
-          name="Batches"
-          to={`/datalakes/${datalake.id}/batches`}
-          as={NavLink}
-          exact
-        />
         {/* --- Generator: end */}
       </Menu>
       <Divider hidden />

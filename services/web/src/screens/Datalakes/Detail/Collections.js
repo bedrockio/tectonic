@@ -1,16 +1,8 @@
 import React from 'react';
-import {
-  Table,
-  Message,
-  Loader,
-  Image,
-  Button,
-  Header,
-} from 'semantic-ui-react';
+import { Table, Message, Loader, Button, Header } from 'semantic-ui-react';
 import { formatDateTime } from 'utils/date';
 import { request } from 'utils/api';
 import { screen } from 'helpers';
-import { urlForUpload } from 'utils/uploads';
 import { Layout, Confirm, HelpTip, SearchProvider } from 'components';
 
 import Filters from 'modals/Filters';
