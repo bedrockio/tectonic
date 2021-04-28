@@ -4,6 +4,7 @@ const config = require('@bedrockio/config');
 const { get: objectGet } = require('lodash');
 const { createHash } = require('crypto');
 const { logger } = require('@bedrockio/instrumentation');
+const ENV_NAME = config.get('ENV_NAME');
 
 const elasticsearchClient = new elasticsearch.Client({
   node: config.get('ELASTICSEARCH_URI'),
@@ -206,12 +207,12 @@ async function get(index, id) {
 function parseFilterOptions(options = { from: 0, size: 100 }, skipSort = false) {
   const sort = [
     {
-      [options.dateField || 'timestamp']: {
+      [options.dateField || 'ingestedAt']: {
         order: 'desc',
       },
     },
   ];
-  const { providerId, from, size, terms, excludeTerms, exists, notExists, minTimestamp, q, range } = options;
+  const { from = 0, size = 100, terms, excludeTerms, exists, notExists, minTimestamp, q, range, scope } = options;
   const body = {
     sort: skipSort ? undefined : sort,
     from,
@@ -252,22 +253,6 @@ function parseFilterOptions(options = { from: 0, size: 100 }, skipSort = false) 
     body.query.bool.must.push({
       exists: {
         field: exists,
-      },
-    });
-  }
-  if (providerId) {
-    if (!body.query) {
-      body.query = {};
-    }
-    if (!body.query.bool) {
-      body.query.bool = {};
-    }
-    if (!body.query.bool.must) {
-      body.query.bool.must = [];
-    }
-    body.query.bool.must.push({
-      term: {
-        providerId: providerId,
       },
     });
   }
@@ -334,6 +319,23 @@ function parseFilterOptions(options = { from: 0, size: 100 }, skipSort = false) 
         query: q,
       },
     });
+  }
+  if (scope) {
+    if (!body.query) {
+      body.query = {};
+    }
+    if (!body.query.bool) {
+      body.query.bool = {};
+    }
+    if (!body.query.bool.must) {
+      body.query.bool.must = [];
+    }
+    for (const [key, value] of Object.entries(scope)) {
+      const scopeTerm = { term: {} };
+      // TODO: move event. prefix out of this lib
+      scopeTerm.term[`event.${key}`] = value;
+      body.query.bool.must.push(scopeTerm);
+    }
   }
   // console.log(JSON.stringify(body, null, 2));
   return body;
@@ -429,8 +431,16 @@ const dynamic_templates = [
   },
 ];
 
+const getCollectionIndex = (collectionId) => {
+  if (ENV_NAME == 'test') {
+    return `test-tectonic-collection-${collectionId}`;
+  } else {
+    return `tectonic-collection-${collectionId}`;
+  }
+};
+
 const ensureCollectionIndex = async (collectionId, collectionIndexName) => {
-  let index = `tectonic-collection-${collectionId}`;
+  let index = getCollectionIndex(collectionId);
   if (collectionIndexName) index += `-${collectionIndexName}`;
   const exists = await indexExists(index);
   if (!exists) {
@@ -441,6 +451,11 @@ const ensureCollectionIndex = async (collectionId, collectionIndexName) => {
         body: {
           mappings: {
             dynamic_templates,
+            properties: {
+              ingestedAt: {
+                type: 'date',
+              },
+            },
           },
         },
       });
@@ -456,8 +471,8 @@ const bulkIndexBatchEvents = async (batchEvents) => {
   // logger.info('events:', batchEvents);
   const body = batchEvents.flatMap(({ batch, event }) => {
     const { datalakeId, collectionId, id: batchId, ingestedAt } = batch;
-    const index = { _index: `tectonic-collection-${collectionId}` };
-    if (event.id) index._id = event.id;
+    const index = { _index: getCollectionIndex(collectionId) };
+    if (event._id) index._id = event._id;
     const doc = {
       datalakeId,
       collectionId,
@@ -509,4 +524,5 @@ module.exports = {
   ensureCollectionIndex,
   bulkIndexBatchEvents,
   bulkErrorLog,
+  getCollectionIndex,
 };

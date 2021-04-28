@@ -12,16 +12,17 @@ const {
   ensureIndex,
 } = require('./../analytics');
 
-const testIndex = 'bedrock-analytics-test';
+const testIndex = 'tectonic-analytics-test';
 
 jest.setTimeout(40 * 1000);
 
 const indexEvents = async () => {
-  const events = loadJsonStreamFile(__dirname + '/fixtures/analytics/performance-member-summary.jsons');
+  const events = loadJsonStreamFile(__dirname + '/fixtures/analytics/performance-member-summary.ndjson');
   await ensureIndex(testIndex, { recreate: true });
   let i = 0;
   for (const event of events) {
-    event.timestamp = Date.parse(event['date-created']);
+    event.ingestedAt = Date.parse(event['date-created']);
+    event.createdAt = new Date(event.ingestedAt); // used in for timeseries field
     if (i === 0) {
       event.deletedAt = new Date();
     }
@@ -93,16 +94,18 @@ describe('analytics', () => {
     expect(result[0].topHit._source.id).toEqual('37d2aa7b-64a9-4e02-8980-504ad3f20a61');
     expect(result[0].reference.id).toEqual('37d2aa7b-64a9-4e02-8980-504ad3f20a61');
   });
-  it.skip('should allow time series aggregations (count)', async () => {
+  it('should allow time series aggregations (count)', async () => {
     const result = await timeSeries(testIndex, 'count', null, {
+      field: 'createdAt',
       interval: '10s',
     });
+    // console.info(JSON.stringify(result, null, 2));
     expect(result.length).toBe(7);
     const [bucket] = result;
     expect(bucket.count).toBe(42);
     expect(!!bucket.timestamp).toBe(true);
   });
-  it.skip('should allow time series aggregations (sum)', async () => {
+  it('should allow time series aggregations (sum)', async () => {
     const result = await timeSeries(testIndex, 'sum', 'zone-info.red-zone-time', { interval: '10s' });
     expect(result.length).toBe(7);
     const [bucket] = result;
@@ -110,7 +113,7 @@ describe('analytics', () => {
     expect(bucket.value).toBe(33876);
     expect(!!bucket.timestamp).toBe(true);
   });
-  it.skip('should allow time series aggregations (max)', async () => {
+  it('should allow time series aggregations (max)', async () => {
     const result = await timeSeries(testIndex, 'max', 'otbeat-info.max-hr', {
       interval: '20s',
     });

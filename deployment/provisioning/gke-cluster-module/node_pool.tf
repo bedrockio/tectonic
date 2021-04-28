@@ -27,7 +27,6 @@ resource "google_container_node_pool" "default" {
       "https://www.googleapis.com/auth/bigquery",
       "https://www.googleapis.com/auth/trace.append", # Required for bedrock.io intrumentation
       "https://www.googleapis.com/auth/cloud-platform", # Added to be the same as initial staging environment
-
     ]
   }
 

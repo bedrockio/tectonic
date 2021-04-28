@@ -10,6 +10,7 @@ const status = require('./status');
 const events = require('./events');
 const batches = require('./batches');
 const analytics = require('./analytics');
+const policyAnalytics = require('./policy/analytics');
 
 const router = new Router();
 
@@ -24,5 +25,6 @@ router.use('/status', status.routes());
 router.use('/events', events.routes());
 router.use('/batches', batches.routes());
 router.use('/analytics', analytics.routes());
+router.use('/policy/analytics', policyAnalytics.routes());
 
 module.exports = router;
