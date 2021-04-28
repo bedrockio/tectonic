@@ -37,8 +37,10 @@ router
   )
   .get('/:policyId', async (ctx) => {
     const { policy } = await ctx.state;
+    const token = createPolicyToken(policy);
+
     ctx.body = {
-      data: policy,
+      data: { ...policy.toObject(), token },
     };
   })
   .get('/:policyId/token', async (ctx) => {

@@ -1,7 +1,8 @@
 import React from 'react';
-import { Header, Table } from 'semantic-ui-react';
+import { Header, Table, Segment } from 'semantic-ui-react';
 import { screen } from 'helpers';
 import Menu from './Menu';
+import ReactJson from 'react-json-view';
 
 // --- Generator: overview-imports
 import { formatDateTime } from 'utils/date';
@@ -33,6 +34,10 @@ export default class PolicyOverview extends React.Component {
             </Table.Row>
           </Table.Body>
         </Table>
+        <Header as="h1">JSON</Header>
+        <Segment style={{ overflow: 'auto' }}>
+          <ReactJson src={policy} />
+        </Segment>
       </React.Fragment>
     );
   }
