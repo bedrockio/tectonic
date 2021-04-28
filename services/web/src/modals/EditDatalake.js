@@ -124,12 +124,6 @@ export default class EditDatalake extends React.Component {
                 value={datalake.description || ''}
                 onChange={this.setField}
               />
-              <CountriesField
-                label="Country"
-                name="country"
-                value={datalake.country || 'US'}
-                onChange={this.setField}
-              />
               <CategoriesField
                 name="categories"
                 value={datalake.categories || []}

@@ -125,22 +125,6 @@ export default class EditCollection extends React.Component {
                 value={collection.description || ''}
                 onChange={this.setField}
               />
-              <Form.Input
-                required
-                type="text"
-                name="ingest"
-                label="Ingest"
-                value={collection.ingest || ''}
-                onChange={this.setField}
-              />
-              <Form.Input
-                required
-                type="text"
-                name="raw"
-                label="Raw"
-                value={collection.raw || ''}
-                onChange={this.setField}
-              />
               {/* --- Generator: end */}
             </Form>
           </AutoFocus>

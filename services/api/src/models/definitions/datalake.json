@@ -22,9 +22,6 @@
         "ref": "Category",
         "autopopulate": true
       }
-    ],
-    "country": {
-      "type": "String"
-    }
+    ]
   }
 }
