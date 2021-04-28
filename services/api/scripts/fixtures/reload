@@ -28,7 +28,7 @@ async function run() {
   if (!allowedEnvironments.includes(ENV_NAME)) {
     throw new Error(`Not allowed in ENV_NAME other than ${allowedEnvironments.join(', ')} (ENV_NAME=${ENV_NAME})`);
   }
-  console.info(`
+  logger.info(`
 -------------------------------------------------------------------
 
   Warning: This will delete ALL DATA for the ${ENV_NAME} environment
@@ -41,7 +41,7 @@ async function run() {
     throw new Error('Aborted');
   }
   const db = await initialize();
-  console.info(`Dropping database...`);
+  logger.info(`Dropping database...`);
   await db.dropDatabase();
   const result = await createFixtures();
   if (!result) {
