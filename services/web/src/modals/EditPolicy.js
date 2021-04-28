@@ -4,8 +4,6 @@ import { request } from 'utils/api';
 import AutoFocus from 'components/AutoFocus';
 
 // --- Generator: imports
-import UploadsField from 'components/form-fields/Uploads';
-import CategoriesField from 'components/form-fields/Categories';
 // --- Generator: end
 
 export default class EditPolicy extends React.Component {

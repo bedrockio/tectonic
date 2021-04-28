@@ -5,7 +5,7 @@ import AutoFocus from 'components/AutoFocus';
 
 // --- Generator: imports
 import UploadsField from 'components/form-fields/Uploads';
-import CountriesField from 'components/form-fields/Countries';
+//import CountriesField from 'components/form-fields/Countries';
 import CategoriesField from 'components/form-fields/Categories';
 // --- Generator: end
 

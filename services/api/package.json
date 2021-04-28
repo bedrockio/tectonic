@@ -11,7 +11,7 @@
   "scripts": {
     "start": "nodemon -w src --exec \"MOCK_EMAIL=true PUBSUB_EMULATOR_HOST=localhost:8200 node src/index.js\"",
     "start:production": "node src/index",
-    "elasticsearch-sink:start": "nodemon -w src --exec \"node src/workers/elasticsearch-sink.js\"",
+    "elasticsearch-sink:start": "nodemon -w src --exec \"PUBSUB_EMULATOR_HOST=localhost:8200 node src/workers/elasticsearch-sink.js\"",
     "docs": "node scripts/generate-openapi",
     "emails": "node emails/build",
     "lint": "eslint src scripts",
@@ -39,6 +39,7 @@
     "lodash": "^4.17.19",
     "mongoose": "^5.12.2",
     "mongoose-autopopulate": "^0.12.2",
+    "node-fetch": "^2.6.1",
     "pino": "^6.11.0",
     "postmark": "^2.5.4",
     "snyk": "^1.359.1"

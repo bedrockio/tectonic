@@ -6,7 +6,7 @@ const { bulkErrorLog, bulkIndexBatchEvents } = require('../lib/analytics');
 const ENV_NAME = config.get('ENV_NAME');
 const maxInProgress = config.get('ELASTICSEARCH_SINK_WORKER_MAX_IN_PROGRESS', 'integer') || 100;
 
-function listenForMessages(subscriptionName, index, maxMilliseconds = 2000) {
+function listenForMessages(subscriptionName, maxMilliseconds = 2000) {
   // References an existing subscription
 
   const subscriberOptions = {
