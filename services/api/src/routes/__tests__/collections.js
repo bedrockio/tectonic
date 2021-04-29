@@ -1,5 +1,6 @@
 const { setupDb, teardownDb, request, createUser } = require('../../utils/testing');
 const { Collection } = require('../../models');
+const { ensureCollectionIndex, getCollectionIndex, deleteIndex } = require('../../lib/analytics');
 
 beforeAll(async () => {
   await setupDb();
@@ -34,7 +35,9 @@ describe('/1/collections', () => {
         name: 'test 1',
         description: 'Some description',
       });
+      await ensureCollectionIndex(collection.id);
       const response = await request('GET', `/1/collections/${collection.id}`, {}, { user });
+      await deleteIndex(getCollectionIndex(collection.id));
       expect(response.status).toBe(200);
       expect(response.body.data.name).toBe(collection.name);
     });

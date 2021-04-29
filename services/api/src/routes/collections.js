@@ -5,6 +5,7 @@ const { authenticate, fetchUser } = require('../utils/middleware/authenticate');
 const { NotFoundError } = require('../utils/errors');
 const { Collection } = require('../models');
 const { ensureCollectionIndex, getMapping, getCollectionIndex } = require('../lib/analytics');
+const { logger } = require('@bedrockio/instrumentation');
 
 const router = new Router();
 
@@ -34,7 +35,13 @@ router
   )
   .get('/:collectionId', async (ctx) => {
     const { collection } = await ctx.state;
-    const mapping = await getMapping(getCollectionIndex(collection.id));
+    let mapping = {};
+    try {
+      mapping = await getMapping(getCollectionIndex(collection.id));
+    } catch (e) {
+      logger.warn('Could not retrieve mapping');
+    }
+
     ctx.body = {
       data: { ...collection.toObject(), mapping },
     };
