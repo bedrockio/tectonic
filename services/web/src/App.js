@@ -11,7 +11,7 @@ import Docs from 'screens/Docs';
 import Invites from 'screens/Invites';
 import NotFound from 'screens/NotFound';
 import Settings from 'screens/Settings';
-import Datalakes from 'screens/Datalakes';
+import Collections from 'screens/Collections';
 import Users from 'screens/Users';
 import Policies from 'screens/Policies';
 import Analytics from 'screens/Analytics';
@@ -26,7 +26,7 @@ import Signup from 'screens/Auth/Signup';
 const App = () => (
   <Switch>
     <AuthSwitch path="/" loggedIn={Dashboard} loggedOut={Login} exact />
-    <Protected path="/datalakes/:id?" allowed={Datalakes} />
+    <Protected path="/collections/:id?" allowed={Collections} />
     <Protected path="/policies/:id?" allowed={Policies} />
     <Protected path="/analytics/:id?" allowed={Analytics} />
     <Protected path="/settings" allowed={Settings} exact />
@@ -34,18 +34,8 @@ const App = () => (
     <Protected path="/users/:id?" allowed={Users} />
     <Protected path="/docs/:id?" allowed={Docs} />
     <Route path="/logout" component={Logout} exact />
-    <AuthSwitch
-      path="/login"
-      loggedOut={Login}
-      loggedIn={() => <Redirect to="/" />}
-      exact
-    />
-    <AuthSwitch
-      path="/signup"
-      loggedOut={Signup}
-      loggedIn={() => <Redirect to="/" />}
-      exact
-    />
+    <AuthSwitch path="/login" loggedOut={Login} loggedIn={() => <Redirect to="/" />} exact />
+    <AuthSwitch path="/signup" loggedOut={Signup} loggedIn={() => <Redirect to="/" />} exact />
     <Route path="/accept-invite" component={AcceptInvite} exact />
     <Route path="/forgot-password" component={ForgotPassword} exact />
     <Route path="/reset-password" component={ResetPassword} exact />

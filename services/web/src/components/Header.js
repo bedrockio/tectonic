@@ -19,8 +19,8 @@ export default class Header extends React.Component {
             <Menu.Item as={Link} to="/">
               <img style={{ width: '30px' }} className="logo" src={`${logo}`} />
             </Menu.Item>
-            <Menu.Item as={NavLink} to="/datalakes">
-              Data Lakes
+            <Menu.Item as={NavLink} to="/collections">
+              Collections
             </Menu.Item>
             <Menu.Item as={NavLink} to="/policies">
               Policies

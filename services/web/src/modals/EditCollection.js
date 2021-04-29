@@ -53,23 +53,13 @@ export default class EditCollection extends React.Component {
         await request({
           method: 'PATCH',
           path: `/1/collections/${collection.id}`,
-          body: {
-            ...collection,
-            // --- Generator: refs
-            datalake: this.props.datalake.id,
-            // --- Generator: end
-          },
+          body: collection,
         });
       } else {
         await request({
           method: 'POST',
           path: '/1/collections',
-          body: {
-            ...collection,
-            // --- Generator: refs
-            datalake: this.props.datalake.id,
-            // --- Generator: end
-          },
+          body: collection,
         });
         this.setState({
           collection: {},
@@ -99,16 +89,10 @@ export default class EditCollection extends React.Component {
         closeOnDimmerClick={false}
         onOpen={() => this.setState({ open: true })}
         onClose={() => this.setState({ open: false })}>
-        <Modal.Header>
-          {this.isUpdate() ? `Edit "${collection.name}"` : 'New Collection'}
-        </Modal.Header>
+        <Modal.Header>{this.isUpdate() ? `Edit "${collection.name}"` : 'New Collection'}</Modal.Header>
         <Modal.Content scrolling>
           <AutoFocus>
-            <Form
-              noValidate
-              id="edit-collection"
-              error={!!error}
-              onSubmit={this.onSubmit}>
+            <Form noValidate id="edit-collection" error={!!error} onSubmit={this.onSubmit}>
               {error && <Message error content={error.message} />}
               {/* --- Generator: fields */}
               <Form.Input

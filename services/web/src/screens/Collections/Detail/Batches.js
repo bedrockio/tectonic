@@ -10,46 +10,34 @@ import Filters from 'modals/Filters';
 import Menu from './Menu';
 
 @screen
-export default class DatalakeBatches extends React.Component {
+export default class CollectionBatches extends React.Component {
   onDataNeeded = async (params) => {
-    const { datalake } = this.props;
+    const { collection } = this.props;
     return await request({
       method: 'POST',
       path: '/1/batches/search',
       body: {
         ...params,
-        datalake: datalake.id,
+        collectionId: collection.id,
       },
     });
   };
 
   render() {
-    const { datalake } = this.props;
+    const { collection } = this.props;
     return (
       <React.Fragment>
         <Menu {...this.props} />
-        {datalake ? (
-          <SearchProvider
-            sort={{ order: 'desc', field: 'ingestedAt' }}
-            onDataNeeded={this.onDataNeeded}>
-            {({
-              items: batches,
-              filters,
-              setFilters,
-              getSorted,
-              setSort,
-              reload,
-            }) => {
+        {collection ? (
+          <SearchProvider sort={{ order: 'desc', field: 'ingestedAt' }} onDataNeeded={this.onDataNeeded}>
+            {({ items: batches, filters, setFilters, getSorted, setSort, reload }) => {
               return (
                 <React.Fragment>
                   <Header as="h2">
                     <Layout horizontal center spread>
                       Batches
                       <Layout.Group>
-                        <Filters
-                          size="tiny"
-                          onSave={setFilters}
-                          filters={filters}>
+                        <Filters size="tiny" onSave={setFilters} filters={filters}>
                           <Filters.Text label="BatchId" name="id" />
                         </Filters>
                       </Layout.Group>
@@ -62,10 +50,7 @@ export default class DatalakeBatches extends React.Component {
                       <Table.Header>
                         <Table.Row>
                           {/* --- Generator: list-header-cells */}
-                          <Table.HeaderCell
-                            width={3}
-                            sorted={getSorted('id')}
-                            onClick={() => setSort('id')}>
+                          <Table.HeaderCell width={3} sorted={getSorted('id')} onClick={() => setSort('id')}>
                             BatchId
                           </Table.HeaderCell>
                           <Table.HeaderCell width={1}>#Events</Table.HeaderCell>
@@ -77,15 +62,10 @@ export default class DatalakeBatches extends React.Component {
                             sorted={getSorted('ingestedAt')}
                             onClick={() => setSort('ingestedAt')}>
                             IngestedAt
-                            <HelpTip
-                              title="IngestedAt"
-                              text="This is the date and time the batch was ingested."
-                            />
+                            <HelpTip title="IngestedAt" text="This is the date and time the batch was ingested." />
                           </Table.HeaderCell>
                           {/* --- Generator: end */}
-                          <Table.HeaderCell textAlign="center">
-                            Actions
-                          </Table.HeaderCell>
+                          <Table.HeaderCell textAlign="center">Actions</Table.HeaderCell>
                         </Table.Row>
                       </Table.Header>
                       <Table.Body>
@@ -98,9 +78,7 @@ export default class DatalakeBatches extends React.Component {
                               <Table.Cell>{batch.rawUrl}</Table.Cell>
                               <Table.Cell>{batch.hash}</Table.Cell>
                               <Table.Cell>{batch.memorySize}</Table.Cell>
-                              <Table.Cell>
-                                {formatDateTime(batch.ingestedAt)}
-                              </Table.Cell>
+                              <Table.Cell>{formatDateTime(batch.ingestedAt)}</Table.Cell>
                               {/* --- Generator: end */}
                               <Table.Cell textAlign="center">
                                 <Confirm

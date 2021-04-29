@@ -50,18 +50,18 @@ router
           order: 'desc',
         }),
         ids: Joi.array().items(Joi.string()),
-        datalake: Joi.string(),
+        collectionId: Joi.string(),
         limit: Joi.number().positive().default(50),
       }),
     }),
     async (ctx) => {
-      const { ids = [], sort, name, skip, limit, datalake } = ctx.request.body;
+      const { ids = [], sort, name, skip, limit, collectionId } = ctx.request.body;
       const query = {
         ...(ids.length ? { _id: { $in: ids } } : {}),
         deletedAt: { $exists: false },
       };
-      if (datalake) {
-        query.datalakeId = datalake;
+      if (collectionId) {
+        query.collectionId = collectionId;
       }
       if (name) {
         query.name = {

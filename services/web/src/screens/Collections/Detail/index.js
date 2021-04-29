@@ -8,15 +8,14 @@ import { request } from 'utils/api';
 import Overview from './Overview';
 
 // --- Generator: imports
-import Collections from './Collections';
 import Batches from './Batches';
 // --- Generator: end
 
-export default class DatalakeDetail extends React.Component {
+export default class CollectionDetail extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      datalake: null,
+      collection: null,
       error: null,
       loading: true,
       onSave: this.onSave,
@@ -24,21 +23,21 @@ export default class DatalakeDetail extends React.Component {
   }
 
   componentDidMount() {
-    this.fetchDatalake();
+    this.fetchCollection();
   }
 
   componentDidUpdate(lastProps) {
     const { id } = this.props.match.params;
     if (id !== lastProps.match.params.id) {
-      this.fetchDatalake();
+      this.fetchCollection();
     }
   }
 
   onSave = () => {
-    this.fetchDatalake();
+    this.fetchCollection();
   };
 
-  async fetchDatalake() {
+  async fetchCollection() {
     const { id } = this.props.match.params;
     try {
       this.setState({
@@ -47,10 +46,10 @@ export default class DatalakeDetail extends React.Component {
       });
       const { data } = await request({
         method: 'GET',
-        path: `/1/datalakes/${id}`,
+        path: `/1/collections/${id}`,
       });
       this.setState({
-        datalake: data,
+        collection: data,
         loading: false,
       });
     } catch (error) {
@@ -68,32 +67,16 @@ export default class DatalakeDetail extends React.Component {
     } else if (error) {
       return (
         <React.Fragment>
-          <Breadcrumbs
-            link={<Link to="/datalakes">Data Lakes</Link>}
-            active="Not Found"
-          />
-          <Header content="Sorry that datalake wasn't found." />
+          <Breadcrumbs link={<Link to="/collections">Collections</Link>} active="Not Found" />
+          <Header content="Sorry that collection wasn't found." />
         </React.Fragment>
       );
     }
     return (
       <Switch>
-        <Route
-          exact
-          path="/datalakes/:id"
-          render={(props) => <Overview {...props} {...this.state} />}
-        />
+        <Route exact path="/collections/:id" render={(props) => <Overview {...props} {...this.state} />} />
         {/* --- Generator: routes */}
-        <Route
-          exact
-          path="/datalakes/:id/collections"
-          render={(props) => <Collections {...props} {...this.state} />}
-        />
-        <Route
-          exact
-          path="/datalakes/:id/batches"
-          render={(props) => <Batches {...props} {...this.state} />}
-        />
+        <Route exact path="/collections/:id/batches" render={(props) => <Batches {...props} {...this.state} />} />
         {/* --- Generator: end */}
       </Switch>
     );

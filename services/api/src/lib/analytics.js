@@ -505,11 +505,11 @@ const bulkErrorLog = async (bulkResult, events) => {
 };
 
 async function ensureAlias(index, alias, { recreate = true } = {}) {
-  const existsResult = await elasticsearchClient.indices.existsAlias({ name: alias });
+  const existsResult = await elasticsearchClient.indices.existsAlias({ index, name: alias });
   if (recreate && existsResult.statusCode === 200) {
-    await elasticsearchClient.indices.deleteAlias({ name: alias });
+    await elasticsearchClient.indices.deleteAlias({ index, name: alias });
   }
-  const existsResult2 = await elasticsearchClient.indices.existsAlias({ name: alias });
+  const existsResult2 = await elasticsearchClient.indices.existsAlias({ index, name: alias });
   if (!(existsResult2.statusCode === 200)) {
     await elasticsearchClient.indices.putAlias({ index, name: alias });
   }

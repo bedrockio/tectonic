@@ -6,7 +6,7 @@ import { screen } from 'helpers';
 @withSession
 export default class Home extends React.Component {
   componentDidMount() {
-    this.props.history.replace('/datalakes');
+    this.props.history.replace('/collections');
   }
 
   render() {
