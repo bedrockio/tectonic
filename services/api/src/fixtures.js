@@ -2,7 +2,7 @@ const { User, Collection, Category, Policy } = require('./models');
 const config = require('@bedrockio/config');
 // const { storeUploadedFile } = require('./utils/uploads');
 const { logger } = require('@bedrockio/instrumentation');
-const { ensureCollectionIndex, ensureAlias, getCollectionIndex, deleteIndex } = require('./lib/analytics');
+const { ensureCollectionIndex, ensureAlias, getCollectionIndex } = require('./lib/analytics');
 const { createPolicyToken } = require('./lib/tokens');
 
 const adminConfig = {
