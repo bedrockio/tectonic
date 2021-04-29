@@ -1,11 +1,10 @@
 import React from 'react';
-import { Header, Table, Image, Label } from 'semantic-ui-react';
+import { Header, Table, Label } from 'semantic-ui-react';
 import { screen } from 'helpers';
 import Menu from './Menu';
 
 // --- Generator: overview-imports
 import { formatDateTime } from 'utils/date';
-import { urlForUpload } from 'utils/uploads';
 // --- Generator: end
 
 @screen
