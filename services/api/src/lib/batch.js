@@ -31,12 +31,12 @@ function dateToString(d) {
 }
 
 async function storeBatchEvents(batch, events) {
-  const { datalakeId, collectionId, id: batchId, ingestedAt } = batch;
+  const { collectionId, id: batchId, ingestedAt } = batch;
 
   const ndEvents = events.map((event) => JSON.stringify(event)).join('\n');
   const dateString = dateToString(ingestedAt);
 
-  const fileName = `${datalakeId}-${collectionId}-${dateString}-${batchId}.ndjson`;
+  const fileName = `${collectionId}-${dateString}-${batchId}.ndjson`;
 
   if (config.get('BATCHES_STORE') === 'gcs') {
     return await storeGcsFile(fileName, ndEvents);

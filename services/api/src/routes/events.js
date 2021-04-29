@@ -35,7 +35,6 @@ router.post(
     let collection;
     try {
       collection = await Collection.findById(collectionId);
-      // logger.info(collection.datalake._id.toString());
     } catch (e) {
       throw new NotFoundError(`CollectionId ${collectionId} not valid`);
     }
@@ -50,7 +49,6 @@ router.post(
     // 1: Create and store mongo batch
 
     const batch = {
-      datalakeId: collection.datalake._id.toString(),
       collectionId,
       ingestedAt,
       numEvents: events.length,

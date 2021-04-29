@@ -117,20 +117,20 @@ router
   .use(authenticate({ type: 'user' }))
   .use(fetchUser)
   // Only allow access to users that have write permissions for this organization
-  .use(requirePermissions({ endpoint: 'datalakes', level: 'write', context: 'organization' }))
+  .use(requirePermissions({ endpoint: 'collections', level: 'write', context: 'organization' }))
   .post(
     '/',
     validate({
       body: schema,
     }),
     async (ctx) => {
-      const datalake = await Datalake.create({
+      const collection = await Collection.create({
         // Set the organization for each object created
         organization: ctx.state.organization,
         ...ctx.request.body,
       });
       ctx.body = {
-        data: datalake,
+        data: collection,
       };
     }
   );
@@ -243,7 +243,6 @@ Result:
 ```json
 {
   "batch": {
-    "datalakeId": "606078c674e2fb4edf190759",
     "collectionId": "606078c674e2fb4edf19075b",
     "ingestedAt": "2021-04-01T15:13:23.562Z",
     "numEvents": 2,

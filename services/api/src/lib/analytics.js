@@ -470,11 +470,10 @@ const ensureCollectionIndex = async (collectionId, collectionIndexName) => {
 const bulkIndexBatchEvents = async (batchEvents) => {
   // logger.info('events:', batchEvents);
   const body = batchEvents.flatMap(({ batch, event }) => {
-    const { datalakeId, collectionId, id: batchId, ingestedAt } = batch;
+    const { collectionId, id: batchId, ingestedAt } = batch;
     const index = { _index: getCollectionIndex(collectionId) };
     if (event._id) index._id = event._id;
     const doc = {
-      datalakeId,
       collectionId,
       batchId,
       ingestedAt,

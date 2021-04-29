@@ -1,5 +1,3 @@
-const mongoose = require('mongoose');
-
 const { setupDb, teardownDb, request, createUser } = require('../../utils/testing');
 const { Collection } = require('../../models');
 
@@ -20,7 +18,6 @@ describe('/1/collections', () => {
         '/1/collections',
         {
           name: 'some other collection',
-          datalake: mongoose.Types.ObjectId(),
         },
         { user }
       );
@@ -36,7 +33,6 @@ describe('/1/collections', () => {
       const collection = await Collection.create({
         name: 'test 1',
         description: 'Some description',
-        datalake: mongoose.Types.ObjectId(),
       });
       const response = await request('GET', `/1/collections/${collection.id}`, {}, { user });
       expect(response.status).toBe(200);
@@ -52,13 +48,11 @@ describe('/1/collections', () => {
       const collection1 = await Collection.create({
         name: 'test 1',
         description: 'Some description',
-        datalake: mongoose.Types.ObjectId(),
       });
 
       const collection2 = await Collection.create({
         name: 'test 2',
         description: 'Some description',
-        datalake: mongoose.Types.ObjectId(),
       });
 
       const response = await request('POST', '/1/collections/search', {}, { user });
@@ -78,7 +72,6 @@ describe('/1/collections', () => {
       const collection = await Collection.create({
         name: 'test 1',
         description: 'Some description',
-        datalake: mongoose.Types.ObjectId(),
       });
       const response = await request('PATCH', `/1/collections/${collection.id}`, { name: 'new name' }, { user });
       expect(response.status).toBe(200);
@@ -94,7 +87,6 @@ describe('/1/collections', () => {
       const collection = await Collection.create({
         name: 'test 1',
         description: 'Some description',
-        datalake: mongoose.Types.ObjectId(),
       });
       const response = await request('DELETE', `/1/collections/${collection.id}`, {}, { user });
       expect(response.status).toBe(204);

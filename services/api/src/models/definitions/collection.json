@@ -5,12 +5,6 @@
       "trim": true,
       "required": true
     },
-    "datalake": {
-      "ref": "Datalake",
-      "type": "ObjectId",
-      "required": true,
-      "autopopulate": false
-    },
     "description": {
       "type": "String",
       "trim": true,
@@ -19,6 +13,13 @@
     "secondaryIndex": {
       "type": "String",
       "required": false
-    }
+    },
+    "categories": [
+      {
+        "type": "ObjectId",
+        "ref": "Category",
+        "autopopulate": true
+      }
+    ]
   }
 }

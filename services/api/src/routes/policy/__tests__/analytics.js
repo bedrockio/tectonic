@@ -21,7 +21,6 @@ const indexEvents = async (collectionId) => {
   await deleteIndex(index);
   await ensureCollectionIndex(collectionId);
   const batch = {
-    datalakeId: 'datalake1',
     collectionId,
     id: 'batchId1',
     ingestedAt: new Date().toISOString(),
@@ -46,7 +45,6 @@ beforeAll(async () => {
     _id: testCollectionId,
     name: 'test-collection',
     description: 'none',
-    datalake: new mongoose.Types.ObjectId(),
   });
   await indexEvents(testCollection.id.toString());
 });

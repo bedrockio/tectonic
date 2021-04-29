@@ -13,8 +13,8 @@
       "organization": "none"
     }
   },
-  "datalakes": {
-    "name": "Datalakes",
+  "collections": {
+    "name": "Collections",
     "maximums": {
       "global": "read-write",
       "organization": "read-write"
