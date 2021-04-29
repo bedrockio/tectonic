@@ -43,6 +43,8 @@ spec:
               value: bedrock.foundation
             - name: APP_URL
               value: "https://tectonic.bedrock.foundation"
+            - name: API_URL
+              value: "https://tectonic-api.bedrock.foundation"
             - name: POSTMARK_FROM
               value: no-reply@tectonic.io
             - name: POSTMARK_APIKEY
