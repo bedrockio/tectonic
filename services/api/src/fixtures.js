@@ -2,7 +2,7 @@ const { User, Collection, Datalake, Upload, Category, Policy } = require('./mode
 const config = require('@bedrockio/config');
 const { storeUploadedFile } = require('./utils/uploads');
 const { logger } = require('@bedrockio/instrumentation');
-const { ensureCollectionIndex } = require('./lib/analytics');
+const { ensureCollectionIndex, ensureAlias, getCollectionIndex } = require('./lib/analytics');
 const { createPolicyToken } = require('./lib/tokens');
 
 const adminConfig = {
@@ -57,6 +57,7 @@ const createFixtures = async () => {
     datalake,
   });
   await ensureCollectionIndex(collection.id);
+  await ensureAlias(getCollectionIndex(collection.id), 'purchases');
   //const events = loadJsonStreamFile(__dirname + './routes/policy/__tests__/fixtures/bar-purchases.ndjson');
 
   const datalake2 = await Datalake.create({
@@ -72,6 +73,7 @@ const createFixtures = async () => {
     datalake: datalake2,
   });
   await ensureCollectionIndex(collection2.id);
+  await ensureAlias(getCollectionIndex(collection2.id), 'controllers');
 
   const policy2 = await Policy.create({
     name: 'Access for Maintenance Account 5f15901ef8909f9ea57425b9',
@@ -93,6 +95,7 @@ const createFixtures = async () => {
     datalake: datalake2,
   });
   await ensureCollectionIndex(collection3.id);
+  await ensureAlias(getCollectionIndex(collection3.id), 'metervalues');
 
   const policy3 = await Policy.create({
     name: 'MeterValues for EVSE Controller 5fd6036fccd06f4d6b1d8bd2',
