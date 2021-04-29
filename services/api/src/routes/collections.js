@@ -4,7 +4,7 @@ const validate = require('../utils/middleware/validate');
 const { authenticate, fetchUser } = require('../utils/middleware/authenticate');
 const { NotFoundError } = require('../utils/errors');
 const { Collection } = require('../models');
-const { ensureCollectionIndex } = require('../lib/analytics');
+const { ensureCollectionIndex, getMapping, getCollectionIndex } = require('../lib/analytics');
 
 const router = new Router();
 
@@ -34,8 +34,9 @@ router
   )
   .get('/:collectionId', async (ctx) => {
     const { collection } = await ctx.state;
+    const mapping = await getMapping(getCollectionIndex(collection.id));
     ctx.body = {
-      data: collection,
+      data: { ...collection.toObject(), mapping },
     };
   })
   .post(

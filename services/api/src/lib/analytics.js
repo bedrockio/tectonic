@@ -515,6 +515,11 @@ async function ensureAlias(index, alias, { recreate = true } = {}) {
   }
 }
 
+async function getMapping(index) {
+  const { body } = await elasticsearchClient.indices.getMapping({ index });
+  return body;
+}
+
 module.exports = {
   terms,
   timeSeries,
@@ -536,4 +541,5 @@ module.exports = {
   bulkErrorLog,
   getCollectionIndex,
   ensureAlias,
+  getMapping,
 };

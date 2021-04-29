@@ -1,7 +1,8 @@
 import React from 'react';
-import { Header, Table, Label } from 'semantic-ui-react';
+import { Header, Table, Label, Segment } from 'semantic-ui-react';
 import { screen } from 'helpers';
 import Menu from './Menu';
+import ReactJson from 'react-json-view';
 
 // --- Generator: overview-imports
 import { formatDateTime } from 'utils/date';
@@ -42,6 +43,10 @@ export default class CollectionOverview extends React.Component {
             </Table.Row>
           </Table.Body>
         </Table>
+        <Header as="h1">Mapping</Header>
+        <Segment style={{ overflow: 'auto' }}>
+          <ReactJson src={collection.mapping} />
+        </Segment>
       </React.Fragment>
     );
   }

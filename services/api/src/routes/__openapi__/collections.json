@@ -19,14 +19,6 @@
           }
         },
         {
-          "name": "datalakeId",
-          "description": "",
-          "required": true,
-          "schema": {
-            "type": "string"
-          }
-        },
-        {
           "name": "description",
           "description": "",
           "required": false,
@@ -73,14 +65,6 @@
             "additionalProperties": false,
             "patterns": [],
             "required": ["field", "order"]
-          }
-        },
-        {
-          "name": "datalakeId",
-          "description": "",
-          "required": false,
-          "schema": {
-            "type": "string"
           }
         },
         {
@@ -148,14 +132,6 @@
         },
         {
           "name": "name",
-          "description": "",
-          "required": false,
-          "schema": {
-            "type": "string"
-          }
-        },
-        {
-          "name": "datalakeId",
           "description": "",
           "required": false,
           "schema": {
