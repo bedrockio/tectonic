@@ -25,6 +25,9 @@ export default class Header extends React.Component {
             <Menu.Item as={NavLink} to="/policies">
               Policies
             </Menu.Item>
+            <Menu.Item as={NavLink} to="/analytics">
+              Analytics
+            </Menu.Item>
             <Menu.Menu position="right">
               <Dropdown
                 className="account"

@@ -9,9 +9,7 @@ import EditDatalake from 'modals/EditDatalake';
 export default ({ datalake, onSave }) => {
   return (
     <React.Fragment>
-      <Breadcrumbs
-        link={<Link to="/datalakes">Data Lakes</Link>}
-        active={datalake.name || 'Loading...'}>
+      <Breadcrumbs link={<Link to="/datalakes">Data Lakes</Link>} active={datalake.name || 'Loading...'}>
         <EditDatalake
           datalake={datalake}
           onSave={onSave}
@@ -20,25 +18,10 @@ export default ({ datalake, onSave }) => {
       </Breadcrumbs>
       <Divider hidden />
       <Menu tabular>
-        <Menu.Item
-          name="Overview"
-          to={`/datalakes/${datalake.id}`}
-          as={NavLink}
-          exact
-        />
+        <Menu.Item name="Overview" to={`/datalakes/${datalake.id}`} as={NavLink} exact />
         {/* --- Generator: menus */}
-        <Menu.Item
-          name="Collections"
-          to={`/datalakes/${datalake.id}/collections`}
-          as={NavLink}
-          exact
-        />
-        <Menu.Item
-          name="Batches"
-          to={`/datalakes/${datalake.id}/batches`}
-          as={NavLink}
-          exact
-        />
+        <Menu.Item name="Collections" to={`/datalakes/${datalake.id}/collections`} as={NavLink} exact />
+        <Menu.Item name="Batches" to={`/datalakes/${datalake.id}/batches`} as={NavLink} exact />
         {/* --- Generator: end */}
       </Menu>
       <Divider hidden />

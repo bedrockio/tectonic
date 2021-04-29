@@ -14,6 +14,7 @@ import Settings from 'screens/Settings';
 import Datalakes from 'screens/Datalakes';
 import Users from 'screens/Users';
 import Policies from 'screens/Policies';
+import Analytics from 'screens/Analytics';
 
 import AcceptInvite from 'screens/Auth/AcceptInvite';
 import ForgotPassword from 'screens/Auth/ForgotPassword';
@@ -27,6 +28,7 @@ const App = () => (
     <AuthSwitch path="/" loggedIn={Dashboard} loggedOut={Login} exact />
     <Protected path="/datalakes/:id?" allowed={Datalakes} />
     <Protected path="/policies/:id?" allowed={Policies} />
+    <Protected path="/analytics/:id?" allowed={Analytics} />
     <Protected path="/settings" allowed={Settings} exact />
     <Protected path="/invites" allowed={Invites} exact />
     <Protected path="/users/:id?" allowed={Users} />

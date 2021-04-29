@@ -20,6 +20,17 @@ export const numberWithDots = (x) => {
   return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
 };
 
+export const formatUsdLabel = (value, precision = 2) => {
+  if (isNaN(value)) return <span>&ndash;</span>;
+  return <span>${(value / 100).toFixed(precision).replace(/\d(?=(\d{3})+\.)/g, '$&,')}</span>;
+};
+
+export const formatUsd = (value) => {
+  if (isNaN(value)) return '';
+  const usd = Math.round(value / 100);
+  return `$${numberWithCommas(usd)}`;
+};
+
 export function formatOption(types, key) {
   const status = types[key];
   const props = {
