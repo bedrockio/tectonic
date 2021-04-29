@@ -4,7 +4,7 @@ import { Divider, Menu } from 'semantic-ui-react';
 import { NavLink } from 'react-router-dom';
 import { Breadcrumbs } from 'components';
 
-export default ({}) => (
+export default () => (
   <React.Fragment>
     <Breadcrumbs link={<Link to="/analytics">Analytics</Link>} active={'Purchases' || 'Loading...'}></Breadcrumbs>
     <Divider hidden />

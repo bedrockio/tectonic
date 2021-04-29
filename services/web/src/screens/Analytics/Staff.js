@@ -2,21 +2,14 @@ import React from 'react';
 import { screen } from 'helpers';
 
 import Terms from 'components/analytics/Terms';
-import TimeSeries from 'components/analytics/TimeSeries';
-import MultiTimeSeries from 'components/analytics/MultiTimeSeries';
-import MultiStats from 'components/analytics/MultiStats';
-
-import SeriesChart from 'components/visualizations/SeriesChart';
-import MultiSeriesChart from 'components/visualizations/MultiSeriesChart';
 import DonutChart from 'components/visualizations/DonutChart';
 import Table from 'components/visualizations/Table';
-
-import { numberWithCommas, formatUsd } from 'utils/formatting';
-
-import { Divider, Segment, Header, Statistic, Message, Button } from 'semantic-ui-react';
-
 import Block from 'components/Block';
-import { startCase } from 'lodash';
+
+import { formatUsd } from 'utils/formatting';
+
+import { Divider, Header } from 'semantic-ui-react';
+
 import Menu from './Menu';
 
 @screen

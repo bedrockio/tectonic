@@ -1,5 +1,5 @@
 import React from 'react';
-import { Divider, Segment, Header, Statistic, Table, Message, Button, Grid } from 'semantic-ui-react';
+import { Divider, Segment, Grid } from 'semantic-ui-react';
 
 export default ({ columns, children }) => {
   return (
@@ -10,7 +10,9 @@ export default ({ columns, children }) => {
           <Grid columns={columns}>
             <Grid.Row>
               {children.map((child) => {
-                return <Grid.Column>{child}</Grid.Column>;
+                return (
+                  <Grid.Column key={`${child.toString() + Math.floor(Math.random() * 42000)}`}>{child}</Grid.Column>
+                );
               })}
             </Grid.Row>
           </Grid>
