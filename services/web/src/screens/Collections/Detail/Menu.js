@@ -21,6 +21,7 @@ export default ({ collection, onSave }) => {
         <Menu.Item name="Overview" to={`/collections/${collection.id}`} as={NavLink} exact />
         {/* --- Generator: menus */}
         <Menu.Item name="Batches" to={`/collections/${collection.id}/batches`} as={NavLink} exact />
+        <Menu.Item name="Stats" to={`/collections/${collection.id}/stats`} as={NavLink} exact />
         {/* --- Generator: end */}
       </Menu>
       <Divider hidden />
