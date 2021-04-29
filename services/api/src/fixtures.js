@@ -2,7 +2,7 @@ const { User, Collection, Category, Policy } = require('./models');
 const config = require('@bedrockio/config');
 // const { storeUploadedFile } = require('./utils/uploads');
 const { logger } = require('@bedrockio/instrumentation');
-const { ensureCollectionIndex, ensureAlias, getCollectionIndex } = require('./lib/analytics');
+const { ensureCollectionIndex, ensureAlias, getCollectionIndex, deleteIndex } = require('./lib/analytics');
 const { createPolicyToken } = require('./lib/tokens');
 
 const adminConfig = {
@@ -42,6 +42,7 @@ const createFixtures = async () => {
     description: 'POS system purchases',
     categories: [demoCategory, barCategory],
   });
+
   await ensureCollectionIndex(collection.id);
   await ensureAlias(getCollectionIndex(collection.id), 'purchases');
   //const events = loadJsonStreamFile(__dirname + './routes/policy/__tests__/fixtures/bar-purchases.ndjson');
@@ -53,6 +54,7 @@ const createFixtures = async () => {
     description: 'MongoDB EVSE controller data',
     categories: [demoCategory, evseCategory],
   });
+
   await ensureCollectionIndex(collection2.id);
   await ensureAlias(getCollectionIndex(collection2.id), 'controllers');
 
@@ -75,6 +77,7 @@ const createFixtures = async () => {
     description: 'MongoDB EVSE meter value event data',
     categories: [demoCategory, evseCategory],
   });
+
   await ensureCollectionIndex(collection3.id);
   await ensureAlias(getCollectionIndex(collection3.id), 'metervalues');
 

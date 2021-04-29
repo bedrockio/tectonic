@@ -4,6 +4,8 @@ const { logger } = require('@bedrockio/instrumentation');
 const { initialize } = require('../../src/utils/database');
 const config = require('@bedrockio/config');
 const { createFixtures } = require('../../src/fixtures');
+const { getCollectionIndex, deleteIndex } = require('../../src/lib/analytics');
+const { Collection } = require('../../src/models');
 const readline = require('readline');
 
 const ENV_NAME = config.get('ENV_NAME');
@@ -24,6 +26,14 @@ function prompt(message) {
   });
 }
 
+async function dropCollectionIndex(collectionName) {
+  const collection = await Collection.findOne({ name: collectionName });
+  if (collection) {
+    const index = getCollectionIndex(collection.id);
+    await deleteIndex(index);
+  }
+}
+
 async function run() {
   if (!allowedEnvironments.includes(ENV_NAME)) {
     throw new Error(`Not allowed in ENV_NAME other than ${allowedEnvironments.join(', ')} (ENV_NAME=${ENV_NAME})`);
@@ -41,6 +51,10 @@ async function run() {
     throw new Error('Aborted');
   }
   const db = await initialize();
+  logger.info('Deleting ES indexes...');
+  await dropCollectionIndex('evse-controllers');
+  await dropCollectionIndex('evse-metervalues');
+  await dropCollectionIndex('bat-purchases');
   logger.info(`Dropping database...`);
   await db.dropDatabase();
   const result = await createFixtures();
