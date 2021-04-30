@@ -37,32 +37,25 @@ docker run --name mongo -d -p 27017:27017 -v /root/data:/data/db mongo:4.4.4
 docker run --name elasticsearch -d -p 9200:9200 -p 9300:9300 -e "discovery.type=single-node" -v /root/esdata:/usr/share/elasticsearch/data elasticsearch:7.9.3
 ```
 
-### 3) Load fixtures
-
-```bash
-cd services/api
-./scripts/fixtures/load
-
-# Reload with:
-# ./scripts/fixtures/reload
-```
-
-### 4) Start API service
+### 3) Start API service
 
 ```bash
 cd services/api
 yarn install
 yarn start
+
+# Note: Reload fixtures with:
+# ./scripts/fixtures/reload
 ```
 
-### 5) Start Elasticsearch Pubsub sink worker
+### 4) Start Elasticsearch Pubsub sink worker
 
 ```bash
 cd services/api
 yarn elasticsearch-sink:start
 ```
 
-### 6) Start Web service
+### 5) Start Web service
 
 ```bash
 cd services/web
@@ -70,14 +63,14 @@ yarn install
 yarn start
 ```
 
-### 7) Publish events for the 3 collection fixtures (`bar-purchases`, `evse-controllers` and `evse-metervalues`):
+### 6) Publish events for the 3 collection fixtures (`bar-purchases`, `evse-controllers` and `evse-metervalues`):
 
 ```bash
 cd services/api
 node scripts/publish-fixture-events.js
 ```
 
-### 8) Check Dashboard Url
+### 7) Check Dashboard Url
 
 Login with `admin@tectonic.io`:`tectonic.now` at [http://localhost:2200](http://localhost:2200)
 
