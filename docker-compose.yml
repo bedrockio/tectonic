@@ -52,6 +52,17 @@ services:
     ports:
       - 27017:27017
 
+  elasticsearch:
+    image: elasticsearch:7.9.3
+    container_name: elasticsearch
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    volumes:
+      - ./data/elasticsearch:/usr/share/elasticsearch/data
+    environment:
+      - "discovery.type=single-node"
+
   pubsub:
     build:
       context: ./services/pubsub-emulator
