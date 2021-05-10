@@ -2,14 +2,29 @@ version: "3.7"
 
 services:
   api:
-    command: ["./scripts/wait-for-it.sh", "mongo:27017", "--", "yarn", "start"]
+    command:       [
+      "./scripts/wait-for-it.sh",
+      "mongo:27017",
+      "--",
+      "./scripts/wait-for-it.sh",
+      "elasticsearch:9200",
+      "--",
+      "./scripts/wait-for-it.sh",
+      "pubsub:9200",
+      "--",
+      "yarn",
+      "start:production", # producion required to overwrite PUBSUB_EMULATOR_HOST
+    ]
     environment:
+      - MOCK_EMAIL=true
       - MONGO_URI=mongodb://mongo/tectonic_dev
+      - PUBSUB_EMULATOR_HOST=pubsub:8200
+      - ELASTICSEARCH_URI=http://elasticsearch:9200
     build:
       context: ./services/api
       dockerfile: Dockerfile
       args:
-        NODE_ENV: development
+        ENV_NAME: development
     volumes:
       - ./services/api/src:/service/src
       - ./services/api/emails:/service/emails
@@ -21,8 +36,12 @@ services:
       - "2300:2300"
     links:
       - mongo
+      - pubsub
+      - elasticsearch
     depends_on:
       - mongo
+      - pubsub
+      - elasticsearch
 
   web:
     command: ["yarn", "start"]
@@ -30,7 +49,7 @@ services:
       context: ./services/web
       dockerfile: Dockerfile
       args:
-        NODE_ENV: development
+        ENV_NAME: development
     volumes:
       - ./services/web/src:/service/src
     ports:
@@ -48,7 +67,7 @@ services:
       - MONGO_DATA_DIR=/data/db
       - MONGO_LOG_DIR=/dev/null
     volumes:
-      - ./data/db:/data/db
+      - db-data:/data/db
     ports:
       - 27017:27017
 
@@ -58,3 +77,18 @@ services:
       dockerfile: Dockerfile
     ports:
       - "8200:8200"
+
+  elasticsearch:
+    image: elasticsearch:7.9.3
+    container_name: elasticsearch
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    volumes:
+      - es-data:/usr/share/elasticsearch/data
+    environment:
+      - "discovery.type=single-node"
+
+volumes:
+  db-data:
+  es-data:
