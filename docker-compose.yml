@@ -20,6 +20,7 @@ services:
       - MONGO_URI=mongodb://mongo/tectonic_dev
       - PUBSUB_EMULATOR_HOST=pubsub:8200
       - ELASTICSEARCH_URI=http://elasticsearch:9200
+      - GOOGLE_CLOUD_PROJECT=tectonic
     build:
       context: ./services/api
       dockerfile: Dockerfile
