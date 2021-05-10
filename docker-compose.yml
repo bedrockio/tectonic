@@ -2,19 +2,20 @@ version: "3.7"
 
 services:
   api:
-    command:       [
-      "./scripts/wait-for-it.sh",
-      "mongo:27017",
-      "--",
-      "./scripts/wait-for-it.sh",
-      "elasticsearch:9200",
-      "--",
-      "./scripts/wait-for-it.sh",
-      "pubsub:9200",
-      "--",
-      "yarn",
-      "start:production", # producion required to overwrite PUBSUB_EMULATOR_HOST
-    ]
+    command:
+      [
+        "./scripts/wait-for-it.sh",
+        "mongo:27017",
+        "--",
+        "./scripts/wait-for-it.sh",
+        "elasticsearch:9200",
+        "--",
+        "./scripts/wait-for-it.sh",
+        "pubsub:9200",
+        "--",
+        "yarn",
+        "start:production", # producion required to overwrite PUBSUB_EMULATOR_HOST
+      ]
     environment:
       - MOCK_EMAIL=true
       - MONGO_URI=mongodb://mongo/tectonic_dev
@@ -44,20 +45,21 @@ services:
       - pubsub
       - elasticsearch
 
-api-elasticsearch-worker:
-    command:       [
-      "./scripts/wait-for-it.sh",
-      "mongo:27017",
-      "--",
-      "./scripts/wait-for-it.sh",
-      "elasticsearch:9200",
-      "--",
-      "./scripts/wait-for-it.sh",
-      "pubsub:9200",
-      "--",
-      "yarn",
-      "elasticsearch-sink:start:production", # producion required to overwrite PUBSUB_EMULATOR_HOST
-    ]
+  api-elasticsearch-worker:
+    command:
+      [
+        "./scripts/wait-for-it.sh",
+        "mongo:27017",
+        "--",
+        "./scripts/wait-for-it.sh",
+        "elasticsearch:9200",
+        "--",
+        "./scripts/wait-for-it.sh",
+        "pubsub:9200",
+        "--",
+        "yarn",
+        "elasticsearch-sink:start:production", # producion required to overwrite PUBSUB_EMULATOR_HOST
+      ]
     environment:
       - MOCK_EMAIL=true
       - MONGO_URI=mongodb://mongo/tectonic_dev
