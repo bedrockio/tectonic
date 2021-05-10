@@ -12,6 +12,7 @@
     "start": "nodemon -w src --exec \"MOCK_EMAIL=true PUBSUB_EMULATOR_HOST=localhost:8200 node src/index.js\"",
     "start:production": "node src/index",
     "elasticsearch-sink:start": "nodemon -w src --exec \"PUBSUB_EMULATOR_HOST=localhost:8200 node src/workers/elasticsearch-sink.js\"",
+    "elasticsearch-sink:start:production": "node src/workers/elasticsearch-sink.js",
     "docs": "node scripts/generate-openapi",
     "emails": "node emails/build",
     "lint": "eslint src scripts",

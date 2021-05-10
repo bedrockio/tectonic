@@ -44,6 +44,47 @@ services:
       - pubsub
       - elasticsearch
 
+api-elasticsearch-worker:
+    command:       [
+      "./scripts/wait-for-it.sh",
+      "mongo:27017",
+      "--",
+      "./scripts/wait-for-it.sh",
+      "elasticsearch:9200",
+      "--",
+      "./scripts/wait-for-it.sh",
+      "pubsub:9200",
+      "--",
+      "yarn",
+      "elasticsearch-sink:start:production", # producion required to overwrite PUBSUB_EMULATOR_HOST
+    ]
+    environment:
+      - MOCK_EMAIL=true
+      - MONGO_URI=mongodb://mongo/tectonic_dev
+      - PUBSUB_EMULATOR_HOST=pubsub:8200
+      - ELASTICSEARCH_URI=http://elasticsearch:9200
+      - GOOGLE_CLOUD_PROJECT=tectonic
+    build:
+      context: ./services/api
+      dockerfile: Dockerfile.elasticsearch-sink
+      args:
+        ENV_NAME: development
+    volumes:
+      - ./services/api/src:/service/src
+      - ./services/api/emails:/service/emails
+      - ./services/api/fixtures:/service/fixtures
+      - ./services/api/scripts:/service/scripts
+      - ./services/api/.env:/service/.env
+      - ./services/api/openapi:/service/openapi
+    links:
+      - mongo
+      - pubsub
+      - elasticsearch
+    depends_on:
+      - mongo
+      - pubsub
+      - elasticsearch
+
   web:
     command: ["yarn", "start"]
     build:
