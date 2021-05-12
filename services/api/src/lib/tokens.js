@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-const config = require('@bedrockio/config');
+const { secrets } = require('./secrets');
 
 const expiresIn = {
   temporary: '1d',
@@ -9,11 +9,6 @@ const expiresIn = {
   policy: '1w',
 };
 
-const secrets = {
-  user: config.get('JWT_SECRET'),
-  policy: config.get('POLICY_JWT_SECRET'),
-};
-
 function createUserToken(user) {
   return jwt.sign(
     {
@@ -21,9 +16,7 @@ function createUserToken(user) {
       type: 'user',
     },
     secrets.user,
-    {
-      expiresIn: expiresIn.regular,
-    }
+    { expiresIn: expiresIn.regular }
   );
 }
 
@@ -34,9 +27,7 @@ function createPolicyToken(policy) {
       type: 'policy',
     },
     secrets.policy,
-    {
-      expiresIn: expiresIn.policy,
-    }
+    { expiresIn: expiresIn.policy }
   );
 }
 
@@ -47,9 +38,7 @@ function createUserLastingToken(user) {
       type: 'user',
     },
     secrets.user,
-    {
-      expiresIn: expiresIn.lasting,
-    }
+    { expiresIn: expiresIn.lasting }
   );
 }
 

@@ -1,11 +1,6 @@
 const jwt = require('jsonwebtoken');
-const config = require('@bedrockio/config');
 const mongoose = require('mongoose');
-
-const secrets = {
-  user: config.get('JWT_SECRET'),
-  policy: config.get('POLICY_JWT_SECRET'),
-};
+const { secrets } = require('./../secrets');
 
 function getToken(ctx) {
   let token;
