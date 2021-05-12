@@ -49,11 +49,6 @@ export default class Header extends React.Component {
                       Users
                     </Dropdown.Item>
                   </Protected>
-                  <Protected endpoint="events">
-                    <Dropdown.Item as={Link} to="/invites">
-                      Invites
-                    </Dropdown.Item>
-                  </Protected>
                   <Dropdown.Item as={Link} to="/logout">
                     Log Out
                   </Dropdown.Item>

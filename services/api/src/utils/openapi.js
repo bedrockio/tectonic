@@ -138,12 +138,8 @@ function expandOpenApi(definitions) {
   return {
     openapi: '3.0.3',
     info: {
-      title: `${config.get('APP_NAME')} API`,
+      title: `Tectonic API`,
       version: '1',
-      contact: {
-        url: config.get('APP_URL'),
-        email: config.get('APP_SUPPORT_EMAIL'),
-      },
     },
     paths: allPaths,
   };

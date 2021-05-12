@@ -18,8 +18,6 @@ See http://localhost:2200/docs for full documentation on this API (requires runn
 - `src/models` - Mongoose ORM models (code and JSON) - [Models Documentation](./src/models)
 - `src/app.js` - Entrypoint into API (does not bind, so can be used in unit tests)
 - `src/index.js` - Launch script for the API
-- `emails/dist` - Prebuild emails templates (dont modify => modify emails/src and run `yarn emails`)
-- `emails/src` - Email templates
 - `scripts` - Scripts and jobs
 
 ## Install Dependencies
@@ -63,12 +61,10 @@ All configuration is done using environment variables. The default values in `.e
 - `ADMIN_NAME` - Default dashboard admin user name `admin`
 - `ADMIN_EMAIL` - Default dashboard admin user `admin@tectonic.io`
 - `ADMIN_PASSWORD` - Default dashboard admin password `[change me]`
-- `APP_NAME` - Default product name to be used in emails `Tectonic`
-- `APP_URL` - URL for app defaults to `http://localhost:2200`
 - `POSTMARK_FROM` - Reply email address `no-reply@tectonic.io`
 - `POSTMARK_APIKEY` - APIKey for Postmark `[change me]`
-- `UPLOADS_STORE` - Method for uploads. `local` or `gcs` (Google Cloud Storage)
-- `UPLOADS_GCS_BUCKET` - GCS bucket for uploads
+- `BATCHES_STORE` - Method for batches storage. `local` or `gcs` (Google Cloud Storage)
+- `BATCHES_GCS_BUCKET` - GCS bucket for batches
 - `SENTRY_DSN` - Sentry error monitoring credentials
 
 ## Building the Container
@@ -134,14 +130,6 @@ router
       };
     }
   );
-```
-
-## Updating E-Mail Templates
-
-E-mail templates can be found in `emails/src`. When changes are made, run the following command to optimize the emails for mail readers:
-
-```
-yarn emails
 ```
 
 ## Logging

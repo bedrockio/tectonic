@@ -9,14 +9,10 @@ COPY yarn.lock /service/yarn.lock
 RUN apk add --update bash curl;
 RUN cd /service; yarn install --frozen-lockfile;
 
-
 # Copy app source
 COPY . /service
 
 # Set work directory to /api
 WORKDIR /service
-
-# Needed for Gcloud Storage resumable file uploads
-RUN mkdir -p /root/.config
 
 CMD ["./scripts/jobs-entrypoint.sh"]
