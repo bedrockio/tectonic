@@ -46,6 +46,23 @@ router
       data: { ...collection.toObject(), mapping },
     };
   })
+  .get('/', async (ctx) => {
+    const { limit = 100 } = ctx.request.query;
+    const query = {
+      deletedAt: { $exists: false },
+    };
+    const data = await Collection.find(query)
+      .sort({ ['createdAt']: -1 })
+      .limit(parseInt(limit));
+    const total = await Collection.countDocuments(query);
+    ctx.body = {
+      data,
+      meta: {
+        total,
+        limit,
+      },
+    };
+  })
   .post(
     '/search',
     validate({
