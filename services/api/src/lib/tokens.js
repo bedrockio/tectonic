@@ -4,9 +4,8 @@ const { secrets } = require('./secrets');
 const expiresIn = {
   temporary: '1d',
   regular: '30d',
-  invite: '1d',
-  lasting: '1y',
-  policy: '1w',
+  access: '1w',
+  application: '1y',
 };
 
 function createUserToken(user) {
@@ -20,30 +19,16 @@ function createUserToken(user) {
   );
 }
 
-function createPolicyToken(policy) {
-  return jwt.sign(
-    {
-      policyId: policy._id,
-      type: 'policy',
-    },
-    secrets.policy,
-    { expiresIn: expiresIn.policy }
-  );
-}
+function createCredentialToken(credential) {
+  const { type, _id: credentialId } = credential;
+  if (!['access', `application`].includes(type)) {
+    return null;
+  }
 
-function createUserLastingToken(user) {
-  return jwt.sign(
-    {
-      userId: user._id,
-      type: 'user',
-    },
-    secrets.user,
-    { expiresIn: expiresIn.lasting }
-  );
+  return jwt.sign({ credentialId, type }, secrets[type], { expiresIn: expiresIn[type] });
 }
 
 module.exports = {
   createUserToken,
-  createPolicyToken,
-  createUserLastingToken,
+  createCredentialToken,
 };

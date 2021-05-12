@@ -25,12 +25,8 @@ router
     }),
     async (ctx) => {
       const policy = await AccessPolicy.create(ctx.request.body);
-      const token = createPolicyToken(policy);
       ctx.body = {
-        data: {
-          policy,
-          token,
-        },
+        data: policy,
       };
     }
   )
@@ -40,13 +36,6 @@ router
 
     ctx.body = {
       data: { ...policy.toObject(), token },
-    };
-  })
-  .get('/:policyId/token', async (ctx) => {
-    const { policy } = await ctx.state;
-    const token = createPolicyToken(policy);
-    ctx.body = {
-      data: token,
     };
   })
   .post(
