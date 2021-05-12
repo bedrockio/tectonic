@@ -1,7 +1,7 @@
 const Router = require('@koa/router');
 const Joi = require('@hapi/joi');
 const validate = require('../utils/middleware/validate');
-const { authenticate, fetchUser } = require('../utils/middleware/authenticate');
+const { authenticate, fetchUser } = require('../lib/middleware/authenticate');
 const { requirePermissions } = require('../utils/middleware/permissions');
 const { terms, timeSeries, search, fetch, stats, cardinality } = require('../lib/analytics');
 
@@ -30,7 +30,7 @@ function interpretError(error) {
 }
 
 router
-  .use(authenticate({ type: 'user' }))
+  .use(authenticate())
   .use(fetchUser)
   .use(requirePermissions({ endpoint: 'analytics', permission: 'read', scope: 'global' }))
   .post(

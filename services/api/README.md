@@ -106,7 +106,7 @@ The API is "multi tenant ready" and can be modified to accommodate specific tena
 Example Create API call with multi tenancy enabled:
 
 ```js
-const { authenticate, fetchUser } = require('../utils/middleware/authenticate');
+const { authenticate, fetchUser } = require('../lib/middleware/authenticate');
 const { requirePermissions } = require('../utils/middleware/permissions');
 
 router

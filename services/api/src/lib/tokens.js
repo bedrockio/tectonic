@@ -14,26 +14,11 @@ const secrets = {
   policy: config.get('POLICY_JWT_SECRET'),
 };
 
-function createUserTemporaryToken(claims, type) {
-  return jwt.sign(
-    {
-      ...claims,
-      type,
-      kid: 'user',
-    },
-    secrets.user,
-    {
-      expiresIn: expiresIn.temporary,
-    }
-  );
-}
-
 function createUserToken(user) {
   return jwt.sign(
     {
       userId: user._id,
       type: 'user',
-      kid: 'user',
     },
     secrets.user,
     {
@@ -47,7 +32,6 @@ function createPolicyToken(policy) {
     {
       policyId: policy._id,
       type: 'policy',
-      kid: 'policy',
     },
     secrets.policy,
     {
@@ -61,7 +45,6 @@ function createUserLastingToken(user) {
     {
       userId: user._id,
       type: 'user',
-      kid: 'user',
     },
     secrets.user,
     {
@@ -71,7 +54,6 @@ function createUserLastingToken(user) {
 }
 
 module.exports = {
-  createUserTemporaryToken,
   createUserToken,
   createPolicyToken,
   createUserLastingToken,

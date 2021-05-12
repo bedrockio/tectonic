@@ -1,7 +1,7 @@
 const Router = require('@koa/router');
 const Joi = require('@hapi/joi');
 const validate = require('../utils/middleware/validate');
-const { authenticate, fetchUser } = require('../utils/middleware/authenticate');
+const { authenticate } = require('../lib/middleware/authenticate');
 const { NotFoundError } = require('../utils/errors');
 const { Policy } = require('../models');
 const { createPolicyToken } = require('../lib/tokens');
@@ -9,8 +9,7 @@ const { createPolicyToken } = require('../lib/tokens');
 const router = new Router();
 
 router
-  .use(authenticate({ type: 'user' }))
-  .use(fetchUser)
+  .use(authenticate())
   .param('policyId', async (id, ctx, next) => {
     const policy = await Policy.findById(id);
     ctx.state.policy = policy;

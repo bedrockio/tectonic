@@ -41,7 +41,7 @@ async function checkCollectionAccess(ctx, next) {
 }
 
 router
-  .use(authenticate({ type: 'policy' }))
+  .use(authenticate())
   .use(fetchPolicy)
   .post(
     '/terms',

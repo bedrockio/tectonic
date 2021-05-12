@@ -1,7 +1,7 @@
 const Router = require('@koa/router');
 const Joi = require('@hapi/joi');
 const validate = require('../utils/middleware/validate');
-const { authenticate, fetchUser } = require('../utils/middleware/authenticate');
+const { authenticate } = require('../lib/middleware/authenticate');
 const { NotFoundError } = require('../utils/errors');
 const { Collection } = require('../models');
 const { ensureCollectionIndex, getMapping, getCollectionIndex } = require('../lib/analytics');
@@ -10,8 +10,7 @@ const { logger } = require('@bedrockio/instrumentation');
 const router = new Router();
 
 router
-  .use(authenticate({ type: 'user' }))
-  .use(fetchUser)
+  .use(authenticate())
   .param('collectionId', async (id, ctx, next) => {
     const collection = await Collection.findById(id);
     ctx.state.collection = collection;
