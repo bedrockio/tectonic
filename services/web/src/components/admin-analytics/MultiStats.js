@@ -33,7 +33,7 @@ export default class MultiStats extends React.Component {
         };
         return request({
           method: 'POST',
-          path: fetch.cardinality ? '/1/analytics/cardinality' : '/1/analytics/stats',
+          path: fetch.cardinality ? '/1/admin-analytics/cardinality' : '/1/admin-analytics/stats',
           body,
         });
       })

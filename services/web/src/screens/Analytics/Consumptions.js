@@ -1,8 +1,8 @@
 import React from 'react';
 import { screen } from 'helpers';
 
-import Terms from 'components/analytics/Terms';
-import MultiTimeSeries from 'components/analytics/MultiTimeSeries';
+import Terms from 'components/admin-analytics/Terms';
+import MultiTimeSeries from 'components/admin-analytics/MultiTimeSeries';
 import MultiSeriesChart from 'components/visualizations/MultiSeriesChart';
 import DonutChart from 'components/visualizations/DonutChart';
 import Table from 'components/visualizations/Table';

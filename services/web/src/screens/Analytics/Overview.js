@@ -1,8 +1,8 @@
 import React from 'react';
 import { screen } from 'helpers';
 
-import TimeSeries from 'components/analytics/TimeSeries';
-import MultiStats from 'components/analytics/MultiStats';
+import TimeSeries from 'components/admin-analytics/TimeSeries';
+import MultiStats from 'components/admin-analytics/MultiStats';
 import Block from 'components/Block';
 import SeriesChart from 'components/visualizations/SeriesChart';
 

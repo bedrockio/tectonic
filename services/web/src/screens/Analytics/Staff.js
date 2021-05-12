@@ -1,7 +1,7 @@
 import React from 'react';
 import { screen } from 'helpers';
 
-import Terms from 'components/analytics/Terms';
+import Terms from 'components/admin-analytics/Terms';
 import DonutChart from 'components/visualizations/DonutChart';
 import Table from 'components/visualizations/Table';
 import Block from 'components/Block';

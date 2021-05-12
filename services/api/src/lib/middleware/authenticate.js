@@ -60,9 +60,9 @@ async function fetchUser(ctx, next) {
 
 async function fetchPolicy(ctx, next) {
   if (!ctx.state.authPolicy && ctx.state.jwt) {
-    const { Policy } = mongoose.models;
+    const { AccessPolicy } = mongoose.models;
     if (!ctx.state.jwt.policyId) ctx.throw(401, 'policyId is missing in associated token');
-    ctx.state.authPolicy = await Policy.findById(ctx.state.jwt.policyId);
+    ctx.state.authPolicy = await AccessPolicy.findById(ctx.state.jwt.policyId);
     if (!ctx.state.authPolicy) ctx.throw(401, 'policy associated to token could not not be found');
   }
   await next();

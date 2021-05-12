@@ -3,12 +3,13 @@ import { request } from 'utils/api';
 import { Message } from 'semantic-ui-react';
 import { hasDifferentParams } from 'utils/visualizations';
 
-export default class MultiStats extends React.Component {
+export default class TimeSeries extends React.Component {
   state = {
     data: null,
     loading: true,
     error: null,
   };
+
   componentDidMount() {
     this.fetch();
   }
@@ -21,18 +22,21 @@ export default class MultiStats extends React.Component {
 
   fetch() {
     const { fetches } = this.props;
+    //
     Promise.all(
       fetches.map((fetch) => {
-        const { index, filter, fields } = fetch;
-
+        const { index, operation, interval, field, dateField, filter } = fetch;
         const body = {
           index,
-          fields,
+          operation,
+          interval,
+          field,
+          dateField,
           filter,
         };
         return request({
           method: 'POST',
-          path: '/1/analytics/cardinality',
+          path: '/1/admin-analytics/time-series',
           body,
         });
       })

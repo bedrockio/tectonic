@@ -3,13 +3,12 @@ import { request } from 'utils/api';
 import { Message } from 'semantic-ui-react';
 import { hasDifferentParams } from 'utils/visualizations';
 
-export default class Cardinality extends React.Component {
+export default class Stats extends React.Component {
   state = {
     data: null,
     loading: true,
     error: null,
   };
-
   componentDidMount() {
     this.fetch();
   }
@@ -29,7 +28,7 @@ export default class Cardinality extends React.Component {
     };
     request({
       method: 'POST',
-      path: '/1/analytics/cardinality',
+      path: '/1/admin-analytics/stats',
       body,
     })
       .then((data) => {

@@ -46,7 +46,7 @@ export default class PolicyDetail extends React.Component {
       });
       const { data } = await request({
         method: 'GET',
-        path: `/1/policies/${id}`,
+        path: `/1/access-policies/${id}`,
       });
       this.setState({
         policy: data,
@@ -67,21 +67,14 @@ export default class PolicyDetail extends React.Component {
     } else if (error) {
       return (
         <React.Fragment>
-          <Breadcrumbs
-            link={<Link to="/policies">Policies</Link>}
-            active="Not Found"
-          />
+          <Breadcrumbs link={<Link to="/access-policies">Access Policies</Link>} active="Not Found" />
           <Header content="Sorry that policy wasn't found." />
         </React.Fragment>
       );
     }
     return (
       <Switch>
-        <Route
-          exact
-          path="/policies/:id"
-          render={(props) => <Overview {...props} {...this.state} />}
-        />
+        <Route exact path="/access-policies/:id" render={(props) => <Overview {...props} {...this.state} />} />
         {/* --- Generator: routes */}
         {/* --- Generator: end */}
       </Switch>

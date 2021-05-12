@@ -1,6 +1,6 @@
 import React from 'react';
 import { screen } from 'helpers';
-import MultiStats from 'components/analytics/MultiStats';
+import MultiStats from 'components/admin-analytics/MultiStats';
 
 import { numberWithCommas } from 'utils/formatting';
 

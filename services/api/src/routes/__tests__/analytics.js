@@ -6,10 +6,10 @@ const {
   bulkIndexBatchEvents,
   bulkErrorLog,
   getCollectionIndex,
-} = require('../../../lib/analytics');
-const { setupDb, teardownDb, request } = require('../../../utils/testing');
-const { Policy, Collection } = require('../../../models');
-const { createPolicyToken } = require('../../../lib/tokens');
+} = require('../../lib/analytics');
+const { setupDb, teardownDb, request } = require('../../utils/testing');
+const { AccessPolicy, Collection } = require('../../models');
+const { createPolicyToken } = require('../../lib/tokens');
 const mongoose = require('mongoose');
 
 jest.setTimeout(40 * 1000);
@@ -58,28 +58,28 @@ describe('/1/analytics', () => {
     it('should allow analytics search for correct policy', async () => {
       expect(true).toBe(true);
       const collectionId = testCollection.id;
-      const policy = await Policy.create({
+      const policy = await AccessPolicy.create({
         collections: [{ collectionId }],
       });
       const headers = { Authorization: `Bearer ${createPolicyToken(policy)}` };
 
-      const response = await request('POST', '/1/policy/analytics/search', { collectionId }, { headers });
+      const response = await request('POST', '/1/analytics/search', { collectionId }, { headers });
       expect(response.status).toBe(200);
       expect(response.body.hits.hits.length).toBe(10);
     });
     it('should deny analytics for incorrect policy', async () => {
-      const policy = await Policy.create({
+      const policy = await AccessPolicy.create({
         collections: [{ collectionId: new mongoose.Types.ObjectId() }],
       });
       const headers = { Authorization: `Bearer ${createPolicyToken(policy)}` };
       const collectionId = testCollection.id;
-      const response = await request('POST', '/1/policy/analytics/search', { collectionId }, { headers });
+      const response = await request('POST', '/1/analytics/search', { collectionId }, { headers });
       expect(response.status).toBe(401);
     });
     it('should allow scoped analytics search', async () => {
       expect(true).toBe(true);
       const collectionId = testCollection.id;
-      const policy = await Policy.create({
+      const policy = await AccessPolicy.create({
         collections: [
           {
             collectionId,
@@ -91,14 +91,14 @@ describe('/1/analytics', () => {
       });
       const headers = { Authorization: `Bearer ${createPolicyToken(policy)}` };
 
-      const response = await request('POST', '/1/policy/analytics/search', { collectionId }, { headers });
+      const response = await request('POST', '/1/analytics/search', { collectionId }, { headers });
       expect(response.status).toBe(200);
       expect(response.body.hits.hits.length).toBe(6); // ignores 4 out of 10
     });
     it('should allow multiple scoped fields analytics search', async () => {
       expect(true).toBe(true);
       const collectionId = testCollection.id;
-      const policy = await Policy.create({
+      const policy = await AccessPolicy.create({
         collections: [
           {
             collectionId,
@@ -111,14 +111,14 @@ describe('/1/analytics', () => {
       });
       const headers = { Authorization: `Bearer ${createPolicyToken(policy)}` };
 
-      const response = await request('POST', '/1/policy/analytics/search', { collectionId }, { headers });
+      const response = await request('POST', '/1/analytics/search', { collectionId }, { headers });
       expect(response.status).toBe(200);
       expect(response.body.hits.hits.length).toBe(5); // ignores 'method': 'BogusValues'
     });
     it('should allow analytics search with multiple collections policy', async () => {
       expect(true).toBe(true);
       const collectionId = testCollection.id;
-      const policy = await Policy.create({
+      const policy = await AccessPolicy.create({
         collections: [
           {
             collectionId: new mongoose.Types.ObjectId(),
@@ -134,7 +134,7 @@ describe('/1/analytics', () => {
       });
       const headers = { Authorization: `Bearer ${createPolicyToken(policy)}` };
 
-      const response = await request('POST', '/1/policy/analytics/search', { collectionId }, { headers });
+      const response = await request('POST', '/1/analytics/search', { collectionId }, { headers });
       expect(response.status).toBe(200);
       expect(response.body.hits.hits.length).toBe(5); // ignores 'method': 'BogusValues'
     });

@@ -3,7 +3,7 @@ import { request } from 'utils/api';
 import { Message } from 'semantic-ui-react';
 import { hasDifferentParams } from 'utils/visualizations';
 
-export default class Stats extends React.Component {
+export default class Terms extends React.Component {
   state = {
     data: null,
     loading: true,
@@ -20,15 +20,31 @@ export default class Stats extends React.Component {
   }
 
   fetch() {
-    const { index, fields, filter } = this.props;
+    const {
+      index,
+      aggField,
+      aggFieldOrder,
+      field,
+      operation,
+      filter,
+      includeTopHit,
+      referenceFetch,
+      termsSize,
+    } = this.props;
     const body = {
       index,
-      fields,
+      aggField,
+      aggFieldOrder,
+      field,
+      operation,
       filter,
+      includeTopHit,
+      referenceFetch,
+      termsSize,
     };
     request({
       method: 'POST',
-      path: '/1/analytics/stats',
+      path: '/1/admin-analytics/terms',
       body,
     })
       .then((data) => {

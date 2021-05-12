@@ -62,11 +62,7 @@ function determineInterval(from, to) {
 
 function formatInterval(interval) {
   if (interval === '1m') return '1 minute';
-  return interval
-    .replace(/m/, ' minutes')
-    .replace(/h/, ' hour')
-    .replace(/w/, ' week')
-    .replace(/d/, ' day');
+  return interval.replace(/m/, ' minutes').replace(/h/, ' hour').replace(/w/, ' week').replace(/d/, ' day');
 }
 
 export default class TimeSelector extends React.Component {
@@ -88,7 +84,7 @@ export default class TimeSelector extends React.Component {
     };
     request({
       method: 'POST',
-      path: '/1/analytics/stats',
+      path: '/1/admin-analytics/stats',
       body,
     })
       .then((data) => {
@@ -127,10 +123,7 @@ export default class TimeSelector extends React.Component {
       <div>
         <Menu attached="top">
           <Menu.Menu position="right">
-            <Dropdown
-              item
-              text={`Resolution: ${formatInterval(interval)}`}
-              simple>
+            <Dropdown item text={`Resolution: ${formatInterval(interval)}`} simple>
               <Dropdown.Menu>
                 {validIntervals.map((validInterval) => {
                   return (

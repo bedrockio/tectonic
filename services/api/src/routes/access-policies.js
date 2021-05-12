@@ -3,7 +3,7 @@ const Joi = require('@hapi/joi');
 const validate = require('../utils/middleware/validate');
 const { authenticate } = require('../lib/middleware/authenticate');
 const { NotFoundError } = require('../utils/errors');
-const { Policy } = require('../models');
+const { AccessPolicy } = require('../models');
 const { createPolicyToken } = require('../lib/tokens');
 
 const router = new Router();
@@ -11,7 +11,7 @@ const router = new Router();
 router
   .use(authenticate())
   .param('policyId', async (id, ctx, next) => {
-    const policy = await Policy.findById(id);
+    const policy = await AccessPolicy.findById(id);
     ctx.state.policy = policy;
     if (!policy) {
       throw new NotFoundError();
@@ -21,10 +21,10 @@ router
   .post(
     '/',
     validate({
-      body: Policy.getValidator(),
+      body: AccessPolicy.getValidator(),
     }),
     async (ctx) => {
-      const policy = await Policy.create(ctx.request.body);
+      const policy = await AccessPolicy.create(ctx.request.body);
       const token = createPolicyToken(policy);
       ctx.body = {
         data: {
@@ -78,12 +78,12 @@ router
           $options: 'i',
         };
       }
-      const data = await Policy.find(query)
+      const data = await AccessPolicy.find(query)
         .sort({ [sort.field]: sort.order === 'desc' ? -1 : 1 })
         .skip(skip)
         .limit(limit);
 
-      const total = await Policy.countDocuments(query);
+      const total = await AccessPolicy.countDocuments(query);
       ctx.body = {
         data,
         meta: {
@@ -97,7 +97,7 @@ router
   .patch(
     '/:policyId',
     validate({
-      body: Policy.getPatchValidator(),
+      body: AccessPolicy.getPatchValidator(),
     }),
     async (ctx) => {
       const policy = ctx.state.policy;

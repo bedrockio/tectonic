@@ -3,14 +3,15 @@ import { request } from 'utils/api';
 import { Message } from 'semantic-ui-react';
 import { hasDifferentParams } from 'utils/visualizations';
 
-export default class Terms extends React.Component {
+export default class TimeSeries extends React.Component {
   state = {
     data: null,
     loading: true,
     error: null,
   };
+
   componentDidMount() {
-    this.fetch();
+    this.fetch(this.props);
   }
 
   componentDidUpdate(prevProps) {
@@ -19,32 +20,19 @@ export default class Terms extends React.Component {
     }
   }
 
-  fetch() {
-    const {
-      index,
-      aggField,
-      aggFieldOrder,
-      field,
-      operation,
-      filter,
-      includeTopHit,
-      referenceFetch,
-      termsSize,
-    } = this.props;
+  fetch({ interval, filter }) {
+    const { index, operation, field, dateField } = this.props;
     const body = {
       index,
-      aggField,
-      aggFieldOrder,
-      field,
       operation,
+      interval,
+      field,
+      dateField,
       filter,
-      includeTopHit,
-      referenceFetch,
-      termsSize,
     };
     request({
       method: 'POST',
-      path: '/1/analytics/terms',
+      path: '/1/admin-analytics/time-series',
       body,
     })
       .then((data) => {

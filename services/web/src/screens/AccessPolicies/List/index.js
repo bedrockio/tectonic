@@ -17,7 +17,7 @@ export default class PolicyList extends React.Component {
   onDataNeeded = async (params) => {
     return await request({
       method: 'POST',
-      path: '/1/policies/search',
+      path: '/1/access-policies/search',
       body: params,
     });
   };
@@ -25,80 +25,50 @@ export default class PolicyList extends React.Component {
   render() {
     return (
       <SearchProvider onDataNeeded={this.onDataNeeded}>
-        {({
-          items: policies,
-          getSorted,
-          setSort,
-          filters,
-          setFilters,
-          reload,
-        }) => {
+        {({ items: accessPolicies, getSorted, setSort, filters, setFilters, reload }) => {
           return (
             <React.Fragment>
-              <Breadcrumbs active="Policies">
+              <Breadcrumbs active="Access Policies">
                 <Filters onSave={setFilters} filters={filters}>
                   {/* --- Generator: filters */}
                   <Filters.Text label="Name" name="name" />
                   {/* --- Generator: end */}
                 </Filters>
-                <EditPolicy
-                  trigger={<Button primary content="New Policy" icon="plus" />}
-                  onSave={reload}
-                />
+                <EditPolicy trigger={<Button primary content="New Policy" icon="plus" />} onSave={reload} />
               </Breadcrumbs>
               <Divider hidden />
-              {policies.length === 0 ? (
-                <Message>No policies created yet</Message>
+              {accessPolicies.length === 0 ? (
+                <Message>No access policies created yet</Message>
               ) : (
                 <Table celled sortable>
                   <Table.Header>
                     <Table.Row>
                       {/* --- Generator: list-header-cells */}
-                      <Table.HeaderCell
-                        width={10}
-                        onClick={() => setSort('name')}
-                        sorted={getSorted('name')}>
+                      <Table.HeaderCell width={10} onClick={() => setSort('name')} sorted={getSorted('name')}>
                         Name
                       </Table.HeaderCell>
                       {/* --- Generator: end */}
-                      <Table.HeaderCell
-                        onClick={() => setSort('createdAt')}
-                        sorted={getSorted('createdAt')}>
+                      <Table.HeaderCell onClick={() => setSort('createdAt')} sorted={getSorted('createdAt')}>
                         Created
-                        <HelpTip
-                          title="Created"
-                          text="This is the date and time the policy was created."
-                        />
+                        <HelpTip title="Created" text="This is the date and time the policy was created." />
                       </Table.HeaderCell>
-                      <Table.HeaderCell textAlign="center">
-                        Actions
-                      </Table.HeaderCell>
+                      <Table.HeaderCell textAlign="center">Actions</Table.HeaderCell>
                     </Table.Row>
                   </Table.Header>
                   <Table.Body>
-                    {policies.map((policy) => {
+                    {accessPolicies.map((policy) => {
                       return (
                         <Table.Row key={policy.id}>
                           {/* --- Generator: list-body-cells */}
                           <Table.Cell>
-                            <Link to={`/policies/${policy.id}`}>
-                              {policy.name}
-                            </Link>
+                            <Link to={`/access-policies/${policy.id}`}>{policy.name}</Link>
                           </Table.Cell>
                           {/* --- Generator: end */}
-                          <Table.Cell>
-                            {formatDateTime(policy.createdAt)}
-                          </Table.Cell>
+                          <Table.Cell>{formatDateTime(policy.createdAt)}</Table.Cell>
                           <Table.Cell textAlign="center">
                             <EditPolicy
                               policy={policy}
-                              trigger={
-                                <Button
-                                  style={{ marginLeft: '20px' }}
-                                  basic
-                                  icon="edit"
-                                />
-                              }
+                              trigger={<Button style={{ marginLeft: '20px' }} basic icon="edit" />}
                               onSave={reload}
                             />
                             <Confirm
@@ -110,7 +80,7 @@ export default class PolicyList extends React.Component {
                               onConfirm={async () => {
                                 await request({
                                   method: 'DELETE',
-                                  path: `/1/policies/${policy.id}`,
+                                  path: `/1/access-policies/${policy.id}`,
                                 });
                                 reload();
                               }}

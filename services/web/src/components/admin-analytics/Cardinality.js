@@ -3,7 +3,7 @@ import { request } from 'utils/api';
 import { Message } from 'semantic-ui-react';
 import { hasDifferentParams } from 'utils/visualizations';
 
-export default class TimeSeries extends React.Component {
+export default class Cardinality extends React.Component {
   state = {
     data: null,
     loading: true,
@@ -21,26 +21,17 @@ export default class TimeSeries extends React.Component {
   }
 
   fetch() {
-    const { fetches } = this.props;
-    //
-    Promise.all(
-      fetches.map((fetch) => {
-        const { index, operation, interval, field, dateField, filter } = fetch;
-        const body = {
-          index,
-          operation,
-          interval,
-          field,
-          dateField,
-          filter,
-        };
-        return request({
-          method: 'POST',
-          path: '/1/analytics/time-series',
-          body,
-        });
-      })
-    )
+    const { index, fields, filter } = this.props;
+    const body = {
+      index,
+      fields,
+      filter,
+    };
+    request({
+      method: 'POST',
+      path: '/1/admin-analytics/cardinality',
+      body,
+    })
       .then((data) => {
         this.setState({ data, error: null, loading: false });
       })
