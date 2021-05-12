@@ -23,12 +23,12 @@ export default class AnalyticsOverview extends React.Component {
           <MultiStats
             fetches={[
               {
-                index: 'purchases',
+                index: 'bar-purchases',
                 fields: ['event.id'],
                 cardinality: true,
               },
               {
-                index: 'purchases',
+                index: 'bar-purchases',
                 fields: ['event.consumption.price'],
               },
             ]}>
@@ -53,7 +53,7 @@ export default class AnalyticsOverview extends React.Component {
 
           <Block>
             <Header as="h4" content="Purchases over Time" textAlign="center" />
-            <TimeSeries index="purchases" operation="count" interval="1d" dateField="event.orderedAt">
+            <TimeSeries index="bar-purchases" operation="count" interval="1d" dateField="event.orderedAt">
               {(data) => {
                 return <SeriesChart data={data} height={250} bar valueField="count" />;
               }}
@@ -63,7 +63,7 @@ export default class AnalyticsOverview extends React.Component {
           <Block>
             <Header as="h4" content="Revenue over Time" textAlign="center" />
             <TimeSeries
-              index="purchases"
+              index="bar-purchases"
               operation="sum"
               field="event.consumption.price"
               interval="1w"
