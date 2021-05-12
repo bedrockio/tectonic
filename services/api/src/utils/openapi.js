@@ -1,5 +1,4 @@
 const fs = require('fs');
-const config = require('@bedrockio/config');
 const { logger } = require('@bedrockio/instrumentation');
 
 function getParamsFromValidationMiddleware(validationMiddleware, type) {
