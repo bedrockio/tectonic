@@ -7,7 +7,7 @@ echo "Welcome to the API CLI pod. All API code is available here." >> /service/.
 echo "" >> /service/.motd
 echo "Example commands:" >> /service/.motd
 echo "  export                                         # Check env variables" >> /service/.motd
-echo "  curl api:2300/1/status                         # See API status" >> /service/.motd
+echo "  curl api:3300/1/status                         # See API status" >> /service/.motd
 echo "  curl elasticsearch:9200/_cat/indices           # List Elasticsearch indices" >> /service/.motd
 echo "  curl elasticsearch:9200/_cluster/health | jq   # Elasticsearch cluster health" >> /service/.motd
 echo "  ./scripts/fixtures/load                        # Load DB fixtures" >> /service/.motd

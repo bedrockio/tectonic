@@ -73,7 +73,7 @@ node scripts/publish-fixture-events.js
 
 #### 7) Check Dashboard Url
 
-Login with `admin@tectonic.io`:`tectonic.now` at [http://localhost:2200](http://localhost:2200)
+Login with `admin@tectonic.io`:`tectonic.now` at [http://localhost:3200](http://localhost:3200)
 
 ## Quick Start
 
@@ -83,13 +83,13 @@ Using Docker Compose you can build and run all services and dependencies as foll
 docker-compose up
 ```
 
-Open the dashboard at http://localhost:2200/ - Admin login credentials can be seen in the API output.
+Open the dashboard at http://localhost:3200/ - Admin login credentials can be seen in the API output.
 
 ### API Documentation
 
 Full portal with examples:
 
-http://localhost:2200/docs/getting-started
+http://localhost:3200/docs/getting-started
 
 Code documentation:
 

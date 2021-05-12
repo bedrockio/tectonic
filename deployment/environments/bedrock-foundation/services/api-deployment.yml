@@ -39,20 +39,8 @@ spec:
               value: Bedrock.lake!
             - name: JWT_SECRET
               value: qOQ+Sh4tro5qBZEhSsWGoHd1t1kyjOQjfywqE7s8
-            - name: APP_DOMAIN
-              value: bedrock.foundation
-            - name: APP_URL
-              value: "https://tectonic.bedrock.foundation"
             - name: API_URL
               value: "https://tectonic-api.bedrock.foundation"
-            - name: POSTMARK_FROM
-              value: no-reply@tectonic.io
-            - name: POSTMARK_APIKEY
-              value: abc
-            - name: UPLOADS_STORE
-              value: gcs
-            - name: UPLOADS_GCS_BUCKET
-              value: bedrock-foundation-tectonic-uploads
             - name: BATCHES_STORE
               value: gcs
             - name: BATCHES_GCS_BUCKET
@@ -61,7 +49,7 @@ spec:
               value: debug
           ports:
             - name: http-server
-              containerPort: 2300
+              containerPort: 3300
           volumeMounts:
             - name: cache
               mountPath: /service/data
@@ -73,11 +61,11 @@ spec:
             failureThreshold: 2 # When a probe fails, Kubernetes will try failureThreshold times before giving up.
             httpGet:
               path: /1/status/mongodb
-              port: 2300
+              port: 3300
           livenessProbe: # liveness probes to know when to restart a container
             httpGet:
               path: /1/status/mongodb
-              port: 2300
+              port: 3300
             initialDelaySeconds: 20
             periodSeconds: 5
             timeoutSeconds: 2

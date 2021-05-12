@@ -40,7 +40,7 @@ The following command serves all HTML/JS/CSS and watches all changes to `src/*.j
 yarn start
 ```
 
-UI is running at [http://localhost:2200/](http://localhost:2200/)
+UI is running at [http://localhost:3200/](http://localhost:3200/)
 
 ## Configuration
 

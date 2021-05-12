@@ -4,7 +4,7 @@
 
 ## API Documentation
 
-See http://localhost:2200/docs for full documentation on this API (requires running the web interface).
+See http://localhost:3200/docs for full documentation on this API (requires running the web interface).
 
 ## Directory Structure
 
@@ -55,7 +55,7 @@ This command will automatically populate MongoDB fixtures when and empty DB is f
 All configuration is done using environment variables. The default values in `.env` can be overwritten using environment variables.
 
 - `BIND_HOST` - Host to bind to, defaults to `"0.0.0.0"`
-- `BIND_PORT` - Port to bind to, defaults to `2300`
+- `BIND_PORT` - Port to bind to, defaults to `3300`
 - `MONGO_URI` - MongoDB URI to connect to, defaults to `mongodb://localhost/tectonic_dev`
 - `JWT_SECRET` - JWT secret used for token signing and encryption, defaults to `[change me]`
 - `ADMIN_NAME` - Default dashboard admin user name `admin`
@@ -222,7 +222,7 @@ See [../../services/web](../../services/web) for more info on customizing docume
 ## CURL examples
 
 ```bash
-curl -s -X POST http://localhost:2300/1/events \
+curl -s -X POST http://localhost:3300/1/events \
 -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsInR5cGUiOiJ1c2VyIiwia2lkIjoidXNlciIsImlhdCI6MTYwMTg4ODEyOSwiZXhwIjoyNjQzMjg4OTI5fQ.50yZwfOMlyFcFZTWR1ptre1yHxwhR59U8PgPCd9ZcW8' \
 -H 'Content-Type: application/json' \
 -d '{"collectionId": "606078c674e2fb4edf19075b", "events":[{"test":"me", "type": "click", "occurredAt": "2020-10-12T12:17:01.341Z" }, {"test": "you", "field2": "additional", "type": "login", "occurredAt": "2020-10-12T12:17:01.341Z"}]}' | jq
