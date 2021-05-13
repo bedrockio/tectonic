@@ -19,8 +19,8 @@ function createUserToken(user) {
   );
 }
 
-function createCredentialToken(credential) {
-  const { type, _id: credentialId } = credential;
+function createCredentialToken(credential, type = 'access') {
+  const { _id: credentialId } = credential;
   if (!['access', `application`].includes(type)) {
     return null;
   }

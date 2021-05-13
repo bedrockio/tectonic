@@ -1,7 +1,7 @@
 const Router = require('@koa/router');
 const Joi = require('@hapi/joi');
 const validate = require('../utils/middleware/validate');
-const { authenticate, fetchPolicy } = require('../lib/middleware/authenticate');
+const { authenticate, fetchAccessCredential } = require('../lib/middleware/authenticate');
 const { terms, timeSeries, search, stats, cardinality, getCollectionIndex } = require('../lib/analytics');
 
 const router = new Router();
@@ -29,20 +29,34 @@ function interpretError(error) {
 }
 
 async function checkCollectionAccess(ctx, next) {
-  const { authPolicy } = ctx.state;
   const { collectionId } = ctx.request.body;
-  const collection = authPolicy.collections.find(({ collectionId: cid }) => collectionId == cid.toString());
-  const containsCollection = !!collection;
-  if (!containsCollection) {
-    ctx.throw(401, `policy has no access to collectionId: ${collectionId}`);
+  const { accessPolicy, scopeArgs } = ctx.state.authAccessCredential;
+  if (!accessPolicy || !accessPolicy.collections || !Array.isArray(accessPolicy.collections)) {
+    ctx.throw(401, `AccessCredential is missing valid accessPolicy`);
   }
-  ctx.state.policyCollection = collection;
+  const collection = accessPolicy.collections.find(({ collectionId: cid }) => collectionId == cid.toString());
+  if (!collection) {
+    ctx.throw(401, `AccessPolicy has no access to collectionId: ${collectionId}`);
+  }
+  collection.scope = collection.scope || {};
+  // check scopeParams
+  if (collection.scopeParams && collection.scopeParams.length != 0) {
+    for (const param of collection.scopeParams) {
+      if (!Object.keys(scopeArgs).includes(param)) {
+        ctx.throw(401, `Missing scopeArgs for policy scopeParams`);
+      }
+      // Add to scope
+      collection.scope[param] = scopeArgs[param];
+    }
+  }
+
+  ctx.state.accessPolicyCollection = collection;
   return next();
 }
 
 router
   .use(authenticate())
-  .use(fetchPolicy)
+  .use(fetchAccessCredential)
   .post(
     '/terms',
     validate({
@@ -72,7 +86,7 @@ router
         termsSize,
       } = ctx.request.body;
       const index = getCollectionIndex(collectionId);
-      filter.scope = ctx.state.policyCollection.scope; // Each scope key-value pair is added as ES bool.must.term
+      filter.scope = ctx.state.accessPolicyCollection.scope; // Each scope key-value pair is added as ES bool.must.term
       try {
         ctx.body = await terms(index, aggField, {
           ...filter,
@@ -104,7 +118,7 @@ router
     async (ctx) => {
       const { collectionId, filter = {}, operation, field, interval, dateField } = ctx.request.body;
       const index = getCollectionIndex(collectionId);
-      filter.scope = ctx.state.policyCollection.scope;
+      filter.scope = ctx.state.accessPolicyCollection.scope;
       try {
         ctx.body = await timeSeries(index, operation, field, {
           interval,
@@ -129,7 +143,7 @@ router
       const { collectionId, filter = {} } = ctx.request.body;
       // console.info('filter', filter);
       const index = getCollectionIndex(collectionId);
-      filter.scope = ctx.state.policyCollection.scope;
+      filter.scope = ctx.state.accessPolicyCollection.scope;
       try {
         // console.info(JSON.stringify(filter, null, 2));
         ctx.body = await search(index, filter);
@@ -151,7 +165,7 @@ router
     async (ctx) => {
       const { collectionId, filter = {}, fields } = ctx.request.body;
       const index = getCollectionIndex(collectionId);
-      filter.scope = ctx.state.policyCollection.scope;
+      filter.scope = ctx.state.accessPolicyCollection.scope;
       try {
         ctx.body = await stats(index, fields, filter);
       } catch (err) {
@@ -172,7 +186,7 @@ router
     async (ctx) => {
       const { collectionId, filter = {}, fields } = ctx.request.body;
       const index = getCollectionIndex(collectionId);
-      filter.scope = ctx.state.policyCollection.scope;
+      filter.scope = ctx.state.accessPolicyCollection.scope;
       try {
         ctx.body = await cardinality(index, fields, filter);
       } catch (err) {

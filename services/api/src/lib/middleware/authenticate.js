@@ -58,12 +58,13 @@ async function fetchUser(ctx, next) {
   await next();
 }
 
-async function fetchPolicy(ctx, next) {
-  if (!ctx.state.authPolicy && ctx.state.jwt) {
-    const { AccessPolicy } = mongoose.models;
-    if (!ctx.state.jwt.policyId) ctx.throw(401, 'policyId is missing in associated token');
-    ctx.state.authPolicy = await AccessPolicy.findById(ctx.state.jwt.policyId);
-    if (!ctx.state.authPolicy) ctx.throw(401, 'policy associated to token could not not be found');
+async function fetchAccessCredential(ctx, next) {
+  if (!ctx.state.authAccessCredential && ctx.state.jwt) {
+    const { AccessCredential } = mongoose.models;
+    if (ctx.state.jwt.type !== 'access') ctx.throw(401, 'Correct type is missing in associated token');
+    if (!ctx.state.jwt.credentialId) ctx.throw(401, 'credentialId is missing in associated token');
+    ctx.state.authAccessCredential = await AccessCredential.findById(ctx.state.jwt.credentialId);
+    if (!ctx.state.authAccessCredential) ctx.throw(401, 'accessCredential associated to token could not not be found');
   }
   await next();
 }
@@ -71,5 +72,5 @@ async function fetchPolicy(ctx, next) {
 module.exports = {
   authenticate,
   fetchUser,
-  fetchPolicy,
+  fetchAccessCredential,
 };

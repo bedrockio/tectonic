@@ -18,6 +18,7 @@ describe('Access', () => {
         collections: {
           type: 'read',
           scope: defaultQuery,
+          scopeParams: ['organizationId'],
           collectionId: collection.id,
           fields: {
             type: 'blacklist',
