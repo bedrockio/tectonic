@@ -16,7 +16,6 @@ const EVENTS_CHUNK_SIZE = 10;
 const router = new Router();
 
 const eventSchema = Joi.object({
-  type: Joi.string().required(),
   occurredAt: Joi.string().required(),
 }).unknown(); // unknown: to allow any aother field
 
