@@ -4,8 +4,8 @@ setupTelemetry();
 const { initialize: initPubSub } = require('./lib/pubsub');
 const { initialize: initDB } = require('./utils/database');
 const { createFixtures } = require('./fixtures');
-const { createUserLastingToken } = require('./lib/tokens');
-const { User } = require('./models');
+// const { createCredentialToken } = require('./lib/tokens');
+// const { User } = require('./models');
 const app = require('./app');
 
 const config = require('@bedrockio/config');
@@ -34,8 +34,8 @@ module.exports = (async () => {
         console.error(e);
       }
       logger.info(`Admin Login ${adminConfig.email}:${adminConfig.password} (dev env only)`);
-      const adminUser = await User.findOne({ email: adminConfig.email });
-      logger.info(`Lasting dev User token: ${createUserLastingToken(adminUser)}`);
+      // const adminUser = await User.findOne({ email: adminConfig.email });
+      // logger.info(`Lasting dev User token: ${createUserLastingToken(adminUser)}`);
       logger.info('-----------------------------------------------------------------');
     }
   });

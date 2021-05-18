@@ -7,7 +7,7 @@ import { screen } from 'helpers';
 import { Confirm, HelpTip, Breadcrumbs, SearchProvider } from 'components';
 
 import Filters from 'modals/Filters';
-import EditAccessPolicy from 'modals/EditAccessPolicy';
+import EditAccessCredential from 'modals/EditAccessCredential';
 
 // --- Generator: list-imports
 // --- Generator: end
@@ -17,7 +17,7 @@ export default class AccessPolicyList extends React.Component {
   onDataNeeded = async (params) => {
     return await request({
       method: 'POST',
-      path: '/1/access-policies/search',
+      path: '/1/access-credentials/search',
       body: params,
     });
   };
@@ -25,23 +25,23 @@ export default class AccessPolicyList extends React.Component {
   render() {
     return (
       <SearchProvider onDataNeeded={this.onDataNeeded}>
-        {({ items: accessPolicies, getSorted, setSort, filters, setFilters, reload }) => {
+        {({ items: accessCredentials, getSorted, setSort, filters, setFilters, reload }) => {
           return (
             <React.Fragment>
-              <Breadcrumbs active="Access Policies">
+              <Breadcrumbs active="Access Credentials">
                 <Filters onSave={setFilters} filters={filters}>
                   {/* --- Generator: filters */}
                   <Filters.Text label="Name" name="name" />
                   {/* --- Generator: end */}
                 </Filters>
-                <EditAccessPolicy
-                  trigger={<Button primary content="New Access Policy" icon="plus" />}
+                <EditAccessCredential
+                  trigger={<Button primary content="New Access Credential" icon="plus" />}
                   onSave={reload}
                 />
               </Breadcrumbs>
               <Divider hidden />
-              {accessPolicies.length === 0 ? (
-                <Message>No access policies created yet</Message>
+              {accessCredentials.length === 0 ? (
+                <Message>No access credentials created yet</Message>
               ) : (
                 <Table celled sortable>
                   <Table.Header>
@@ -59,31 +59,31 @@ export default class AccessPolicyList extends React.Component {
                     </Table.Row>
                   </Table.Header>
                   <Table.Body>
-                    {accessPolicies.map((policy) => {
+                    {accessCredentials.map((accessCredential) => {
                       return (
-                        <Table.Row key={policy.id}>
+                        <Table.Row key={accessCredential.id}>
                           {/* --- Generator: list-body-cells */}
                           <Table.Cell>
-                            <Link to={`/access-policies/${policy.id}`}>{policy.name}</Link>
+                            <Link to={`/access-credentials/${accessCredential.id}`}>{accessCredential.name}</Link>
                           </Table.Cell>
                           {/* --- Generator: end */}
-                          <Table.Cell>{formatDateTime(policy.createdAt)}</Table.Cell>
+                          <Table.Cell>{formatDateTime(accessCredential.createdAt)}</Table.Cell>
                           <Table.Cell textAlign="center">
-                            <EditAccessPolicy
-                              policy={policy}
+                            <EditAccessCredential
+                              accessCredential={accessCredential}
                               trigger={<Button style={{ marginLeft: '20px' }} basic icon="edit" />}
                               onSave={reload}
                             />
                             <Confirm
                               negative
                               confirmText="Delete"
-                              header={`Are you sure you want to delete "${policy.name}"?`}
+                              header={`Are you sure you want to delete "${accessCredential.name}"?`}
                               content="All data will be permanently deleted"
                               trigger={<Button basic icon="trash" />}
                               onConfirm={async () => {
                                 await request({
                                   method: 'DELETE',
-                                  path: `/1/access-policies/${policy.id}`,
+                                  path: `/1/access-credentials/${accessCredential.id}`,
                                 });
                                 reload();
                               }}

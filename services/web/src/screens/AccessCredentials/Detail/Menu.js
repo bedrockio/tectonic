@@ -4,24 +4,26 @@ import { Menu, Divider, Button } from 'semantic-ui-react';
 import { NavLink } from 'react-router-dom';
 import { Breadcrumbs } from 'components';
 
-import EditAccessPolicy from 'modals/EditAccessPolicy';
+import EditAccessCredential from 'modals/EditAccessCredential';
 
-export default ({ policy, onSave }) => {
+export default ({ accessCredential, onSave }) => {
   return (
     <React.Fragment>
-      <Breadcrumbs link={<Link to="/access-policies">Access Policies</Link>} active={policy.name || 'Loading...'}>
-        <EditAccessPolicy
-          policy={policy}
+      <Breadcrumbs
+        link={<Link to="/access-credentials">Access Credentials</Link>}
+        active={accessCredential.name || 'Loading...'}>
+        <EditAccessCredential
+          accessCredential={accessCredential}
           onSave={onSave}
           trigger={<Button primary icon="setting" content="Settings" />}
         />
       </Breadcrumbs>
       <Divider hidden />
       <Menu tabular>
-        <Menu.Item name="Overview" to={`/access-policies/${policy.id}`} as={NavLink} exact />
+        <Menu.Item name="Overview" to={`/access-credentials/${accessCredential.id}`} as={NavLink} exact />
         {/* <Menu.Item
-          name="AccessCredentials"
-          to={`/access-policies/${policy.id}/access-credentials`}
+          name="AccessPolicies"
+          to={`/access-credentials/${accessCredential.id}/access-policies`}
           as={NavLink}
           exact
         /> */}

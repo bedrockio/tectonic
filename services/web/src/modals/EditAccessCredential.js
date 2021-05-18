@@ -6,34 +6,34 @@ import AutoFocus from 'components/AutoFocus';
 // --- Generator: imports
 // --- Generator: end
 
-export default class EditPolicy extends React.Component {
+export default class EditAccessCredential extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       open: false,
       error: null,
       loading: false,
-      policy: props.policy || {},
+      accessCredential: props.accessCredential || {},
     };
   }
 
   componentDidUpdate(lastProps) {
-    const { policy } = this.props;
-    if (policy && policy !== lastProps.policy) {
+    const { accessCredential } = this.props;
+    if (accessCredential && accessCredential !== lastProps.accessCredential) {
       this.setState({
-        policy,
+        accessCredential,
       });
     }
   }
 
   isUpdate() {
-    return !!this.props.policy;
+    return !!this.props.accessCredential;
   }
 
   setField = (evt, { name, value }) => {
     this.setState({
-      policy: {
-        ...this.state.policy,
+      accessCredential: {
+        ...this.state.accessCredential,
         [name]: value,
       },
     });
@@ -53,21 +53,21 @@ export default class EditPolicy extends React.Component {
         error: null,
         loading: true,
       });
-      const { policy } = this.state;
+      const { accessCredential } = this.state;
       if (this.isUpdate()) {
         await request({
           method: 'PATCH',
-          path: `/1/access-policies/${policy.id}`,
-          body: policy,
+          path: `/1/access-credentials/${accessCredential.id}`,
+          body: accessCredential,
         });
       } else {
         await request({
           method: 'POST',
-          path: '/1/access-policies',
-          body: policy, // TODO: update to work with return of {policy, token}
+          path: '/1/access-credentials',
+          body: accessCredential,
         });
         this.setState({
-          policy: {},
+          accessCredential: {},
         });
       }
       this.setState({
@@ -85,7 +85,7 @@ export default class EditPolicy extends React.Component {
 
   render() {
     const { trigger } = this.props;
-    const { policy, open, loading, error } = this.state;
+    const { accessCredential, open, loading, error } = this.state;
     return (
       <Modal
         closeIcon
@@ -94,10 +94,10 @@ export default class EditPolicy extends React.Component {
         closeOnDimmerClick={false}
         onOpen={() => this.setState({ open: true })}
         onClose={() => this.setState({ open: false })}>
-        <Modal.Header>{this.isUpdate() ? `Edit "${policy.name}"` : 'New Policy'}</Modal.Header>
+        <Modal.Header>{this.isUpdate() ? `Edit "${accessCredential.name}"` : 'New AccessCredential'}</Modal.Header>
         <Modal.Content scrolling>
           <AutoFocus>
-            <Form noValidate id="edit-policy" error={!!error} onSubmit={this.onSubmit}>
+            <Form noValidate id="edit-access-credential" error={!!error} onSubmit={this.onSubmit}>
               {error && <Message error content={error.message} />}
               {/* --- Generator: fields */}
               <Form.Input
@@ -105,14 +105,14 @@ export default class EditPolicy extends React.Component {
                 type="text"
                 name="name"
                 label="Name"
-                value={policy.name || ''}
+                value={accessCredential.name || ''}
                 onChange={this.setField}
               />
               <Form.TextArea
                 name="description"
                 label="Description"
                 type="text"
-                value={policy.description || ''}
+                value={accessCredential.description || ''}
                 onChange={this.setField}
               />
               {/* --- Generator: end */}
@@ -122,7 +122,7 @@ export default class EditPolicy extends React.Component {
         <Modal.Actions>
           <Button
             primary
-            form="edit-policy"
+            form="edit-access-credential"
             loading={loading}
             disabled={loading}
             content={this.isUpdate() ? 'Update' : 'Create'}

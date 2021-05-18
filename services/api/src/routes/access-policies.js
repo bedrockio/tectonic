@@ -4,7 +4,6 @@ const validate = require('../utils/middleware/validate');
 const { authenticate } = require('../lib/middleware/authenticate');
 const { NotFoundError } = require('../utils/errors');
 const { AccessPolicy } = require('../models');
-const { createPolicyToken } = require('../lib/tokens');
 
 const router = new Router();
 
@@ -32,10 +31,8 @@ router
   )
   .get('/:policyId', async (ctx) => {
     const { policy } = await ctx.state;
-    const token = createPolicyToken(policy);
-
     ctx.body = {
-      data: { ...policy.toObject(), token },
+      data: policy,
     };
   })
   .post(

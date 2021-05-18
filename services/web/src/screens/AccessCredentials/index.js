@@ -4,12 +4,12 @@ import { Switch, Route } from 'react-router-dom';
 import List from './List';
 import Detail from './Detail';
 
-export default class AccessPolicies extends React.Component {
+export default class AccessCredentials extends React.Component {
   render() {
     return (
       <Switch>
-        <Route path="/access-policies" component={List} exact />
-        <Route path="/access-policies/:id" component={Detail} />
+        <Route path="/access-credentials" component={List} exact />
+        <Route path="/access-credentials/:id" component={Detail} />
       </Switch>
     );
   }

@@ -13,6 +13,7 @@ import Settings from 'screens/Settings';
 import Collections from 'screens/Collections';
 import Users from 'screens/Users';
 import AccessPolicies from 'screens/AccessPolicies';
+import AccessCredentials from 'screens/AccessCredentials';
 import Analytics from 'screens/Analytics';
 
 import Login from 'screens/Auth/Login';
@@ -23,6 +24,7 @@ const App = () => (
     <AuthSwitch path="/" loggedIn={Dashboard} loggedOut={Login} exact />
     <Protected path="/collections/:id?" allowed={Collections} />
     <Protected path="/access-policies/:id?" allowed={AccessPolicies} />
+    <Protected path="/access-credentials/:id?" allowed={AccessCredentials} />
     <Protected path="/analytics/:id?" allowed={Analytics} />
     <Protected path="/settings" allowed={Settings} exact />
     <Protected path="/users/:id?" allowed={Users} />
