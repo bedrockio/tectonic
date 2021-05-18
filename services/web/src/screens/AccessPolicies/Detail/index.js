@@ -8,7 +8,7 @@ import { request } from 'utils/api';
 import Overview from './Overview';
 
 // --- Generator: imports
-
+import AccessCredentials from './AccessCredentials';
 // --- Generator: end
 
 export default class AccessPolicyDetail extends React.Component {
@@ -76,6 +76,11 @@ export default class AccessPolicyDetail extends React.Component {
       <Switch>
         <Route exact path="/access-policies/:id" render={(props) => <Overview {...props} {...this.state} />} />
         {/* --- Generator: routes */}
+        <Route
+          exact
+          path="/access-policies/:id/access-credentials"
+          render={(props) => <AccessCredentials {...props} {...this.state} />}
+        />
         {/* --- Generator: end */}
       </Switch>
     );

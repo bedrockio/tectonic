@@ -70,15 +70,19 @@ router
           order: 'desc',
         }),
         ids: Joi.array().items(Joi.string()),
+        accessPolicyId: Joi.string(),
         limit: Joi.number().positive().default(50),
       }),
     }),
     async (ctx) => {
-      const { ids = [], sort, name, skip, limit } = ctx.request.body;
+      const { ids = [], sort, name, skip, limit, accessPolicyId } = ctx.request.body;
       const query = {
         ...(ids.length ? { _id: { $in: ids } } : {}),
         deletedAt: { $exists: false },
       };
+      if (accessPolicyId) {
+        query.accessPolicy = accessPolicyId;
+      }
       if (name) {
         query.name = {
           $regex: name,

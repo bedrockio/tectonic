@@ -19,12 +19,12 @@ export default ({ policy, onSave }) => {
       <Divider hidden />
       <Menu tabular>
         <Menu.Item name="Overview" to={`/access-policies/${policy.id}`} as={NavLink} exact />
-        {/* <Menu.Item
+        <Menu.Item
           name="AccessCredentials"
           to={`/access-policies/${policy.id}/access-credentials`}
           as={NavLink}
           exact
-        /> */}
+        />
         {/* --- Generator: menus */}
         {/* --- Generator: end */}
       </Menu>

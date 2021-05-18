@@ -13,7 +13,7 @@ import EditAccessCredential from 'modals/EditAccessCredential';
 // --- Generator: end
 
 @screen
-export default class AccessPolicyList extends React.Component {
+export default class AccessCredentialsList extends React.Component {
   onDataNeeded = async (params) => {
     return await request({
       method: 'POST',
