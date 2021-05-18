@@ -33,7 +33,7 @@ module.exports = (async () => {
       } catch (e) {
         console.error(e);
       }
-      logger.info(`${config.get('APP_NAME')} Admin Login ${adminConfig.email}:${adminConfig.password} (dev env only)`);
+      logger.info(`Admin Login ${adminConfig.email}:${adminConfig.password} (dev env only)`);
       const adminUser = await User.findOne({ email: adminConfig.email });
       logger.info(`Lasting dev User token: ${createUserLastingToken(adminUser)}`);
       logger.info('-----------------------------------------------------------------');

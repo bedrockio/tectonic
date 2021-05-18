@@ -17,6 +17,6 @@ WORKDIR /service/
 
 RUN yarn build
 
-EXPOSE 2200
+EXPOSE 3200
 
 CMD ["yarn", "run", "static"]

@@ -1,6 +1,5 @@
 const { User, Collection, Category, Policy } = require('./models');
 const config = require('@bedrockio/config');
-// const { storeUploadedFile } = require('./utils/uploads');
 const { logger } = require('@bedrockio/instrumentation');
 const { ensureCollectionIndex, ensureAlias, getCollectionIndex } = require('./lib/analytics');
 const { createPolicyToken } = require('./lib/tokens');
@@ -10,16 +9,6 @@ const adminConfig = {
   email: config.get('ADMIN_EMAIL'),
   password: config.get('ADMIN_PASSWORD'),
 };
-
-// const createUpload = async (owner, image) => {
-//   const path = `${__dirname}/../fixtures/images/${image}`;
-//   const file = { path, name: image, type: 'image/jpeg' };
-//   const object = await storeUploadedFile(file);
-//   return Upload.create({
-//     ...object,
-//     ownerId: owner._id,
-//   });
-// };
 
 const createFixtures = async () => {
   if (await User.findOne({ email: adminConfig.email })) {

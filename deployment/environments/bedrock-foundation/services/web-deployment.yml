@@ -27,4 +27,4 @@ spec:
               value: "https://tectonic-api.bedrock.foundation"
           ports:
             - name: http-server
-              containerPort: 2200
+              containerPort: 3200
