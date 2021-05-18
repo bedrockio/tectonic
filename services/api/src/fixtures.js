@@ -1,4 +1,4 @@
-const { User, Collection, Category, AccessPolicy, AccessCredential } = require('./models');
+const { User, Collection, Category, AccessPolicy, AccessCredential, ApplicationCredential } = require('./models');
 const config = require('@bedrockio/config');
 const { logger } = require('@bedrockio/instrumentation');
 const { ensureCollectionIndex, ensureAlias, getCollectionIndex } = require('./lib/analytics');
@@ -37,15 +37,20 @@ const createFixtures = async () => {
   //const events = loadJsonStreamFile(__dirname + './routes/policy/__tests__/fixtures/bar-purchases.ndjson');
 
   const accessPolicy = await AccessPolicy.create({
-    name: 'Access to bar-purchases collection',
+    name: 'Access policy to bar-purchases collection',
     collections: [{ collectionId: collection.id }],
   });
 
   const accessCredential = await AccessCredential.create({
-    name: 'Credential for bar-purchases access',
+    name: 'Access Credential for bar-purchases access',
     accessPolicy,
   });
   console.info(`Created accessCredential ${accessCredential.id}`);
+
+  const applicationCredential = await ApplicationCredential.create({
+    name: 'Admin Application Credential',
+  });
+  console.info(`Created applicationCredential ${applicationCredential.id}`);
 
   const evseCategory = await Category.create({ name: 'evse' });
 
