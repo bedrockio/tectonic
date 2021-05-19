@@ -24,7 +24,7 @@ export default class AnalyticsOverview extends React.Component {
           <Block columns={2}>
             <React.Fragment>
               <Header as="h4" content="Purchases by Category" textAlign="center" />
-              <Terms index={'purchases'} aggField="event.consumption.category" termsSize={10}>
+              <Terms index={'bar-purchases'} aggField="event.consumption.category" termsSize={10}>
                 {(data) => {
                   return <DonutChart data={data} limit={5} percent />;
                 }}
@@ -34,7 +34,7 @@ export default class AnalyticsOverview extends React.Component {
               <Header as="h4" content="Revenue by Category" textAlign="center" />
               <Divider hidden />
               <Terms
-                index={'purchases'}
+                index={'bar-purchases'}
                 aggField="event.consumption.category"
                 field="event.consumption.price"
                 operation="sum"
@@ -52,7 +52,7 @@ export default class AnalyticsOverview extends React.Component {
             <Header as="h4" content="Revenue by Category" textAlign="center" />
 
             <Terms
-              index={'purchases'}
+              index={'bar-purchases'}
               aggField="event.consumption.category"
               field="event.consumption.price"
               operation="sum"
@@ -62,7 +62,7 @@ export default class AnalyticsOverview extends React.Component {
                   <MultiTimeSeries
                     fetches={terms.map((term) => {
                       return {
-                        index: 'purchases',
+                        index: 'bar-purchases',
                         operation: 'sum',
                         field: 'event.consumption.price',
                         interval: '1w',
@@ -94,7 +94,7 @@ export default class AnalyticsOverview extends React.Component {
           <Block columns={2}>
             <React.Fragment>
               <Header as="h4" content="Purchases by Consumption" textAlign="center" />
-              <Terms index={'purchases'} aggField="event.consumption.name" termsSize={10}>
+              <Terms index={'bar-purchases'} aggField="event.consumption.name" termsSize={10}>
                 {(data) => {
                   return <DonutChart data={data} limit={8} percent />;
                 }}
@@ -104,7 +104,7 @@ export default class AnalyticsOverview extends React.Component {
               <Header as="h4" content="Revenue by Consumption" textAlign="center" />
               <Divider hidden />
               <Terms
-                index={'purchases'}
+                index={'bar-purchases'}
                 aggField="event.consumption.name"
                 field="event.consumption.price"
                 operation="sum"

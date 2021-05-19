@@ -22,7 +22,7 @@ export default class AnalyticsOverview extends React.Component {
           <Block columns={2}>
             <React.Fragment>
               <Header as="h4" content="Purchases by Member" textAlign="center" />
-              <Terms index={'purchases'} aggField="ccName" termsSize={10}>
+              <Terms index={'bar-purchases'} aggField="ccName" termsSize={10}>
                 {(data) => {
                   return <DonutChart data={data} limit={7} percent />;
                 }}
@@ -31,7 +31,7 @@ export default class AnalyticsOverview extends React.Component {
             <React.Fragment>
               <Header as="h4" content="Revenue by Member" textAlign="center" />
               <Divider hidden />
-              <Terms index={'purchases'} aggField="ccName" field="price" operation="sum" termsSize={10}>
+              <Terms index={'bar-purchases'} aggField="ccName" field="price" operation="sum" termsSize={10}>
                 {(data) => {
                   return (
                     <Table data={data} valueField="value" valueFieldName="Revenue" valueFieldFormatter={formatUsd} />
