@@ -67,7 +67,25 @@ describe('/1/analytics', () => {
       });
       const headers = { Authorization: `Bearer ${createCredentialToken(accessCredential)}` };
 
-      const response = await request('POST', '/1/analytics/search', { collectionId }, { headers });
+      const response = await request('POST', '/1/analytics/search', { collection: collectionId }, { headers });
+      expect(response.status).toBe(200);
+      expect(response.body.hits.hits.length).toBe(10);
+    });
+    it('should allow analytics search for correct policy with collection name', async () => {
+      await AccessPolicy.deleteMany({});
+      await AccessCredential.deleteMany({});
+      const collectionId = testCollection.id;
+      const accessPolicy = await AccessPolicy.create({
+        name: 'access-test-policy',
+        collections: [{ collectionId }],
+      });
+      const accessCredential = await AccessCredential.create({
+        name: 'access-cred',
+        accessPolicy,
+      });
+      const headers = { Authorization: `Bearer ${createCredentialToken(accessCredential)}` };
+
+      const response = await request('POST', '/1/analytics/search', { collection: testCollection.name }, { headers });
       expect(response.status).toBe(200);
       expect(response.body.hits.hits.length).toBe(10);
     });
@@ -83,7 +101,7 @@ describe('/1/analytics', () => {
       const headers = { Authorization: `Bearer ${createCredentialToken(accessCredential)}` };
       const collectionId = testCollection.id;
 
-      const response = await request('POST', '/1/analytics/search', { collectionId }, { headers });
+      const response = await request('POST', '/1/analytics/search', { collection: collectionId }, { headers });
       expect(response.status).toBe(401);
     });
     it('should allow scoped analytics search', async () => {
@@ -105,7 +123,7 @@ describe('/1/analytics', () => {
       });
       const headers = { Authorization: `Bearer ${createCredentialToken(accessCredential)}` };
 
-      const response = await request('POST', '/1/analytics/search', { collectionId }, { headers });
+      const response = await request('POST', '/1/analytics/search', { collection: collectionId }, { headers });
       expect(response.status).toBe(200);
       expect(response.body.hits.hits.length).toBe(6); // ignores 4 out of 10
     });
@@ -129,7 +147,7 @@ describe('/1/analytics', () => {
       });
       const headers = { Authorization: `Bearer ${createCredentialToken(accessCredential)}` };
 
-      const response = await request('POST', '/1/analytics/search', { collectionId }, { headers });
+      const response = await request('POST', '/1/analytics/search', { collection: collectionId }, { headers });
       expect(response.status).toBe(200);
       expect(response.body.hits.hits.length).toBe(5); // ignores 'method': 'BogusValues'
     });
@@ -157,7 +175,7 @@ describe('/1/analytics', () => {
       });
       const headers = { Authorization: `Bearer ${createCredentialToken(accessCredential)}` };
 
-      const response = await request('POST', '/1/analytics/search', { collectionId }, { headers });
+      const response = await request('POST', '/1/analytics/search', { collection: collectionId }, { headers });
       expect(response.status).toBe(200);
       expect(response.body.hits.hits.length).toBe(5); // ignores 'method': 'BogusValues'
     });

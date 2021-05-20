@@ -3,6 +3,7 @@ const Joi = require('@hapi/joi');
 const validate = require('../utils/middleware/validate');
 const { authenticate, fetchAccessCredential } = require('../lib/middleware/authenticate');
 const { terms, timeSeries, search, stats, cardinality, getCollectionIndex } = require('../lib/analytics');
+const { Collection } = require('../models');
 
 const router = new Router();
 
@@ -29,28 +30,36 @@ function interpretError(error) {
 }
 
 async function checkCollectionAccess(ctx, next) {
-  const { collectionId } = ctx.request.body;
+  const { collection } = ctx.request.body;
+  const collectionObject = await Collection.findByIdOrName(collection);
+  if (!collectionObject) {
+    ctx.throw(401, `Collection '${collection}' could not be found`);
+  }
+  const collectionId = collectionObject._id.toString();
+
   const { accessPolicy, scopeArgs } = ctx.state.authAccessCredential;
   if (!accessPolicy || !accessPolicy.collections || !Array.isArray(accessPolicy.collections)) {
     ctx.throw(401, `AccessCredential is missing valid accessPolicy`);
   }
-  const collection = accessPolicy.collections.find(({ collectionId: cid }) => collectionId == cid.toString());
-  if (!collection) {
+  const accessPolicyCollection = accessPolicy.collections.find(
+    ({ collectionId: cid }) => collectionId == cid.toString()
+  );
+  if (!accessPolicyCollection) {
     ctx.throw(401, `AccessPolicy has no access to collectionId: ${collectionId}`);
   }
-  collection.scope = collection.scope || {};
+  accessPolicyCollection.scope = accessPolicyCollection.scope || {};
   // check scopeParams
-  if (collection.scopeParams && collection.scopeParams.length != 0) {
-    for (const param of collection.scopeParams) {
+  if (accessPolicyCollection.scopeParams && accessPolicyCollection.scopeParams.length != 0) {
+    for (const param of accessPolicyCollection.scopeParams) {
       if (!Object.keys(scopeArgs).includes(param)) {
         ctx.throw(401, `Missing scopeArgs for policy scopeParams`);
       }
       // Add to scope
-      collection.scope[param] = scopeArgs[param];
+      accessPolicyCollection.scope[param] = scopeArgs[param];
     }
   }
 
-  ctx.state.accessPolicyCollection = collection;
+  ctx.state.accessPolicyCollection = accessPolicyCollection;
   return next();
 }
 
@@ -61,7 +70,7 @@ router
     '/terms',
     validate({
       body: Joi.object({
-        collectionId: Joi.string().required(),
+        collection: Joi.string().required(),
         filter: Joi.object(filterOptions),
         aggField: Joi.string().required(),
         aggFieldOrder: Joi.string().valid('desc', 'asc'),
@@ -75,7 +84,6 @@ router
     checkCollectionAccess,
     async (ctx) => {
       const {
-        collectionId,
         filter = {},
         aggField,
         aggFieldOrder,
@@ -85,8 +93,9 @@ router
         referenceFetch,
         termsSize,
       } = ctx.request.body;
+      const { collectionId, scope } = ctx.state.accessPolicyCollection;
       const index = getCollectionIndex(collectionId);
-      filter.scope = ctx.state.accessPolicyCollection.scope; // Each scope key-value pair is added as ES bool.must.term
+      filter.scope = scope; // Each scope key-value pair is added as ES bool.must.term
       try {
         ctx.body = await terms(index, aggField, {
           ...filter,
@@ -106,7 +115,7 @@ router
     '/time-series',
     validate({
       body: Joi.object({
-        collectionId: Joi.string().required(),
+        collection: Joi.string().required(),
         filter: Joi.object(filterOptions),
         operation: Joi.string().required(),
         field: Joi.string().optional(),
@@ -116,9 +125,10 @@ router
     }),
     checkCollectionAccess,
     async (ctx) => {
-      const { collectionId, filter = {}, operation, field, interval, dateField } = ctx.request.body;
+      const { filter = {}, operation, field, interval, dateField } = ctx.request.body;
+      const { collectionId, scope } = ctx.state.accessPolicyCollection;
       const index = getCollectionIndex(collectionId);
-      filter.scope = ctx.state.accessPolicyCollection.scope;
+      filter.scope = scope; // Each scope key-value pair is added as ES bool.must.term
       try {
         ctx.body = await timeSeries(index, operation, field, {
           interval,
@@ -134,16 +144,17 @@ router
     '/search',
     validate({
       body: Joi.object({
-        collectionId: Joi.string().required(),
+        collection: Joi.string().required(),
         filter: Joi.object(filterOptions),
       }),
     }),
     checkCollectionAccess,
     async (ctx) => {
-      const { collectionId, filter = {} } = ctx.request.body;
+      const { filter = {} } = ctx.request.body;
       // console.info('filter', filter);
+      const { collectionId, scope } = ctx.state.accessPolicyCollection;
       const index = getCollectionIndex(collectionId);
-      filter.scope = ctx.state.accessPolicyCollection.scope;
+      filter.scope = scope; // Each scope key-value pair is added as ES bool.must.term
       try {
         // console.info(JSON.stringify(filter, null, 2));
         ctx.body = await search(index, filter);
@@ -156,16 +167,17 @@ router
     '/stats',
     validate({
       body: Joi.object({
-        collectionId: Joi.string().required(),
+        collection: Joi.string().required(),
         filter: Joi.object(filterOptions),
         fields: Joi.array().items(Joi.string()),
       }),
     }),
     checkCollectionAccess,
     async (ctx) => {
-      const { collectionId, filter = {}, fields } = ctx.request.body;
+      const { filter = {}, fields } = ctx.request.body;
+      const { collectionId, scope } = ctx.state.accessPolicyCollection;
       const index = getCollectionIndex(collectionId);
-      filter.scope = ctx.state.accessPolicyCollection.scope;
+      filter.scope = scope; // Each scope key-value pair is added as ES bool.must.term
       try {
         ctx.body = await stats(index, fields, filter);
       } catch (err) {
@@ -177,16 +189,17 @@ router
     '/cardinality',
     validate({
       body: Joi.object({
-        collectionId: Joi.string().required(),
+        collection: Joi.string().required(),
         filter: Joi.object(filterOptions),
         fields: Joi.array().items(Joi.string()),
       }),
     }),
     checkCollectionAccess,
     async (ctx) => {
-      const { collectionId, filter = {}, fields } = ctx.request.body;
+      const { filter = {}, fields } = ctx.request.body;
+      const { collectionId, scope } = ctx.state.accessPolicyCollection;
       const index = getCollectionIndex(collectionId);
-      filter.scope = ctx.state.accessPolicyCollection.scope;
+      filter.scope = scope; // Each scope key-value pair is added as ES bool.must.term
       try {
         ctx.body = await cardinality(index, fields, filter);
       } catch (err) {
