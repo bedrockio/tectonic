@@ -28,20 +28,20 @@ export default class ApplicationCredentialsList extends React.Component {
         {({ items: applicationCredentials, getSorted, setSort, filters, setFilters, reload }) => {
           return (
             <React.Fragment>
-              <Breadcrumbs active="Access Credentials">
+              <Breadcrumbs active="Application Credentials">
                 <Filters onSave={setFilters} filters={filters}>
                   {/* --- Generator: filters */}
                   <Filters.Text label="Name" name="name" />
                   {/* --- Generator: end */}
                 </Filters>
                 <EditApplicationCredential
-                  trigger={<Button primary content="New Access Credential" icon="plus" />}
+                  trigger={<Button primary content="New Application Credential" icon="plus" />}
                   onSave={reload}
                 />
               </Breadcrumbs>
               <Divider hidden />
               {applicationCredentials.length === 0 ? (
-                <Message>No access credentials created yet</Message>
+                <Message>No application credentials created yet</Message>
               ) : (
                 <Table celled sortable>
                   <Table.Header>
@@ -72,7 +72,7 @@ export default class ApplicationCredentialsList extends React.Component {
                           <Table.Cell>{formatDateTime(applicationCredential.createdAt)}</Table.Cell>
                           <Table.Cell textAlign="center">
                             <EditApplicationCredential
-                              accessCredential={applicationCredential}
+                              applicationCredential={applicationCredential}
                               trigger={<Button style={{ marginLeft: '20px' }} basic icon="edit" />}
                               onSave={reload}
                             />
