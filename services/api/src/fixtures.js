@@ -37,18 +37,18 @@ const createFixtures = async () => {
   //const events = loadJsonStreamFile(__dirname + './routes/policy/__tests__/fixtures/bar-purchases.ndjson');
 
   const accessPolicy = await AccessPolicy.create({
-    name: 'Access policy to bar-purchases collection',
+    name: 'Bar Purchases Demo - Access Policy',
     collections: [{ collectionId: collection.id }],
   });
 
   const accessCredential = await AccessCredential.create({
-    name: 'Access Credential for bar-purchases access',
+    name: 'Bar Purchases Demo - Full Access',
     accessPolicy,
   });
   console.info(`Created accessCredential ${accessCredential.id}`);
 
   const applicationCredential = await ApplicationCredential.create({
-    name: 'Admin Application Credential',
+    name: 'Admin - Application Credential',
   });
   console.info(`Created applicationCredential ${applicationCredential.id}`);
 
