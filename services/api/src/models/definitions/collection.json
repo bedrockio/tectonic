@@ -1,25 +1,8 @@
 {
   "attributes": {
-    "name": {
-      "type": "String",
-      "trim": true,
-      "required": true
-    },
-    "description": {
-      "type": "String",
-      "trim": true,
-      "required": false
-    },
-    "secondaryIndex": {
-      "type": "String",
-      "required": false
-    },
-    "categories": [
-      {
-        "type": "ObjectId",
-        "ref": "Category",
-        "autopopulate": true
-      }
-    ]
+    "name": { "type": "String", "unique": true, "required": true, "lowercase": true, "trim": true },
+    "description": { "type": "String", "trim": true, "required": false },
+    "secondaryIndex": { "type": "String", "required": false },
+    "categories": [{ "type": "ObjectId", "ref": "Category", "autopopulate": true }]
   }
 }

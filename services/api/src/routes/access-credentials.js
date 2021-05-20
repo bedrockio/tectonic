@@ -1,6 +1,7 @@
 const Router = require('@koa/router');
 const Joi = require('@hapi/joi');
 const validate = require('../utils/middleware/validate');
+const mongoose = require('mongoose');
 const { authenticate } = require('../lib/middleware/authenticate');
 const { NotFoundError } = require('../utils/errors');
 const { AccessCredential } = require('../models');
@@ -11,8 +12,8 @@ const router = new Router();
 
 router
   .use(authenticate())
-  .param('credentialId', async (id, ctx, next) => {
-    const accessCredential = await AccessCredential.findById(id);
+  .param('credential', async (idOrName, ctx, next) => {
+    const accessCredential = await AccessCredential.findByIdOrName(idOrName);
     ctx.state.accessCredential = accessCredential;
     if (!accessCredential) {
       throw new NotFoundError();
@@ -32,7 +33,7 @@ router
       };
     }
   )
-  .get('/:credentialId', async (ctx) => {
+  .get('/:credential', async (ctx) => {
     const { accessCredential } = await ctx.state;
     const token = createCredentialToken(accessCredential);
     ctx.body = {
@@ -70,18 +71,24 @@ router
           order: 'desc',
         }),
         ids: Joi.array().items(Joi.string()),
-        accessPolicyId: Joi.string(),
+        accessPolicy: Joi.string(), // Is either accessPolicy.id objectId or accessPolicy.name
         limit: Joi.number().positive().default(50),
       }),
     }),
     async (ctx) => {
-      const { ids = [], sort, name, skip, limit, accessPolicyId } = ctx.request.body;
+      const { ids = [], sort, name, skip, limit, accessPolicy } = ctx.request.body;
       const query = {
         ...(ids.length ? { _id: { $in: ids } } : {}),
         deletedAt: { $exists: false },
       };
-      if (accessPolicyId) {
-        query.accessPolicy = accessPolicyId;
+      if (accessPolicy) {
+        if (mongoose.isValidObjectId(accessPolicy)) {
+          query.accessPolicy = accessPolicy;
+        } else {
+          // assume accessPolicy name was passed
+          const accessPolicyObject = await accessPolicy.findOne({ name: accessPolicy });
+          query.accessPolicy = accessPolicyObject._id;
+        }
       }
       if (name) {
         query.name = {
@@ -106,7 +113,7 @@ router
     }
   )
   .patch(
-    '/:credentialId',
+    '/:credential',
     validate({
       body: AccessCredential.getPatchValidator(),
     }),
@@ -119,7 +126,7 @@ router
       };
     }
   )
-  .delete('/:credentialId', async (ctx) => {
+  .delete('/:credential', async (ctx) => {
     const accessCredential = ctx.state.accessCredential;
     await accessCredential.delete();
     ctx.status = 204;

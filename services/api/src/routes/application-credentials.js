@@ -11,8 +11,8 @@ const router = new Router();
 
 router
   .use(authenticate())
-  .param('credentialId', async (id, ctx, next) => {
-    const applicationCredential = await ApplicationCredential.findById(id);
+  .param('credential', async (idOrName, ctx, next) => {
+    const applicationCredential = await ApplicationCredential.findByIdOrName(idOrName);
     ctx.state.applicationCredential = applicationCredential;
     if (!applicationCredential) {
       throw new NotFoundError();
@@ -32,7 +32,7 @@ router
       };
     }
   )
-  .get('/:credentialId', async (ctx) => {
+  .get('/:credential', async (ctx) => {
     const { applicationCredential } = await ctx.state;
     const token = createCredentialToken(applicationCredential, 'application');
     ctx.body = {
@@ -102,7 +102,7 @@ router
     }
   )
   .patch(
-    '/:credentialId',
+    '/:credential',
     validate({
       body: ApplicationCredential.getPatchValidator(),
     }),
@@ -115,7 +115,7 @@ router
       };
     }
   )
-  .delete('/:credentialId', async (ctx) => {
+  .delete('/:credential', async (ctx) => {
     const applicationCredential = ctx.state.applicationCredential;
     await applicationCredential.delete();
     ctx.status = 204;

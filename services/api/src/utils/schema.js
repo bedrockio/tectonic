@@ -70,6 +70,14 @@ function createSchema(definition, options = {}) {
     });
   });
 
+  schema.static('findByIdOrName', function (objectId) {
+    if (mongoose.isValidObjectId(objectId)) {
+      return this.findById(objectId);
+    } else {
+      return this.findOne({ name: objectId });
+    }
+  });
+
   schema.methods.assign = function assign(fields) {
     fields = omitBy(fields, (value, key) => {
       return isDisallowedField(this.schema.obj[key]) || RESERVED_FIELDS.includes(key);

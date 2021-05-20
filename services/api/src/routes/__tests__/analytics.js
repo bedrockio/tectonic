@@ -56,12 +56,15 @@ afterAll(async () => {
 describe('/1/analytics', () => {
   describe('POST /search', () => {
     it('should allow analytics search for correct policy', async () => {
-      expect(true).toBe(true);
       const collectionId = testCollection.id;
       const accessPolicy = await AccessPolicy.create({
+        name: 'access-test-policy',
         collections: [{ collectionId }],
       });
-      const accessCredential = await AccessCredential.create({ accessPolicy });
+      const accessCredential = await AccessCredential.create({
+        name: 'access-cred',
+        accessPolicy,
+      });
       const headers = { Authorization: `Bearer ${createCredentialToken(accessCredential)}` };
 
       const response = await request('POST', '/1/analytics/search', { collectionId }, { headers });
@@ -70,9 +73,13 @@ describe('/1/analytics', () => {
     });
     it('should deny analytics for incorrect policy', async () => {
       const accessPolicy = await AccessPolicy.create({
+        name: 'access-test-policy1',
         collections: [{ collectionId: new mongoose.Types.ObjectId() }],
       });
-      const accessCredential = await AccessCredential.create({ accessPolicy });
+      const accessCredential = await AccessCredential.create({
+        name: 'access-cred2',
+        accessPolicy,
+      });
       const headers = { Authorization: `Bearer ${createCredentialToken(accessCredential)}` };
       const collectionId = testCollection.id;
 
@@ -80,9 +87,9 @@ describe('/1/analytics', () => {
       expect(response.status).toBe(401);
     });
     it('should allow scoped analytics search', async () => {
-      expect(true).toBe(true);
       const collectionId = testCollection.id;
       const accessPolicy = await AccessPolicy.create({
+        name: 'access-test-policy2',
         collections: [
           {
             collectionId,
@@ -92,7 +99,10 @@ describe('/1/analytics', () => {
           },
         ],
       });
-      const accessCredential = await AccessCredential.create({ accessPolicy });
+      const accessCredential = await AccessCredential.create({
+        name: 'access-cred3',
+        accessPolicy,
+      });
       const headers = { Authorization: `Bearer ${createCredentialToken(accessCredential)}` };
 
       const response = await request('POST', '/1/analytics/search', { collectionId }, { headers });
@@ -100,9 +110,9 @@ describe('/1/analytics', () => {
       expect(response.body.hits.hits.length).toBe(6); // ignores 4 out of 10
     });
     it('should allow multiple scoped fields analytics search', async () => {
-      expect(true).toBe(true);
       const collectionId = testCollection.id;
       const accessPolicy = await AccessPolicy.create({
+        name: 'access-test-policy3',
         collections: [
           {
             collectionId,
@@ -113,7 +123,10 @@ describe('/1/analytics', () => {
           },
         ],
       });
-      const accessCredential = await AccessCredential.create({ accessPolicy });
+      const accessCredential = await AccessCredential.create({
+        name: 'access-cred4',
+        accessPolicy,
+      });
       const headers = { Authorization: `Bearer ${createCredentialToken(accessCredential)}` };
 
       const response = await request('POST', '/1/analytics/search', { collectionId }, { headers });
@@ -121,9 +134,10 @@ describe('/1/analytics', () => {
       expect(response.body.hits.hits.length).toBe(5); // ignores 'method': 'BogusValues'
     });
     it('should allow analytics search with multiple collections policy', async () => {
-      expect(true).toBe(true);
+      await AccessCredential.deleteMany({});
       const collectionId = testCollection.id;
       const accessPolicy = await AccessPolicy.create({
+        name: 'access-test-policy4',
         collections: [
           {
             collectionId: new mongoose.Types.ObjectId(),
@@ -137,7 +151,10 @@ describe('/1/analytics', () => {
           },
         ],
       });
-      const accessCredential = await AccessCredential.create({ accessPolicy });
+      const accessCredential = await AccessCredential.create({
+        name: 'access-cred',
+        accessPolicy,
+      });
       const headers = { Authorization: `Bearer ${createCredentialToken(accessCredential)}` };
 
       const response = await request('POST', '/1/analytics/search', { collectionId }, { headers });

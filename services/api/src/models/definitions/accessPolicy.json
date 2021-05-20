@@ -1,6 +1,6 @@
 {
   "attributes": {
-    "name": "String",
+    "name": { "type": "String", "unique": true, "required": true, "lowercase": true, "trim": true },
     "collections": [
       {
         "collectionId": { "type": "ObjectId", "required": true, "autopopulate": false },
