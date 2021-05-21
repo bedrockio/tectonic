@@ -1,16 +1,8 @@
-# <APP_NAME> API v1
+# Getting Started
 
-The <APP_NAME> API is a RESTful JSON API. Select export CSV API calls are available for specific endpoints. All communication is enforced over HTTPS (with support for TLS 1.3) and protected by CloudFlare. Using the dashboard API credentials can be managed with a full RBAC permissioning layer.
+The <APP_NAME> API is a RESTful JSON API.
 
-### URLs
-
-Main production URL:
-
-```
-<API_URL>/
-```
-
-### Authorization
+## Authorization
 
 JWT is used for all authentication. You can provide your API token in a standard bearer token request (`Authorization: Bearer <token>`) like so:
 
@@ -18,68 +10,106 @@ JWT is used for all authentication. You can provide your API token in a standard
 curl -H 'Authorization: Bearer <token>' <API_URL>/
 ```
 
-_When receiving a 401 status code, the client should clear any stored JWT tokens - this will enable authentication reset and expiry behavior_
+Your API token is associated with one of three types of credentials:
+1. Application Credential
+2. Access Credential
+3. User (admin) Credential (Used to login and interact with the dashboard Web UI)
 
-### Requests
+Application and User (admin) credentials give full access to all API endpoints.
 
-A pragmatic RESTful style is enforced on all API calls. GET requests are only used to obtain objects.
+Access credentials are required to query analytics. See `Querying Analytics` down below.
 
-Search/List API calls are done using POST to allow reliable JSON parameters. Example search:
+### Application Credential
+
+You can control your cluster with your admin application credential. For example, to list all collections:
+​
+```bash
+curl -s <API_URL>/1/collections -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MDhjMjY3NmYzODcwMjAwMzk4N2MxZTIiLCJ0eXBlIjoidXNlciIsImtpZCI6InVzZXIiLCJpYXQiOjE2MTk3OTc4ODgsImV4cCI6MTYyMjM4OTg4OH0.Bdq03i3ecf2XyxZ2fhUZNzAmtATC2jJpckqnQUbUp3g"
+```
+
+## Inserting Events
+​
+A Collection can store batches of Events. Here's an example of inserting a batch of events, which requires a `collection` field with the id or name of the collection, and an `events` array where each event element requires an `occurredAt` field:
+​​
+```bash
+curl -s -XPOST '{"collection": "bar-purchases", "events": [{"id":"606efb3dee05960772e6cddb","sourceSystem":"upserve","venue":{"name":"Pirate Boozy Bar","address":"650 Gough St, San Francisco, CA 94102"},"customer":{"name":"Melissa Spencer"},"server":{"name":"Kathryn Bernier"},"consumption":{"id":"606efb3cee05960772e6cda3","name":"Open Food","price":0,"category":"Food","createdAt":"2019-12-08T13:24:52.000Z"},"amountPaid":1,"occurredAt":"2018-03-20T15:30:46.000Z"}]}' <API_URL>/1/events -H "Authorization: Bearer <application-credential>"
+```
+
+If an event has an `id` or `_id` field it will update the same (ES) event if you ingest it a second time. If you have both fields, then `_id` takes precedence.
+
+Currently you need to have a valid Application Credential token in the header. This will expand with (write) access credentials in the future.
+
+## Ingesting bar-purchases events
+
+Run ingest script:
 
 ```bash
-curl -XPOST <API_URL>/2/users/search \
-  -d '{"limit": 100, "skip": 0}' \
-  -H 'Authorization: Bearer <token>' \
-  -H 'Content-Type: application/json'
+cd servies/api
+node scripts/publish-fixture-events.js
 ```
 
-### Responses
+Reloading fixture data:
 
-A standard successful response envelope has a `data` attribute containing the result. An optional `meta` response can be given to provide supplementary information such as pagination information:
-
-```json
-{
-  "data": [{}],
-  "meta": {
-    "total": 45367,
-    "skip": 0,
-    "limit": 100
-  }
-}
+```
+cd services/api
+./scripts/fixtures/reload
 ```
 
-Mutation operations (PATCH and DELETE) may contain a `success` boolean in the response.
+_Note:This will move into the docker compose setup_
+​
+## Creating collections
 
-### Errors
+Before you can ingest events to other collections than `bar-purchases`, you need to create them first as follows:
 
-Errors are returned as follows:
-
-```json
-{
-  "error": {
-    "message": "\"userId\" needs to be a valid ID"
-  }
-}
+```bash
+curl -s -XPOST '{"name": "power-meter-values", "description": "Meter values from a power outlet"}]}' <API_URL>/1/collections -H "Authorization: Bearer <application-credential>"
 ```
 
-An additional `details` array is added for validation errors to specify which fields had errors:
+Collection names are required to be unique and are lowercased.
 
-```json
-{
-  "error": {
-    "message": "\"userId\" needs to be a valid ID",
-    "details": [
-      {
-        "message": "\"userId\" needs to be a valid ID",
-        "path": ["userId"],
-        "type": "string.invalidID",
-        "context": {
-          "value": "INVALID",
-          "key": "userId",
-          "label": "userId"
-        }
-      }
-    ]
-  }
-}
+## Querying Analytics
+### Creating an AccessCredential
+​
+An AccessCredential is a unique token that you can create on behalf of your users. An AccessCredential defines which collections a user is allowed to access and what base queries are set for a given collection. An AccessCredential comes with a JSON Web Token so that direct access from the app-side can be given.
+
+​
+For example, if we wanted to create a token for the owner of the "Pirate Boozy Bar", we'd want to ensure that any analytics query always restricts the `venue.name` to `Pirate Boozy Bar`:
+​
+
+Step 1, create an AccessPolicy:
+​
+```bash
+curl -XPOST -d '{"name":"bar-access-test","collections":[{"type":"read","scope":{"venue.name":"Pirate Boozy Bar"},"collectionId":"60a660940546243490caec36"}]}"}' <API_URL>/1/access-policies -H "Authorization: Bearer <application-credential>"
+```
+​
+Step 2, create an AccessCredential (this can be done for every user):
+​
+```bash
+curl -XPOST -d '{"name": "test-user", "accessPolicy": "50a660940546243490caec42"}' <API_URL>/1/access-credentials -H "Authorization: Bearer <application-credential>"
+```
+
+This will return the new AccessCredential with a `token` field.
+
+### Querying your Events
+
+In order to query your events, you need a valid access credential with access to the collection you want to query.
+
+```bash
+curl -XPOST -d '{"collection": "bar-purchases"}' <API_URL>/1/analytics/search -H "Authorization: Bearer <access-credential>"
+```
+
+### Advanced Access Policy
+
+Access policies can also be used as a template with `scopeParams` that need to be passed as `scopeArgs` in the AccessCredential. This allows for user specific access credentials given one access policy. For example, you might want to have the userId act as a scope for the analytics.
+
+Step 1, create AccessPolicy:
+​
+```bash
+curl -XPOST -d '{"name":"bar-access-userid-test","collections":[{"type":"read","scope":{"venue.name":"Pirate Boozy Bar"},"scopeParams":["userId"],"collectionId":"60a660940546243490caec36"}]}' <API_URL>/1/access-policies -H "Authorization: Bearer <application-credential>"
+```
+​
+Step 2, create an AccessCredential for userId 42:
+​
+```bash
+curl -XPOST -d '{"name":"test-user-42","accessPolicy":"50a660940546243490caec66","scopeArgs":{"userId":42}}' <API_URL>/1/access-credentials -H "Authorization: Bearer <application-credential>"
 ```

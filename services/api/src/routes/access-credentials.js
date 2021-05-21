@@ -28,8 +28,9 @@ router
     async (ctx) => {
       // TODO add logic to check accessCredential validity
       const accessCredential = await AccessCredential.create(ctx.request.body);
+      const token = createCredentialToken(accessCredential);
       ctx.body = {
-        data: accessCredential,
+        data: { ...accessCredential.toObject(), token },
       };
     }
   )

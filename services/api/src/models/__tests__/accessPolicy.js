@@ -15,6 +15,7 @@ describe('Access', () => {
       };
 
       const policy = new AccessPolicy({
+        name: 'access-policy-test',
         collections: {
           type: 'read',
           scope: defaultQuery,

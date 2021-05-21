@@ -9,6 +9,7 @@ const { Batch, Collection } = require('../models');
 const { memorySizeOf, chunkedAsyncMap } = require('../lib/events');
 const { storeBatchEvents } = require('../lib/batch');
 const { createHash } = require('crypto');
+const { authenticate } = require('../lib/middleware/authenticate');
 
 const PUBSUB_RAW_EVENTS_TOPIC = config.get('PUBSUB_RAW_EVENTS_TOPIC');
 const EVENTS_CHUNK_SIZE = 10;
@@ -19,27 +20,29 @@ const eventSchema = Joi.object({
   occurredAt: Joi.string().required(),
 }).unknown(); // unknown: to allow any aother field
 
-router.post(
+router.use(authenticate()).post(
   '/',
   validate({
     body: Joi.object({
-      collectionId: Joi.string().required(),
+      collection: Joi.string().required(),
       events: Joi.array().items(eventSchema).min(1).required(),
     }),
   }),
   async (ctx) => {
-    const { collectionId, events } = ctx.request.body;
+    const { collection, events } = ctx.request.body;
     const ingestedAt = new Date().toISOString();
 
-    let collection;
+    let collectionObject;
     try {
-      collection = await Collection.findById(collectionId);
+      collectionObject = await Collection.findByIdOrName(collection);
     } catch (e) {
-      throw new NotFoundError(`CollectionId ${collectionId} not valid`);
+      console.error(e);
+      throw new NotFoundError(`Collection ${collection} not valid`);
     }
     if (!collection) {
-      throw new NotFoundError(`CollectionId ${collectionId} not found`);
+      throw new NotFoundError(`Collection ${collection} not found`);
     }
+    const collectionId = collectionObject.id;
 
     const hash = createHash('sha256')
       .update(`${collectionId}-${JSON.stringify(events)}`)

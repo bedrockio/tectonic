@@ -19,7 +19,7 @@ export default class AccessPolicyAccessCredentials extends React.Component {
       path: '/1/access-credentials/search',
       body: {
         ...params,
-        accessPolicyId: policy.id,
+        accessPolicy: policy.id,
       },
     });
   };
