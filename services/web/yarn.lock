@@ -8379,9 +8379,10 @@ react-syntax-highlighter@^12.2.1:
     prismjs "^1.8.4"
     refractor "^2.4.1"
 
-react-tectonic@../../../react-tectonic/react-tectonic-0.0.9.tgz:
-  version "0.0.9"
-  resolved "../../../react-tectonic/react-tectonic-0.0.9.tgz#e85cb0808e955c729696736881c977fb18880c5d"
+react-tectonic@^0.1.0:
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/react-tectonic/-/react-tectonic-0.1.0.tgz#7aa8ccbc31e80c0ec93c3497ffa34be38eee70ad"
+  integrity sha512-WAOZWwiSCcaZipc6FFZdtRqDj8xlVAsPXA44DYPpP/1P29Kz2+e1cD43enAvJonDNgfc26ymT5pFBZjUFD4J6Q==
   dependencies:
     moment "^2.29.1"
     recharts "^2.0.9"

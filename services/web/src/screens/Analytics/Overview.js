@@ -46,7 +46,7 @@ export default class AnalyticsOverview extends React.Component {
         <Block>
           <Header as="h4" content="Purchases over Time" textAlign="center" />
           <AggregateTimeSeries index="bar-purchases" operation="count" interval="1d" dateField="event.orderedAt">
-            <SeriesChart height={250} bar valueField="count" />
+            <SeriesChart height={250} variant="bar" valueField="count" />
           </AggregateTimeSeries>
         </Block>
 
@@ -58,7 +58,7 @@ export default class AnalyticsOverview extends React.Component {
             field="event.consumption.price"
             interval="1w"
             dateField="event.orderedAt">
-            <SeriesChart height={250} bar valueField="value" valueFieldFormatter={formatUsd} />
+            <SeriesChart variant="bar" height={250} valueField="value" valueFieldFormatter={formatUsd} />
           </AggregateTimeSeries>
         </Block>
       </React.Fragment>
