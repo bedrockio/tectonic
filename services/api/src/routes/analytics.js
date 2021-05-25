@@ -20,7 +20,7 @@ const filterOptions = {
 
 function interpretError(error) {
   const { meta } = error;
-  if (meta.body && meta.body.error.reason) {
+  if (meta && meta.body && meta.body.error.reason) {
     throw new Error(`Elasticsearch error: ${meta.body.error.reason}`);
   }
   if (error.message.match(/index_not_found_exception/i)) {
@@ -147,7 +147,7 @@ router
       }),
     }),
     async (ctx) => {
-      const { index, filter = {}, fields } = ctx.request.body;
+      const { index, filter = {}, fields = [] } = ctx.request.body;
       try {
         ctx.body = await stats(index, fields, filter);
       } catch (err) {
