@@ -1,5 +1,6 @@
 import { hot } from 'react-hot-loader/root';
 import 'theme/semantic.less';
+import 'react-tectonic/lib/styles.css';
 
 import React from 'react';
 

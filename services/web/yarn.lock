@@ -7037,7 +7037,7 @@ mkdirp@^0.5.1, mkdirp@~0.5.1:
   dependencies:
     minimist "^1.2.5"
 
-moment@^2.23.0:
+moment@^2.23.0, moment@^2.29.1:
   version "2.29.1"
   resolved "https://registry.yarnpkg.com/moment/-/moment-2.29.1.tgz#b2be769fa31940be9eeea6469c075e35006fa3d3"
   integrity sha512-kHmoybcPV8Sqy59DwNDY3Jefr64lK/by/da0ViFcuA4DH0vQg5Q6Ze5VimxkfQNSC+Mls/Kx53s7TjP1RhFEDQ==
@@ -8453,6 +8453,20 @@ react-syntax-highlighter@^12.2.1:
     prismjs "^1.8.4"
     refractor "^2.4.1"
 
+react-tectonic@../../../react-tectonic/react-tectonic-0.0.8.tgz:
+  version "0.0.8"
+  resolved "../../../react-tectonic/react-tectonic-0.0.8.tgz#16e983c980fca21b0fd6d5955689367be2e463b7"
+  dependencies:
+    moment "^2.29.1"
+    recharts "^2.0.9"
+
+react-tectonic@../../../react-tectonic/react-tectonic-0.0.9.tgz:
+  version "0.0.9"
+  resolved "../../../react-tectonic/react-tectonic-0.0.9.tgz#e85cb0808e955c729696736881c977fb18880c5d"
+  dependencies:
+    moment "^2.29.1"
+    recharts "^2.0.9"
+
 react-textarea-autosize@^8.3.2:
   version "8.3.2"
   resolved "https://registry.yarnpkg.com/react-textarea-autosize/-/react-textarea-autosize-8.3.2.tgz#4f9374d357b0a6f6469956726722549124a1b2db"
@@ -8545,7 +8559,7 @@ recharts-scale@^0.4.4:
   dependencies:
     decimal.js-light "^2.4.1"
 
-recharts@^2.0.0-beta.7:
+recharts@^2.0.0-beta.7, recharts@^2.0.9:
   version "2.0.9"
   resolved "https://registry.yarnpkg.com/recharts/-/recharts-2.0.9.tgz#048068eb01383291104548388712026948275f70"
   integrity sha512-JNsXE80PuF3hugUCE7JqDOMSvu5xQLxtjOaqFKKZI2pCJ1PVJzhwDv4TWk0nO4AvADbeWzYEHbg8C5Hcrh42UA==
