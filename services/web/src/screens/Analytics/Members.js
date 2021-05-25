@@ -1,9 +1,7 @@
 import React from 'react';
 import { screen } from 'helpers';
+import { AggregateTerms, DonutChart, Table } from 'react-tectonic';
 
-import Terms from 'components/analytics/Terms';
-import DonutChart from 'components/visualizations/DonutChart';
-import Table from 'components/visualizations/Table';
 import Block from 'components/Block';
 
 import { formatUsd } from 'utils/formatting';
@@ -22,22 +20,16 @@ export default class AnalyticsOverview extends React.Component {
           <Block columns={2}>
             <React.Fragment>
               <Header as="h4" content="Purchases by Member" textAlign="center" />
-              <Terms index={'bar-purchases'} aggField="ccName" termsSize={10}>
-                {(data) => {
-                  return <DonutChart data={data} limit={7} percent />;
-                }}
-              </Terms>
+              <AggregateTerms index={'bar-purchases'} aggField="ccName" termsSize={7}>
+                <DonutChart limit={7} percent />
+              </AggregateTerms>
             </React.Fragment>
             <React.Fragment>
               <Header as="h4" content="Revenue by Member" textAlign="center" />
               <Divider hidden />
-              <Terms index={'bar-purchases'} aggField="ccName" field="price" operation="sum" termsSize={10}>
-                {(data) => {
-                  return (
-                    <Table data={data} valueField="value" valueFieldName="Revenue" valueFieldFormatter={formatUsd} />
-                  );
-                }}
-              </Terms>
+              <AggregateTerms index={'bar-purchases'} aggField="ccName" field="price" operation="sum" termsSize={10}>
+                <Table valueField="value" valueFieldName="Revenue" valueFieldFormatter={formatUsd} />
+              </AggregateTerms>
             </React.Fragment>
           </Block>
         </div>
