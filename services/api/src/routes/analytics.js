@@ -20,7 +20,7 @@ const filterOptions = {
 
 function interpretError(error) {
   const { meta } = error;
-  if (meta.body && meta.body.error.reason) {
+  if (meta && meta.body && meta.body.error.reason) {
     throw new Error(`Elasticsearch error: ${meta.body.error.reason}`);
   }
   if (error.message.match(/index_not_found_exception/i)) {
@@ -174,7 +174,7 @@ router
     }),
     checkCollectionAccess,
     async (ctx) => {
-      const { filter = {}, fields } = ctx.request.body;
+      const { filter = {}, fields = [] } = ctx.request.body;
       const { collectionId, scope } = ctx.state.accessPolicyCollection;
       const index = getCollectionIndex(collectionId);
       filter.scope = scope; // Each scope key-value pair is added as ES bool.must.term
