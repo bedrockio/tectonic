@@ -52,9 +52,9 @@ async function run() {
   }
   const db = await initialize();
   logger.info('Deleting ES indexes...');
-  await dropCollectionIndex('evse-controllers');
-  await dropCollectionIndex('evse-metervalues');
-  await dropCollectionIndex('bat-purchases');
+  // await dropCollectionIndex('evse-controllers');
+  // await dropCollectionIndex('evse-metervalues');
+  await dropCollectionIndex('bar-purchases');
   logger.info(`Dropping database...`);
   await db.dropDatabase();
   const result = await createFixtures();

@@ -22,8 +22,14 @@ export default class Header extends React.Component {
             <Menu.Item as={NavLink} to="/collections">
               Collections
             </Menu.Item>
-            <Menu.Item as={NavLink} to="/policies">
-              Policies
+            <Menu.Item as={NavLink} to="/access-policies">
+              Access Policies
+            </Menu.Item>
+            <Menu.Item as={NavLink} to="/access-credentials">
+              Access Credentials
+            </Menu.Item>
+            <Menu.Item as={NavLink} to="/application-credentials">
+              Application Credentials
             </Menu.Item>
             <Menu.Item as={NavLink} to="/analytics">
               Analytics

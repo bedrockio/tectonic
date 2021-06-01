@@ -72,6 +72,8 @@ describe('/1/collections', () => {
   describe('PATCH /:collection', () => {
     it('admins should be able to update collection', async () => {
       const user = await createUser();
+      await Collection.deleteMany({});
+
       const collection = await Collection.create({
         name: 'test 1',
         description: 'Some description',
@@ -87,6 +89,8 @@ describe('/1/collections', () => {
   describe('DELETE /:collection', () => {
     it('should be able to delete collection', async () => {
       const user = await createUser();
+      await Collection.deleteMany({});
+
       const collection = await Collection.create({
         name: 'test 1',
         description: 'Some description',

@@ -54,13 +54,14 @@ async function chunkedAsyncMap(events, fn, chunkSize = 10) {
 
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
-async function publishEvents(collectionId, events, retryCount = 0) {
+async function publishEvents(collectionId, events, token, retryCount = 0) {
   const body = {
     events,
-    collectionId,
+    collection: collectionId,
   };
   const headers = {
     'Content-Type': 'application/json',
+    Authorization: `Bearer ${token}`,
   };
   const uri = `${config.get('API_URL')}/1/events`;
   try {
@@ -94,10 +95,10 @@ async function publishEvents(collectionId, events, retryCount = 0) {
   logger.info(`Published ${events.length} events to ${uri}`);
 }
 
-async function publishEventsBatched(collectionId, events, batchSize = 100) {
+async function publishEventsBatched(collectionId, events, token, batchSize = 100) {
   const batches = chunk(events, batchSize);
   for (const batch of batches) {
-    await publishEvents(collectionId, batch);
+    await publishEvents(collectionId, batch, token);
   }
 }
 
