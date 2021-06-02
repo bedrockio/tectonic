@@ -1,11 +1,12 @@
 {
   "attributes": {
-    "name": "String",
+    "name": { "type": "String", "unique": true, "required": true, "lowercase": true, "trim": true },
     "collections": [
       {
-        "type": { "type": "String", "enum": ["none", "read", "read-write"], "default": "none" },
-        "scope": {},
         "collectionId": { "type": "ObjectId", "required": true, "autopopulate": false },
+        "permission": { "type": "String", "enum": ["none", "read", "read-write"], "default": "none" },
+        "scope": {},
+        "scopeParams": ["String"],
         "fields": {
           "type": { "type": "String", "enum": ["blacklist", "whitelist"], "default": "blacklist" },
           "exclude": [{ "type": "String" }],

@@ -6,34 +6,34 @@ import AutoFocus from 'components/AutoFocus';
 // --- Generator: imports
 // --- Generator: end
 
-export default class EditPolicy extends React.Component {
+export default class EditApplicationCredential extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       open: false,
       error: null,
       loading: false,
-      policy: props.policy || {},
+      applicationCredential: props.applicationCredential || {},
     };
   }
 
   componentDidUpdate(lastProps) {
-    const { policy } = this.props;
-    if (policy && policy !== lastProps.policy) {
+    const { applicationCredential } = this.props;
+    if (applicationCredential && applicationCredential !== lastProps.applicationCredential) {
       this.setState({
-        policy,
+        applicationCredential,
       });
     }
   }
 
   isUpdate() {
-    return !!this.props.policy;
+    return !!this.props.applicationCredential;
   }
 
   setField = (evt, { name, value }) => {
     this.setState({
-      policy: {
-        ...this.state.policy,
+      applicationCredential: {
+        ...this.state.applicationCredential,
         [name]: value,
       },
     });
@@ -53,21 +53,21 @@ export default class EditPolicy extends React.Component {
         error: null,
         loading: true,
       });
-      const { policy } = this.state;
+      const { applicationCredential } = this.state;
       if (this.isUpdate()) {
         await request({
           method: 'PATCH',
-          path: `/1/policies/${policy.id}`,
-          body: policy,
+          path: `/1/application-credentials/${applicationCredential.id}`,
+          body: applicationCredential,
         });
       } else {
         await request({
           method: 'POST',
-          path: '/1/policies',
-          body: policy, // TODO: update to work with return of {policy, token}
+          path: '/1/application-credentials',
+          body: applicationCredential,
         });
         this.setState({
-          policy: {},
+          applicationCredential: {},
         });
       }
       this.setState({
@@ -85,7 +85,7 @@ export default class EditPolicy extends React.Component {
 
   render() {
     const { trigger } = this.props;
-    const { policy, open, loading, error } = this.state;
+    const { applicationCredential, open, loading, error } = this.state;
     return (
       <Modal
         closeIcon
@@ -95,15 +95,11 @@ export default class EditPolicy extends React.Component {
         onOpen={() => this.setState({ open: true })}
         onClose={() => this.setState({ open: false })}>
         <Modal.Header>
-          {this.isUpdate() ? `Edit "${policy.name}"` : 'New Policy'}
+          {this.isUpdate() ? `Edit "${applicationCredential.name}"` : 'New ApplicationCredential'}
         </Modal.Header>
         <Modal.Content scrolling>
           <AutoFocus>
-            <Form
-              noValidate
-              id="edit-policy"
-              error={!!error}
-              onSubmit={this.onSubmit}>
+            <Form noValidate id="edit-application-credential" error={!!error} onSubmit={this.onSubmit}>
               {error && <Message error content={error.message} />}
               {/* --- Generator: fields */}
               <Form.Input
@@ -111,14 +107,7 @@ export default class EditPolicy extends React.Component {
                 type="text"
                 name="name"
                 label="Name"
-                value={policy.name || ''}
-                onChange={this.setField}
-              />
-              <Form.TextArea
-                name="description"
-                label="Description"
-                type="text"
-                value={policy.description || ''}
+                value={applicationCredential.name || ''}
                 onChange={this.setField}
               />
               {/* --- Generator: end */}
@@ -128,7 +117,7 @@ export default class EditPolicy extends React.Component {
         <Modal.Actions>
           <Button
             primary
-            form="edit-policy"
+            form="edit-application-credential"
             loading={loading}
             disabled={loading}
             content={this.isUpdate() ? 'Update' : 'Create'}

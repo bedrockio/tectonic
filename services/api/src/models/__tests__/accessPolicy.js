@@ -1,9 +1,9 @@
-const { Policy, Collection } = require('..');
+const { AccessPolicy, Collection } = require('..');
 
 describe('Access', () => {
   describe('serialization', () => {
     it('should expose id', () => {
-      const policy = new Policy();
+      const policy = new AccessPolicy();
       const data = JSON.parse(JSON.stringify(policy));
       expect(data.id).toBe(policy.id);
     });
@@ -14,10 +14,12 @@ describe('Access', () => {
         userId: 'id42',
       };
 
-      const policy = new Policy({
+      const policy = new AccessPolicy({
+        name: 'access-policy-test',
         collections: {
           type: 'read',
           scope: defaultQuery,
+          scopeParams: ['organizationId'],
           collectionId: collection.id,
           fields: {
             type: 'blacklist',

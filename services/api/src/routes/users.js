@@ -1,7 +1,7 @@
 const Router = require('@koa/router');
 const Joi = require('@hapi/joi');
 const validate = require('../utils/middleware/validate');
-const { authenticate, fetchUser } = require('../utils/middleware/authenticate');
+const { authenticate, fetchUser } = require('../lib/middleware/authenticate');
 const { requirePermissions } = require('../utils/middleware/permissions');
 const { NotFoundError, BadRequestError } = require('../utils/errors');
 const { searchValidation, exportValidation, getSearchQuery, search, searchExport } = require('../utils/search');
@@ -17,7 +17,7 @@ const passwordField = Joi.string()
   .message('Your password must be at least 6 characters long. Please try another.');
 
 router
-  .use(authenticate({ type: 'user' }))
+  .use(authenticate())
   .use(fetchUser)
   .param('userId', async (id, ctx, next) => {
     const user = await User.findById(id);

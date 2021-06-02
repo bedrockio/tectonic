@@ -1,11 +1,8 @@
 import React from 'react';
 import { screen } from 'helpers';
 import { AggregateStats } from 'react-tectonic';
-
 import { numberWithCommas } from 'utils/formatting';
-
 import { Divider, Statistic } from 'semantic-ui-react';
-
 import Menu from './Menu';
 
 @screen

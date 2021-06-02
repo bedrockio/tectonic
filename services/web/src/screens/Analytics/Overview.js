@@ -1,14 +1,9 @@
 import React from 'react';
 import { screen } from 'helpers';
-
 import { AggregateTimeSeries, AggregateStats, SeriesChart } from 'react-tectonic';
-
 import Block from 'components/Block';
-
 import { numberWithCommas, formatUsd } from 'utils/formatting';
-
 import { Divider, Header, Statistic } from 'semantic-ui-react';
-
 import Menu from './Menu';
 
 @screen

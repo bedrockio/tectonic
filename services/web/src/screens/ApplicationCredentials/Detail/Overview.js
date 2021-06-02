@@ -9,15 +9,15 @@ import { formatDateTime } from 'utils/date';
 // --- Generator: end
 
 @screen
-export default class PolicyOverview extends React.Component {
+export default class ApplicationCredentialOverview extends React.Component {
   render() {
-    const { policy } = this.props;
+    const { applicationCredential } = this.props;
     return (
       <React.Fragment>
         <Menu {...this.props} />
         {/* --- Generator: overview-fields */}
-        <Header as="h1">{policy.name}</Header>
-        <p>{policy.description}</p>
+        <Header as="h1">{applicationCredential.name}</Header>
+        <p>{applicationCredential.description}</p>
         {/* --- Generator: end */}
         <Header as="h3">Details</Header>
         <Table definition>
@@ -26,17 +26,17 @@ export default class PolicyOverview extends React.Component {
             {/* --- Generator: end */}
             <Table.Row>
               <Table.Cell>Created At</Table.Cell>
-              <Table.Cell>{formatDateTime(policy.createdAt)}</Table.Cell>
+              <Table.Cell>{formatDateTime(applicationCredential.createdAt)}</Table.Cell>
             </Table.Row>
             <Table.Row>
               <Table.Cell>Updated At</Table.Cell>
-              <Table.Cell>{formatDateTime(policy.updatedAt)}</Table.Cell>
+              <Table.Cell>{formatDateTime(applicationCredential.updatedAt)}</Table.Cell>
             </Table.Row>
           </Table.Body>
         </Table>
         <Header as="h1">JSON</Header>
         <Segment style={{ overflow: 'auto' }}>
-          <ReactJson src={policy} />
+          <ReactJson src={applicationCredential} />
         </Segment>
       </React.Fragment>
     );

@@ -11,11 +11,11 @@ import Overview from './Overview';
 
 // --- Generator: end
 
-export default class PolicyDetail extends React.Component {
+export default class AccessCredentialDetail extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      policy: null,
+      accessCredential: null,
       error: null,
       loading: true,
       onSave: this.onSave,
@@ -23,21 +23,21 @@ export default class PolicyDetail extends React.Component {
   }
 
   componentDidMount() {
-    this.fetchPolicy();
+    this.fetchAccessCredential();
   }
 
   componentDidUpdate(lastProps) {
     const { id } = this.props.match.params;
     if (id !== lastProps.match.params.id) {
-      this.fetchPolicy();
+      this.fetchAccessCredential();
     }
   }
 
   onSave = () => {
-    this.fetchPolicy();
+    this.fetchAccessCredential();
   };
 
-  async fetchPolicy() {
+  async fetchAccessCredential() {
     const { id } = this.props.match.params;
     try {
       this.setState({
@@ -46,10 +46,10 @@ export default class PolicyDetail extends React.Component {
       });
       const { data } = await request({
         method: 'GET',
-        path: `/1/policies/${id}`,
+        path: `/1/access-credentials/${id}`,
       });
       this.setState({
-        policy: data,
+        accessCredential: data,
         loading: false,
       });
     } catch (error) {
@@ -67,21 +67,14 @@ export default class PolicyDetail extends React.Component {
     } else if (error) {
       return (
         <React.Fragment>
-          <Breadcrumbs
-            link={<Link to="/policies">Policies</Link>}
-            active="Not Found"
-          />
-          <Header content="Sorry that policy wasn't found." />
+          <Breadcrumbs link={<Link to="/access-credentials">Access Credentials</Link>} active="Not Found" />
+          <Header content="Sorry that access credential wasn't found." />
         </React.Fragment>
       );
     }
     return (
       <Switch>
-        <Route
-          exact
-          path="/policies/:id"
-          render={(props) => <Overview {...props} {...this.state} />}
-        />
+        <Route exact path="/access-credentials/:id" render={(props) => <Overview {...props} {...this.state} />} />
         {/* --- Generator: routes */}
         {/* --- Generator: end */}
       </Switch>

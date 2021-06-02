@@ -1,18 +1,16 @@
 const Router = require('@koa/router');
 const Joi = require('@hapi/joi');
 const validate = require('../utils/middleware/validate');
-const { authenticate, fetchUser } = require('../utils/middleware/authenticate');
+const { authenticate } = require('../lib/middleware/authenticate');
 const { NotFoundError } = require('../utils/errors');
-const { Policy } = require('../models');
-const { createPolicyToken } = require('../lib/tokens');
+const { AccessPolicy } = require('../models');
 
 const router = new Router();
 
 router
-  .use(authenticate({ type: 'user' }))
-  .use(fetchUser)
+  .use(authenticate())
   .param('policyId', async (id, ctx, next) => {
-    const policy = await Policy.findById(id);
+    const policy = await AccessPolicy.findById(id);
     ctx.state.policy = policy;
     if (!policy) {
       throw new NotFoundError();
@@ -22,32 +20,19 @@ router
   .post(
     '/',
     validate({
-      body: Policy.getValidator(),
+      body: AccessPolicy.getValidator(),
     }),
     async (ctx) => {
-      const policy = await Policy.create(ctx.request.body);
-      const token = createPolicyToken(policy);
+      const policy = await AccessPolicy.create(ctx.request.body);
       ctx.body = {
-        data: {
-          policy,
-          token,
-        },
+        data: policy,
       };
     }
   )
   .get('/:policyId', async (ctx) => {
     const { policy } = await ctx.state;
-    const token = createPolicyToken(policy);
-
     ctx.body = {
-      data: { ...policy.toObject(), token },
-    };
-  })
-  .get('/:policyId/token', async (ctx) => {
-    const { policy } = await ctx.state;
-    const token = createPolicyToken(policy);
-    ctx.body = {
-      data: token,
+      data: policy,
     };
   })
   .post(
@@ -79,12 +64,12 @@ router
           $options: 'i',
         };
       }
-      const data = await Policy.find(query)
+      const data = await AccessPolicy.find(query)
         .sort({ [sort.field]: sort.order === 'desc' ? -1 : 1 })
         .skip(skip)
         .limit(limit);
 
-      const total = await Policy.countDocuments(query);
+      const total = await AccessPolicy.countDocuments(query);
       ctx.body = {
         data,
         meta: {
@@ -98,7 +83,7 @@ router
   .patch(
     '/:policyId',
     validate({
-      body: Policy.getPatchValidator(),
+      body: AccessPolicy.getPatchValidator(),
     }),
     async (ctx) => {
       const policy = ctx.state.policy;

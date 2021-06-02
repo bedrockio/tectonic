@@ -3,18 +3,18 @@ const Joi = require('@hapi/joi');
 const validate = require('../utils/middleware/validate');
 const { authenticate } = require('../lib/middleware/authenticate');
 const { NotFoundError } = require('../utils/errors');
-const { Collection } = require('../models');
-const { ensureCollectionIndex, getMapping, getCollectionIndex } = require('../lib/analytics');
-const { logger } = require('@bedrockio/instrumentation');
+const { ApplicationCredential } = require('../models');
+const { createCredentialToken } = require('../lib/tokens');
+//const { logger } = require('@bedrockio/instrumentation');
 
 const router = new Router();
 
 router
   .use(authenticate())
-  .param('collectionId', async (id, ctx, next) => {
-    const collection = await Collection.findById(id);
-    ctx.state.collection = collection;
-    if (!collection) {
+  .param('credential', async (idOrName, ctx, next) => {
+    const applicationCredential = await ApplicationCredential.findByIdOrName(idOrName);
+    ctx.state.applicationCredential = applicationCredential;
+    if (!applicationCredential) {
       throw new NotFoundError();
     }
     return next();
@@ -22,27 +22,21 @@ router
   .post(
     '/',
     validate({
-      body: Collection.getValidator(),
+      body: ApplicationCredential.getValidator(),
     }),
     async (ctx) => {
-      const collection = await Collection.create(ctx.request.body);
-      await ensureCollectionIndex(collection.id);
+      // TODO add logic to check applicationCredential validity
+      const applicationCredential = await ApplicationCredential.create(ctx.request.body);
       ctx.body = {
-        data: collection,
+        data: applicationCredential,
       };
     }
   )
-  .get('/:collectionId', async (ctx) => {
-    const { collection } = await ctx.state;
-    let mapping = {};
-    try {
-      mapping = await getMapping(getCollectionIndex(collection.id));
-    } catch (e) {
-      logger.warn('Could not retrieve mapping');
-    }
-
+  .get('/:credential', async (ctx) => {
+    const { applicationCredential } = await ctx.state;
+    const token = createCredentialToken(applicationCredential, 'application');
     ctx.body = {
-      data: { ...collection.toObject(), mapping },
+      data: { ...applicationCredential.toObject(), token },
     };
   })
   .get('/', async (ctx) => {
@@ -50,10 +44,10 @@ router
     const query = {
       deletedAt: { $exists: false },
     };
-    const data = await Collection.find(query)
+    const data = await ApplicationCredential.find(query)
       .sort({ ['createdAt']: -1 })
       .limit(parseInt(limit));
-    const total = await Collection.countDocuments(query);
+    const total = await ApplicationCredential.countDocuments(query);
     ctx.body = {
       data,
       meta: {
@@ -91,12 +85,12 @@ router
           $options: 'i',
         };
       }
-      const data = await Collection.find(query)
+      const data = await ApplicationCredential.find(query)
         .sort({ [sort.field]: sort.order === 'desc' ? -1 : 1 })
         .skip(skip)
         .limit(limit);
 
-      const total = await Collection.countDocuments(query);
+      const total = await ApplicationCredential.countDocuments(query);
       ctx.body = {
         data,
         meta: {
@@ -108,22 +102,22 @@ router
     }
   )
   .patch(
-    '/:collectionId',
+    '/:credential',
     validate({
-      body: Collection.getPatchValidator(),
+      body: ApplicationCredential.getPatchValidator(),
     }),
     async (ctx) => {
-      const collection = ctx.state.collection;
-      collection.assign(ctx.request.body);
-      await collection.save();
+      const applicationCredential = ctx.state.applicationCredential;
+      applicationCredential.assign(ctx.request.body);
+      await applicationCredential.save();
       ctx.body = {
-        data: collection,
+        data: applicationCredential,
       };
     }
   )
-  .delete('/:collectionId', async (ctx) => {
-    const collection = ctx.state.collection;
-    await collection.delete();
+  .delete('/:credential', async (ctx) => {
+    const applicationCredential = ctx.state.applicationCredential;
+    await applicationCredential.delete();
     ctx.status = 204;
   });
 

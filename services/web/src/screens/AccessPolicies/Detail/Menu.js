@@ -4,15 +4,13 @@ import { Menu, Divider, Button } from 'semantic-ui-react';
 import { NavLink } from 'react-router-dom';
 import { Breadcrumbs } from 'components';
 
-import EditPolicy from 'modals/EditPolicy';
+import EditAccessPolicy from 'modals/EditAccessPolicy';
 
 export default ({ policy, onSave }) => {
   return (
     <React.Fragment>
-      <Breadcrumbs
-        link={<Link to="/policies">Policies</Link>}
-        active={policy.name || 'Loading...'}>
-        <EditPolicy
+      <Breadcrumbs link={<Link to="/access-policies">Access Policies</Link>} active={policy.name || 'Loading...'}>
+        <EditAccessPolicy
           policy={policy}
           onSave={onSave}
           trigger={<Button primary icon="setting" content="Settings" />}
@@ -20,9 +18,10 @@ export default ({ policy, onSave }) => {
       </Breadcrumbs>
       <Divider hidden />
       <Menu tabular>
+        <Menu.Item name="Overview" to={`/access-policies/${policy.id}`} as={NavLink} exact />
         <Menu.Item
-          name="Overview"
-          to={`/policies/${policy.id}`}
+          name="AccessCredentials"
+          to={`/access-policies/${policy.id}/access-credentials`}
           as={NavLink}
           exact
         />

@@ -22,43 +22,33 @@ describe('authenticate', () => {
     ctx = context({});
   });
 
-  it('should confirm that token has a valid kid', async () => {
+  it('should confirm that token has a valid type', async () => {
     const middleware = authenticate();
-    const token = jwt.sign({ kid: 'not valid kid' }, 'verysecret');
-    const ctx = context({ headers: { authorization: `Bearer ${token}` } });
-    await expect(middleware(ctx)).rejects.toHaveProperty('message', 'jwt token does not match supported kid');
-  });
-
-  it('should confirm that type if specify in middleware', async () => {
-    const middleware = authenticate({
-      type: 'sometype',
-    });
-
-    const token = jwt.sign({ kid: 'user', type: 'not same type' }, 'verysecret');
+    const token = jwt.sign({ type: 'not valid type' }, 'verysecret');
     const ctx = context({ headers: { authorization: `Bearer ${token}` } });
     await expect(middleware(ctx)).rejects.toHaveProperty(
       'message',
-      'endpoint requires jwt token payload match type "sometype"'
+      "jwt token of type 'not valid type' is not supported"
     );
   });
 
   it('should fail if token doesnt have right signature', async () => {
     const middleware = authenticate();
-    const token = jwt.sign({ kid: 'user' }, 'verysecret');
+    const token = jwt.sign({ type: 'user' }, 'verysecret');
     const ctx = context({ headers: { authorization: `Bearer ${token}` } });
     await expect(middleware(ctx)).rejects.toHaveProperty('message', 'invalid signature');
   });
 
   it('should fail if expired', async () => {
     const middleware = authenticate();
-    const token = jwt.sign({ kid: 'user' }, config.get('JWT_SECRET'), { expiresIn: 0 });
+    const token = jwt.sign({ type: 'user' }, config.get('JWT_SECRET'), { expiresIn: 0 });
     const ctx = context({ headers: { authorization: `Bearer ${token}` } });
     await expect(middleware(ctx)).rejects.toHaveProperty('message', 'jwt expired');
   });
 
   it('should work with valid secret and not expired', async () => {
     const middleware = authenticate();
-    const token = jwt.sign({ kid: 'user', attribute: 'value' }, config.get('JWT_SECRET'));
+    const token = jwt.sign({ type: 'user', attribute: 'value' }, config.get('JWT_SECRET'));
     const ctx = context({ headers: { authorization: `Bearer ${token}` } });
     await middleware(ctx, () => {
       expect(ctx.state.jwt.attribute).toBe('value');
@@ -67,7 +57,7 @@ describe('authenticate', () => {
 
   it('should only validate the token once when called multiple times', async () => {
     const middleware = authenticate();
-    const token = jwt.sign({ kid: 'user', attribute: 'value' }, config.get('JWT_SECRET'));
+    const token = jwt.sign({ type: 'user', attribute: 'value' }, config.get('JWT_SECRET'));
     const ctx = context({ headers: { authorization: `Bearer ${token}` } });
 
     let tmp;
@@ -90,7 +80,7 @@ describe('authenticate', () => {
   describe('optional authentication', () => {
     it('should authenticate when token exists', async () => {
       const middleware = authenticate({ optional: true });
-      const token = jwt.sign({ kid: 'user', attribute: 'value' }, config.get('JWT_SECRET'));
+      const token = jwt.sign({ type: 'user', attribute: 'value' }, config.get('JWT_SECRET'));
       const ctx = context({ headers: { authorization: `Bearer ${token}` } });
       await middleware(ctx, () => {
         expect(ctx.state.jwt.attribute).toBe('value');
@@ -109,7 +99,7 @@ describe('authenticate', () => {
       const optional = authenticate({ optional: true });
       const required = authenticate();
 
-      const token = jwt.sign({ kid: 'user', attribute: 'value' }, config.get('JWT_SECRET'));
+      const token = jwt.sign({ type: 'user', attribute: 'value' }, config.get('JWT_SECRET'));
       const ctx = context({ headers: { authorization: `Bearer ${token}` } });
 
       await optional(ctx, () => {});

@@ -472,6 +472,7 @@ const bulkIndexBatchEvents = async (batchEvents) => {
   const body = batchEvents.flatMap(({ batch, event }) => {
     const { collectionId, id: batchId, ingestedAt } = batch;
     const index = { _index: getCollectionIndex(collectionId) };
+    if (event.id) index._id = event.id;
     if (event._id) index._id = event._id;
     const doc = {
       collectionId,

@@ -1,14 +1,9 @@
 import React from 'react';
 import { screen } from 'helpers';
-
 import { AggregateTerms, DonutChart, Table } from 'react-tectonic';
-
 import Block from 'components/Block';
-
 import { formatUsd } from 'utils/formatting';
-
 import { Divider, Header } from 'semantic-ui-react';
-
 import Menu from './Menu';
 
 @screen
