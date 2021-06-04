@@ -1,5 +1,4 @@
 import React, { createRef } from 'react';
-import { withSession } from 'stores';
 import { startCase, kebabCase } from 'lodash';
 import { Container, Menu, Message, Breadcrumb, Divider, Grid, Sticky, Ref, Segment } from 'semantic-ui-react';
 import { Switch, Route, Link, NavLink } from 'react-router-dom';
@@ -28,7 +27,6 @@ function stateForParams(params) {
 }
 
 @screen
-@withSession
 export default class Docs extends React.Component {
   contextRef = createRef();
 
@@ -38,7 +36,6 @@ export default class Docs extends React.Component {
       openApi: null,
       loading: true,
       error: null,
-      token: localStorage.getItem('jwt'),
       ...stateForParams(this.props.match.params),
     };
   }
@@ -91,7 +88,7 @@ export default class Docs extends React.Component {
   }
 
   render() {
-    const { page, loading, openApi, token } = this.state;
+    const { page, loading, openApi } = this.state;
     const { me } = this.props;
 
     if (loading) {
