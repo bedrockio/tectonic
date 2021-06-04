@@ -23,10 +23,15 @@ router
   .post(
     '/',
     validate({
-      body: AccessCredential.getValidator(),
+      body: Joi.object({
+        name: Joi.string().required(),
+        accessPolicy: Joi.string().required(), // name or id
+        scopeArgs: Joi.object().optional(), // TODO: add validator for this field
+      }),
     }),
     async (ctx) => {
       // TODO add logic to check accessCredential validity
+      // Check if accessPolicy is a name or id
       const accessCredential = await AccessCredential.create(ctx.request.body);
       const token = createCredentialToken(accessCredential);
       ctx.body = {
