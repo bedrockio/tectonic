@@ -7,6 +7,16 @@ More documentation about specific services and components can be found in the fo
 - [services/web](services/web) - Web application and administration dashboard
 - [services/pubsub-emulator](services/pubsub-emulator) - Docker container to run the gcloud pubsub emulator
 
+## Quick Start
+
+Using Docker Compose you can build and run all services and dependencies as follows:
+
+```bash
+docker-compose up
+```
+
+Open the dashboard at http://localhost:3200/ - Admin login credentials can be seen in the API output.
+
 ## Local development
 
 Steps to run the full stack locally:
@@ -17,7 +27,9 @@ Steps to run the full stack locally:
 bedrock cloud build pubsub-emulator
 docker run --name pubsub-emulator -d -p 8200:8200 tectonic-services-pubsub-emulator
 ```
+
 Alternatively install and run the gcloud emulator on your system:
+
 ```
 gcloud components install pubsub-emulator
 gcloud components update
@@ -27,6 +39,7 @@ gcloud beta emulators pubsub start --host-port=0.0.0.0:8200
 #### 2) Make sure to have MongoDB and Elasticsearch running
 
 Optinally run as docker containers:
+
 ```bash
 # create local data folders for mongo and ES
 sudo mkdir /root/data
@@ -74,16 +87,6 @@ node scripts/publish-fixture-events.js
 #### 7) Check Dashboard Url
 
 Login with `admin@tectonic.io`:`tectonic.now` at [http://localhost:3200](http://localhost:3200)
-
-## Quick Start
-
-Using Docker Compose you can build and run all services and dependencies as follows:
-
-```bash
-docker-compose up
-```
-
-Open the dashboard at http://localhost:3200/ - Admin login credentials can be seen in the API output.
 
 ### API Documentation
 
