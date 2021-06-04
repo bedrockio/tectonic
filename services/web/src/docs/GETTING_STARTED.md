@@ -79,7 +79,7 @@ For example, if we wanted to create a token for the owner of the "Pirate Boozy B
 Step 1, create an AccessPolicy:
 ​
 ```bash
-curl -s -XPOST -d '{"name":"bar-access-test","collections":[{"type":"read","scope":{"venue.name":"Pirate Boozy Bar"},"collectionId":"60a660940546243490caec36"}]}' <API_URL>/1/access-policies -H "Authorization: Bearer <ADMIN_TOKEN>" -H "Content-Type: application/json"
+curl -s -XPOST -d '{"name":"bar-access-test","collections":[{"permission":"read","scope":{"venue.name":"Pirate Boozy Bar"},"collectionId":"60a660940546243490caec36"}]}' <API_URL>/1/access-policies -H "Authorization: Bearer <ADMIN_TOKEN>" -H "Content-Type: application/json"
 ```
 ​
 Step 2, create an AccessCredential (this can be done for every user):
