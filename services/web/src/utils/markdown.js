@@ -114,29 +114,29 @@ class OpenApiMacros {
   }
 
   buildNestedTable(headerCells, bodyRows) {
-
     function wrap(tag, arr, fn) {
-      return arr.map((el) => {
-        if (fn) {
-          el = fn(el);
-        }
-        return `<${tag}>${el}</${tag}>`;
-      }).join('');
+      return arr
+        .map((el) => {
+          if (fn) {
+            el = fn(el);
+          }
+          return `<${tag}>${el}</${tag}>`;
+        })
+        .join('');
     }
     return html`
       <table>
-      <thead>
-        <tr>
-        ${wrap('th', headerCells)}
-        </tr>
-      </thead>
-      <tbody>
-        ${wrap('tr', bodyRows, (cells) => {
-          return wrap('td', cells);
-        })}
-        <tr>
-        </tr>
-      </tbody>
+        <thead>
+          <tr>
+            ${wrap('th', headerCells)}
+          </tr>
+        </thead>
+        <tbody>
+          ${wrap('tr', bodyRows, (cells) => {
+            return wrap('td', cells);
+          })}
+          <tr></tr>
+        </tbody>
       </table>
     `;
   }
@@ -158,13 +158,13 @@ export function executeOpenApiMacros(openApi, markdown) {
   return markdown;
 }
 
-export function enrichMarkdown(markdown, credentials, organization) {
+export function enrichMarkdown(markdown, adminToken, organization) {
   let enrichedMarkdown = markdown;
   if (organization) {
     enrichedMarkdown = enrichedMarkdown.replace(new RegExp('<ORGANIZATION_ID>', 'g'), organization.id);
   }
-  if (credentials && credentials.length) {
-    enrichedMarkdown = enrichedMarkdown.replace(new RegExp('<TOKEN>', 'g'), credentials[0].apiToken);
+  if (adminToken) {
+    enrichedMarkdown = enrichedMarkdown.replace(new RegExp('<ADMIN_TOKEN>', 'g'), adminToken);
   }
   enrichedMarkdown = enrichedMarkdown.replace(new RegExp('<API_URL>', 'g'), API_URL.replace(/\/$/, ''));
   enrichedMarkdown = enrichedMarkdown.replace(new RegExp('<APP_NAME>', 'g'), APP_NAME.replace(/\/$/, ''));
@@ -172,7 +172,11 @@ export function enrichMarkdown(markdown, credentials, organization) {
 }
 
 function html(chunks, ...args) {
-  return chunks.map((chunk, i) => {
-    return chunk.trim() + (args[i] || '');
-  }).join('').trim().replace(/\s*\n\s*/g, '');
+  return chunks
+    .map((chunk, i) => {
+      return chunk.trim() + (args[i] || '');
+    })
+    .join('')
+    .trim()
+    .replace(/\s*\n\s*/g, '');
 }

@@ -1,4 +1,5 @@
 import React, { createRef } from 'react';
+import { withSession } from 'stores';
 import { startCase, kebabCase } from 'lodash';
 import { Container, Menu, Message, Breadcrumb, Divider, Grid, Sticky, Ref, Segment } from 'semantic-ui-react';
 import { Switch, Route, Link, NavLink } from 'react-router-dom';
@@ -27,6 +28,7 @@ function stateForParams(params) {
 }
 
 @screen
+@withSession
 export default class Docs extends React.Component {
   contextRef = createRef();
 
@@ -36,6 +38,7 @@ export default class Docs extends React.Component {
       openApi: null,
       loading: true,
       error: null,
+      token: localStorage.getItem('jwt'),
       ...stateForParams(this.props.match.params),
     };
   }
@@ -51,12 +54,15 @@ export default class Docs extends React.Component {
         method: 'GET',
         path: '/openapi.lite.json',
       });
-      this.setState({
-        loading: false,
-        openApi,
-      }, () => {
-        this.checkJumpLink();
-      });
+      this.setState(
+        {
+          loading: false,
+          openApi,
+        },
+        () => {
+          this.checkJumpLink();
+        }
+      );
     } catch (error) {
       this.setState({
         error,
@@ -85,7 +91,7 @@ export default class Docs extends React.Component {
   }
 
   render() {
-    const { page, loading, openApi } = this.state;
+    const { page, loading, openApi, token } = this.state;
     const { me } = this.props;
 
     if (loading) {
@@ -122,25 +128,23 @@ export default class Docs extends React.Component {
               <Ref innerRef={this.contextRef}>
                 <Segment basic>
                   <Switch>
-                    {PAGES
-                      .map((page) => {
-                        return (
-                          <Route
-                            key={page.id}
-                            exact
-                            path={`/docs/${page.id}`}
-                            component={(props) => <StandardPage {...props} me={me} openApi={openApi} page={page} />}
-                          />
-                        );
-                      })
-                      .concat([
+                    {PAGES.map((page) => {
+                      return (
                         <Route
-                          key="index"
+                          key={page.id}
                           exact
-                          path={`/docs`}
-                          component={(props) => <StandardPage {...props} me={me} openApi={openApi} page={PAGES[0]} />}
-                        />,
-                      ])}
+                          path={`/docs/${page.id}`}
+                          component={(props) => <StandardPage {...props} me={me} openApi={openApi} page={page} />}
+                        />
+                      );
+                    }).concat([
+                      <Route
+                        key="index"
+                        exact
+                        path={`/docs`}
+                        component={(props) => <StandardPage {...props} me={me} openApi={openApi} page={PAGES[0]} />}
+                      />,
+                    ])}
                   </Switch>
                 </Segment>
               </Ref>
