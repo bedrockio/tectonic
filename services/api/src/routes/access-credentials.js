@@ -129,7 +129,10 @@ router
   )
   .delete('/:credential', async (ctx) => {
     const accessCredential = ctx.state.accessCredential;
-    await accessCredential.delete();
+    // hard delete
+    await AccessCredential.deleteOne({ _id: accessCredential.id });
+    // soft delete
+    // await accessCredential.delete();
     ctx.status = 204;
   });
 

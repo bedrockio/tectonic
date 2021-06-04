@@ -98,7 +98,7 @@ describe('/1/collections', () => {
       const response = await request('DELETE', `/1/collections/${collection.id}`, {}, { user });
       expect(response.status).toBe(204);
       const dbCollection = await Collection.findById(collection.id);
-      expect(dbCollection.deletedAt).toBeDefined();
+      expect(dbCollection).toBeNull();
     });
   });
 });

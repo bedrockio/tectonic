@@ -96,7 +96,10 @@ router
   )
   .delete('/:policyId', async (ctx) => {
     const policy = ctx.state.policy;
-    await policy.delete();
+    // hard delete
+    await AccessPolicy.deleteOne({ _id: policy.id });
+    // soft delete
+    // await policy.delete();
     ctx.status = 204;
   });
 

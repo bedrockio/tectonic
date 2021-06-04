@@ -123,7 +123,10 @@ router
   )
   .delete('/:collectionId', async (ctx) => {
     const collection = ctx.state.collection;
-    await collection.delete();
+    // hard delete
+    await Collection.deleteOne({ _id: collection.id });
+    // soft delete
+    // await collection.delete();
     ctx.status = 204;
   });
 
