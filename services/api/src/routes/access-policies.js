@@ -3,9 +3,16 @@ const Joi = require('@hapi/joi');
 const validate = require('../utils/middleware/validate');
 const { authenticate } = require('../lib/middleware/authenticate');
 const { NotFoundError } = require('../utils/errors');
-const { AccessPolicy } = require('../models');
+const { AccessPolicy, Collection } = require('../models');
 
 const router = new Router();
+
+const collectionSchema = Joi.object({
+  collection: Joi.string().required(),
+  scope: Joi.object().optional(),
+  scopeParams: Joi.array().items(Joi.string()).optional(),
+  // fields is ignored for now
+});
 
 router
   .use(authenticate())
@@ -20,10 +27,41 @@ router
   .post(
     '/',
     validate({
-      body: AccessPolicy.getValidator(),
+      body: Joi.object({
+        name: Joi.string().required(),
+        collections: Joi.array().items(collectionSchema).min(1).required(),
+      }),
     }),
     async (ctx) => {
-      const policy = await AccessPolicy.create(ctx.request.body);
+      const { name, collections } = ctx.request.body;
+      const policyObject = {
+        name,
+        collections: [],
+      };
+
+      for (const col of collections) {
+        const collection = await Collection.findByIdOrName(col.collection);
+        if (!collection) ctx.throw(401, `collection "${col.collection}" doesn't exist`);
+        col.collectionId = collection.id;
+        delete col.collection;
+        policyObject.collections.push(col);
+      }
+      const policy = await AccessPolicy.create(policyObject);
+      ctx.body = {
+        data: policy,
+      };
+    }
+  )
+  .patch(
+    // TODO: update patch to work with collection id or name
+    '/:policyId',
+    validate({
+      body: AccessPolicy.getPatchValidator(),
+    }),
+    async (ctx) => {
+      const policy = ctx.state.policy;
+      policy.assign(ctx.request.body);
+      await policy.save();
       ctx.body = {
         data: policy,
       };
@@ -77,20 +115,6 @@ router
           skip,
           limit,
         },
-      };
-    }
-  )
-  .patch(
-    '/:policyId',
-    validate({
-      body: AccessPolicy.getPatchValidator(),
-    }),
-    async (ctx) => {
-      const policy = ctx.state.policy;
-      policy.assign(ctx.request.body);
-      await policy.save();
-      ctx.body = {
-        data: policy,
       };
     }
   )
