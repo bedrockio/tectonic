@@ -1,7 +1,8 @@
 import React from 'react';
 import { Form, Modal, Message, Button } from 'semantic-ui-react';
 import { request } from 'utils/api';
-import AutoFocus from 'components/AutoFocus';
+
+import CollectionPolicy from './CollectionPolicy';
 
 // --- Generator: imports
 // --- Generator: end
@@ -13,7 +14,9 @@ export default class EditAccessPolicy extends React.Component {
       open: false,
       error: null,
       loading: false,
-      policy: props.policy || {},
+      policy: props.policy || {
+        collections: [],
+      },
     };
   }
 
@@ -86,6 +89,7 @@ export default class EditAccessPolicy extends React.Component {
   render() {
     const { trigger } = this.props;
     const { policy, open, loading, error } = this.state;
+
     return (
       <Modal
         closeIcon
@@ -96,28 +100,33 @@ export default class EditAccessPolicy extends React.Component {
         onClose={() => this.setState({ open: false })}>
         <Modal.Header>{this.isUpdate() ? `Edit "${policy.name}"` : 'New Policy'}</Modal.Header>
         <Modal.Content scrolling>
-          <AutoFocus>
-            <Form noValidate id="edit-policy" error={!!error} onSubmit={this.onSubmit}>
-              {error && <Message error content={error.message} />}
-              {/* --- Generator: fields */}
-              <Form.Input
-                required
-                type="text"
-                name="name"
-                label="Name"
-                value={policy.name || ''}
-                onChange={this.setField}
-              />
-              <Form.TextArea
-                name="description"
-                label="Description"
-                type="text"
-                value={policy.description || ''}
-                onChange={this.setField}
-              />
-              {/* --- Generator: end */}
-            </Form>
-          </AutoFocus>
+          <Form noValidate id="edit-policy" error={!!error}>
+            {error && <Message error content={error.message} />}
+            {/* --- Generator: fields */}
+            <Form.Input
+              required
+              type="text"
+              name="name"
+              label="Name"
+              value={policy.name || ''}
+              onChange={this.setField}
+            />
+
+            <CollectionPolicy
+              collections={policy.collections}
+              onChange={(collections) => {
+                console.log('collections', collections);
+                this.setState({
+                  policy: {
+                    ...policy,
+                    collections,
+                  },
+                });
+              }}
+            />
+
+            {/* --- Generator: end */}
+          </Form>
         </Modal.Content>
         <Modal.Actions>
           <Button
@@ -125,6 +134,7 @@ export default class EditAccessPolicy extends React.Component {
             form="edit-policy"
             loading={loading}
             disabled={loading}
+            onClick={this.onSubmit}
             content={this.isUpdate() ? 'Update' : 'Create'}
           />
         </Modal.Actions>
