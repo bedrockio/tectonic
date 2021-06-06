@@ -2,6 +2,7 @@ import React from 'react';
 import { Form, Modal, Message, Button } from 'semantic-ui-react';
 import { request } from 'utils/api';
 import AutoFocus from 'components/AutoFocus';
+import SearchDropdown from 'components/SearchDropdown';
 
 // --- Generator: imports
 // --- Generator: end
@@ -108,13 +109,21 @@ export default class EditAccessCredential extends React.Component {
                 value={accessCredential.name || ''}
                 onChange={this.setField}
               />
-              <Form.TextArea
-                name="description"
-                label="Description"
-                type="text"
-                value={accessCredential.description || ''}
-                onChange={this.setField}
-              />
+              <Form.Field>
+                <label>Policy</label>
+                <SearchDropdown
+                  value={accessCredential.accessPolicy}
+                  name="accessPolicy"
+                  onChange={this.setField}
+                  fetchData={() =>
+                    request({
+                      method: 'POST',
+                      path: `/1/access-policies/search`,
+                    })
+                  }
+                />
+              </Form.Field>
+
               {/* --- Generator: end */}
             </Form>
           </AutoFocus>

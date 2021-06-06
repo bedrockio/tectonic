@@ -4,9 +4,6 @@ import { request } from 'utils/api';
 
 import CollectionPolicy from './CollectionPolicy';
 
-// --- Generator: imports
-// --- Generator: end
-
 export default class EditAccessPolicy extends React.Component {
   constructor(props) {
     super(props);
@@ -102,7 +99,7 @@ export default class EditAccessPolicy extends React.Component {
         <Modal.Content scrolling>
           <Form noValidate id="edit-policy" error={!!error}>
             {error && <Message error content={error.message} />}
-            {/* --- Generator: fields */}
+
             <Form.Input
               required
               type="text"
@@ -115,7 +112,6 @@ export default class EditAccessPolicy extends React.Component {
             <CollectionPolicy
               collections={policy.collections}
               onChange={(collections) => {
-                console.log('collections', collections);
                 this.setState({
                   policy: {
                     ...policy,
@@ -124,8 +120,6 @@ export default class EditAccessPolicy extends React.Component {
                 });
               }}
             />
-
-            {/* --- Generator: end */}
           </Form>
         </Modal.Content>
         <Modal.Actions>
