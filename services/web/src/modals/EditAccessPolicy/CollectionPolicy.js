@@ -43,7 +43,7 @@ export default class EditAccessPolicy extends React.Component {
               flexDirection: 'row',
               justifyContent: 'space-between',
             }}
-            key={collection.collection}>
+            key={`${collection.collection}-${JSON.stringify(collection.scope)}`}>
             <Form.Field>
               <label>Collection</label> {collection.collection}
             </Form.Field>

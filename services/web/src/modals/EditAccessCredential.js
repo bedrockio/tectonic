@@ -112,7 +112,7 @@ export default class EditAccessCredential extends React.Component {
               <Form.Field>
                 <label>Policy</label>
                 <SearchDropdown
-                  value={accessCredential.accessPolicy}
+                  value={accessCredential.accessPolicy?.id || accessCredential.accessPolicy}
                   name="accessPolicy"
                   onChange={this.setField}
                   fetchData={() =>
