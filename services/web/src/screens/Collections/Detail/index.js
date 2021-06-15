@@ -78,7 +78,7 @@ export default class CollectionDetail extends React.Component {
         <Route exact path="/collections/:id" render={(props) => <Overview {...props} {...this.state} />} />
         {/* --- Generator: routes */}
         <Route exact path="/collections/:id/batches" render={(props) => <Batches {...props} {...this.state} />} />
-        <Route exact path="/collections/:id/stats" render={(props) => <Stats {...props} {...this.state} />} />
+        {/* <Route exact path="/collections/:id/stats" render={(props) => <Stats {...props} {...this.state} />} /> */}
         {/* --- Generator: end */}
       </Switch>
     );
