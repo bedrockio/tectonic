@@ -7,10 +7,7 @@ import { request } from 'utils/api';
 
 import Overview from './Overview';
 
-// --- Generator: imports
 import Batches from './Batches';
-import Stats from './Stats';
-// --- Generator: end
 
 export default class CollectionDetail extends React.Component {
   constructor(props) {

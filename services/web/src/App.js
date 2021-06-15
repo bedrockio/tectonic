@@ -16,7 +16,6 @@ import Users from 'screens/Users';
 import AccessPolicies from 'screens/AccessPolicies';
 import AccessCredentials from 'screens/AccessCredentials';
 import ApplicationCredentials from 'screens/ApplicationCredentials';
-import Analytics from 'screens/Analytics';
 
 import Login from 'screens/Auth/Login';
 import Logout from 'screens/Auth/Logout';
@@ -28,7 +27,6 @@ const App = () => (
     <Protected path="/access-policies/:id?" allowed={AccessPolicies} />
     <Protected path="/access-credentials/:id?" allowed={AccessCredentials} />
     <Protected path="/application-credentials/:id?" allowed={ApplicationCredentials} />
-    <Protected path="/analytics/:id?" allowed={Analytics} />
     <Protected path="/settings" allowed={Settings} exact />
     <Protected path="/users/:id?" allowed={Users} />
     <Protected path="/docs/:id?" allowed={Docs} />
