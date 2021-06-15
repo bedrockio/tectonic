@@ -1,5 +1,5 @@
 import React from 'react';
-import { Form, Segment, Button, Header, Divider, Message } from 'semantic-ui-react';
+import { Form, Segment, Button, Header, Divider, Message, TextArea } from 'semantic-ui-react';
 import { request } from 'utils/api';
 import SearchDropdown from 'components/SearchDropdown';
 
@@ -9,7 +9,7 @@ import SearchDropdown from 'components/SearchDropdown';
 export default class EditAccessPolicy extends React.Component {
   state = {
     collection: '',
-    scope: {},
+    scope: JSON.stringify({}),
   };
 
   handleRemove = (collection) => {
@@ -18,12 +18,11 @@ export default class EditAccessPolicy extends React.Component {
 
   handleAdd = () => {
     const { collection, scope } = this.state;
-
     this.props.onChange([
       ...this.props.collections,
       {
         collection,
-        scope,
+        scope: JSON.parse(scope),
       },
     ]);
   };
@@ -50,6 +49,7 @@ export default class EditAccessPolicy extends React.Component {
             </Form.Field>
             <Form.Field disabled>
               <label>Scope</label>
+              {JSON.stringify(collection.scope)}
             </Form.Field>
             <div style={{ display: 'flex', alignItems: 'center' }}>
               <Button basic icon="close" onClick={() => this.handleRemove(collection)} />
@@ -57,43 +57,38 @@ export default class EditAccessPolicy extends React.Component {
           </div>
         ))}
         <Divider />
-        <Header>Add</Header>
-        <Form.Group>
-          <Form.Field required>
-            <label>Collection</label>
-            <SearchDropdown
-              valueField="name"
-              value={collection}
-              name="collection"
-              onChange={(e, { value }) => {
-                this.setState({
-                  collection: value,
-                });
-              }}
-              fetchData={() =>
-                request({
-                  method: 'POST',
-                  path: `/1/collections/search`,
-                })
-              }
-            />
-          </Form.Field>
-          <Form.Field>
-            <Form.Input
-              required
-              type="text"
-              value={JSON.stringify(scope)}
-              disabled
-              name="scope"
-              label="Scope"
-              onChange={(e, { value }) => {
-                this.setState({
-                  scope: value,
-                });
-              }}
-            />
-          </Form.Field>
-        </Form.Group>
+        <Header>Add Collection Policy</Header>
+
+        <Form.Field required>
+          <label>Collection</label>
+          <SearchDropdown
+            valueField="name"
+            value={collection}
+            name="collection"
+            onChange={(e, { value }) => {
+              this.setState({
+                collection: value,
+              });
+            }}
+            fetchData={() =>
+              request({
+                method: 'POST',
+                path: `/1/collections/search`,
+              })
+            }
+          />
+        </Form.Field>
+        <Form.TextArea
+          value={scope}
+          name="scope"
+          label="Scope"
+          onChange={(e, { value }) => {
+            this.setState({
+              scope: value,
+            });
+          }}
+        />
+
         <Button disabled={!collection.length} onClick={() => this.handleAdd()}>
           Add Policy
         </Button>

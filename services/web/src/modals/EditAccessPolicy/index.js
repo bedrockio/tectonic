@@ -95,7 +95,7 @@ export default class EditAccessPolicy extends React.Component {
         closeOnDimmerClick={false}
         onOpen={() => this.setState({ open: true })}
         onClose={() => this.setState({ open: false })}>
-        <Modal.Header>{this.isUpdate() ? `Edit "${policy.name}"` : 'New Policy'}</Modal.Header>
+        <Modal.Header>{this.isUpdate() ? `Edit Access Policy "${policy.name}"` : 'New Access Policy'}</Modal.Header>
         <Modal.Content scrolling>
           <Form noValidate id="edit-policy" error={!!error}>
             {error && <Message error content={error.message} />}
