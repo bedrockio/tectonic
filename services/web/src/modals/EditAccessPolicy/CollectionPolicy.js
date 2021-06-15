@@ -1,5 +1,5 @@
 import React from 'react';
-import { Form, Segment, Button, Header, Divider, Message, TextArea } from 'semantic-ui-react';
+import { Form, Segment, Button, Header, Divider, Message } from 'semantic-ui-react';
 import { request } from 'utils/api';
 import SearchDropdown from 'components/SearchDropdown';
 
