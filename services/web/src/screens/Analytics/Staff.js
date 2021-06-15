@@ -18,7 +18,7 @@ export default class AnalyticsOverview extends React.Component {
               <Header as="h4" content="Revenue by Staff" textAlign="center" />
               <Divider hidden />
               <AggregateTerms
-                index={'bar-purchases'}
+                collection={'bar-purchases'}
                 aggField="event.server.name"
                 field="event.consumption.price"
                 operation="sum"
@@ -28,7 +28,7 @@ export default class AnalyticsOverview extends React.Component {
             </React.Fragment>
             <React.Fragment>
               <Header as="h4" content="Purchases by Staff" textAlign="center" />
-              <AggregateTerms index={'bar-purchases'} aggField="event.server.name" termsSize={10}>
+              <AggregateTerms collection={'bar-purchases'} aggField="event.server.name" termsSize={10}>
                 <DonutChart limit={5} percent />
               </AggregateTerms>
             </React.Fragment>

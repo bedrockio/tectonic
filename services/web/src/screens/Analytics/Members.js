@@ -16,14 +16,19 @@ export default class AnalyticsOverview extends React.Component {
           <Block columns={2}>
             <React.Fragment>
               <Header as="h4" content="Purchases by Member" textAlign="center" />
-              <AggregateTerms index={'bar-purchases'} aggField="ccName" termsSize={7}>
+              <AggregateTerms collection={'bar-purchases'} aggField="ccName" termsSize={7}>
                 <DonutChart limit={7} percent />
               </AggregateTerms>
             </React.Fragment>
             <React.Fragment>
               <Header as="h4" content="Revenue by Member" textAlign="center" />
               <Divider hidden />
-              <AggregateTerms index={'bar-purchases'} aggField="ccName" field="price" operation="sum" termsSize={10}>
+              <AggregateTerms
+                collection={'bar-purchases'}
+                aggField="ccName"
+                field="price"
+                operation="sum"
+                termsSize={10}>
                 <Table valueField="value" valueFieldName="Revenue" valueFieldFormatter={formatUsd} />
               </AggregateTerms>
             </React.Fragment>

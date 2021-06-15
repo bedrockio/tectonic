@@ -15,7 +15,7 @@ export default class AnalyticsOverview extends React.Component {
 
         <Divider hidden />
         <Statistic.Group widths="four">
-          <AggregateStats index="bar-purchases" fields={['event.id']} cardinality>
+          <AggregateStats collection="bar-purchases" fields={['event.id']} cardinality>
             {({ data }) => (
               <Statistic>
                 <Statistic.Value>{data['event.id'] ? numberWithCommas(data['event.id']) : '...'}</Statistic.Value>
@@ -23,7 +23,7 @@ export default class AnalyticsOverview extends React.Component {
               </Statistic>
             )}
           </AggregateStats>
-          <AggregateStats index="bar-purchases" fields={['event.consumption.price']}>
+          <AggregateStats collection="bar-purchases" fields={['event.consumption.price']}>
             {({ data }) => (
               <Statistic>
                 <Statistic.Value>
@@ -40,7 +40,7 @@ export default class AnalyticsOverview extends React.Component {
 
         <Block>
           <Header as="h4" content="Purchases over Time" textAlign="center" />
-          <AggregateTimeSeries index="bar-purchases" operation="count" interval="1d" dateField="event.orderedAt">
+          <AggregateTimeSeries collection="bar-purchases" operation="count" interval="1d" dateField="event.orderedAt">
             <SeriesChart height={250} variant="bar" valueField="count" />
           </AggregateTimeSeries>
         </Block>
@@ -48,7 +48,7 @@ export default class AnalyticsOverview extends React.Component {
         <Block>
           <Header as="h4" content="Revenue over Time" textAlign="center" />
           <AggregateTimeSeries
-            index="bar-purchases"
+            collection="bar-purchases"
             operation="sum"
             field="event.consumption.price"
             interval="1w"
