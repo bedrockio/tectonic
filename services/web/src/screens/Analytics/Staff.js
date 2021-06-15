@@ -1,15 +1,9 @@
 import React from 'react';
 import { screen } from 'helpers';
-
-import Terms from 'components/admin-analytics/Terms';
-import DonutChart from 'components/visualizations/DonutChart';
-import Table from 'components/visualizations/Table';
+import { AggregateTerms, DonutChart, Table } from 'react-tectonic';
 import Block from 'components/Block';
-
 import { formatUsd } from 'utils/formatting';
-
 import { Divider, Header } from 'semantic-ui-react';
-
 import Menu from './Menu';
 
 @screen
@@ -23,26 +17,20 @@ export default class AnalyticsOverview extends React.Component {
             <React.Fragment>
               <Header as="h4" content="Revenue by Staff" textAlign="center" />
               <Divider hidden />
-              <Terms
+              <AggregateTerms
                 index={'bar-purchases'}
                 aggField="event.server.name"
                 field="event.consumption.price"
                 operation="sum"
                 termsSize={10}>
-                {(data) => {
-                  return (
-                    <Table data={data} valueField="value" valueFieldName="Revenue" valueFieldFormatter={formatUsd} />
-                  );
-                }}
-              </Terms>
+                <Table valueField="value" valueFieldName="Revenue" valueFieldFormatter={formatUsd} />
+              </AggregateTerms>
             </React.Fragment>
             <React.Fragment>
               <Header as="h4" content="Purchases by Staff" textAlign="center" />
-              <Terms index={'bar-purchases'} aggField="event.server.name" termsSize={10}>
-                {(data) => {
-                  return <DonutChart data={data} limit={5} percent />;
-                }}
-              </Terms>
+              <AggregateTerms index={'bar-purchases'} aggField="event.server.name" termsSize={10}>
+                <DonutChart limit={5} percent />
+              </AggregateTerms>
             </React.Fragment>
           </Block>
         </div>

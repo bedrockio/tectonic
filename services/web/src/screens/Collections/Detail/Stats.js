@@ -1,11 +1,8 @@
 import React from 'react';
 import { screen } from 'helpers';
-import MultiStats from 'components/admin-analytics/MultiStats';
-
+import { AggregateStats } from 'react-tectonic';
 import { numberWithCommas } from 'utils/formatting';
-
 import { Divider, Statistic } from 'semantic-ui-react';
-
 import Menu from './Menu';
 
 @screen
@@ -17,25 +14,18 @@ export default class CollectionStats extends React.Component {
         <Menu {...this.props} />
         <div>
           <Divider hidden />
-          <MultiStats
-            fetches={[
-              {
-                index: collection.name,
-                fields: ['_id'],
-                cardinality: true,
-              },
-            ]}>
-            {(data) => {
+          <AggregateStats index={collection.name} fields={['_id']} cardinality>
+            {({ data }) => {
               return (
                 <Statistic.Group widths="four">
                   <Statistic>
-                    <Statistic.Value>{numberWithCommas(data[0]['_id'])}</Statistic.Value>
+                    <Statistic.Value>{data['_id'] ? numberWithCommas(data['_id']) : '...'}</Statistic.Value>
                     <Statistic.Label>Total Events</Statistic.Label>
                   </Statistic>
                 </Statistic.Group>
               );
             }}
-          </MultiStats>
+          </AggregateStats>
         </div>
       </React.Fragment>
     );

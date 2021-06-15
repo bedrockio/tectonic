@@ -1,6 +1,7 @@
 // react-hot-loader needs to be imported
 // before react and react-dom
 import 'react-hot-loader';
+import { TectonicProvider } from 'react-tectonic';
 
 import React from 'react';
 import ReactDOM from 'react-dom';
@@ -14,7 +15,9 @@ const Wrapper = () => (
   <BrowserRouter>
     <SessionProvider>
       <HelmetProvider>
-        <App />
+        <TectonicProvider token={localStorage.getItem('jwt')}>
+          <App />
+        </TectonicProvider>
       </HelmetProvider>
     </SessionProvider>
   </BrowserRouter>

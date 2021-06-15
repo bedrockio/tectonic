@@ -1,15 +1,9 @@
 import React from 'react';
 import { screen } from 'helpers';
-
-import TimeSeries from 'components/admin-analytics/TimeSeries';
-import MultiStats from 'components/admin-analytics/MultiStats';
+import { AggregateTimeSeries, AggregateStats, SeriesChart } from 'react-tectonic';
 import Block from 'components/Block';
-import SeriesChart from 'components/visualizations/SeriesChart';
-
 import { numberWithCommas, formatUsd } from 'utils/formatting';
-
 import { Divider, Header, Statistic } from 'semantic-ui-react';
-
 import Menu from './Menu';
 
 @screen
@@ -18,62 +12,50 @@ export default class AnalyticsOverview extends React.Component {
     return (
       <React.Fragment>
         <Menu {...this.props} />
-        <div>
-          <Divider hidden />
-          <MultiStats
-            fetches={[
-              {
-                index: 'bar-purchases',
-                fields: ['event.id'],
-                cardinality: true,
-              },
-              {
-                index: 'bar-purchases',
-                fields: ['event.consumption.price'],
-              },
-            ]}>
-            {(data) => {
-              return (
-                <Statistic.Group widths="four">
-                  <Statistic>
-                    <Statistic.Value>{numberWithCommas(data[0]['event.id'])}</Statistic.Value>
-                    <Statistic.Label>Total Purchases</Statistic.Label>
-                  </Statistic>
-                  <Statistic>
-                    <Statistic.Value>{formatUsd(data[1]['event.consumption.price'].sum)}</Statistic.Value>
-                    <Statistic.Label>Revenue</Statistic.Label>
-                  </Statistic>
-                </Statistic.Group>
-              );
-            }}
-          </MultiStats>
 
-          <Divider hidden />
-          <Divider hidden />
+        <Divider hidden />
+        <Statistic.Group widths="four">
+          <AggregateStats index="bar-purchases" fields={['event.id']} cardinality>
+            {({ data }) => (
+              <Statistic>
+                <Statistic.Value>{data['event.id'] ? numberWithCommas(data['event.id']) : '...'}</Statistic.Value>
+                <Statistic.Label>Total Purchases</Statistic.Label>
+              </Statistic>
+            )}
+          </AggregateStats>
+          <AggregateStats index="bar-purchases" fields={['event.consumption.price']}>
+            {({ data }) => (
+              <Statistic>
+                <Statistic.Value>
+                  {data['event.consumption.price'] ? formatUsd(data['event.consumption.price'].sum) : '...'}
+                </Statistic.Value>
+                <Statistic.Label>Revenue</Statistic.Label>
+              </Statistic>
+            )}
+          </AggregateStats>
+        </Statistic.Group>
 
-          <Block>
-            <Header as="h4" content="Purchases over Time" textAlign="center" />
-            <TimeSeries index="bar-purchases" operation="count" interval="1d" dateField="event.orderedAt">
-              {(data) => {
-                return <SeriesChart data={data} height={250} bar valueField="count" />;
-              }}
-            </TimeSeries>
-          </Block>
+        <Divider hidden />
+        <Divider hidden />
 
-          <Block>
-            <Header as="h4" content="Revenue over Time" textAlign="center" />
-            <TimeSeries
-              index="bar-purchases"
-              operation="sum"
-              field="event.consumption.price"
-              interval="1w"
-              dateField="event.orderedAt">
-              {(data) => {
-                return <SeriesChart data={data} height={250} bar valueField="value" valueFieldFormatter={formatUsd} />;
-              }}
-            </TimeSeries>
-          </Block>
-        </div>
+        <Block>
+          <Header as="h4" content="Purchases over Time" textAlign="center" />
+          <AggregateTimeSeries index="bar-purchases" operation="count" interval="1d" dateField="event.orderedAt">
+            <SeriesChart height={250} variant="bar" valueField="count" />
+          </AggregateTimeSeries>
+        </Block>
+
+        <Block>
+          <Header as="h4" content="Revenue over Time" textAlign="center" />
+          <AggregateTimeSeries
+            index="bar-purchases"
+            operation="sum"
+            field="event.consumption.price"
+            interval="1w"
+            dateField="event.orderedAt">
+            <SeriesChart variant="bar" height={250} valueField="value" valueFieldFormatter={formatUsd} />
+          </AggregateTimeSeries>
+        </Block>
       </React.Fragment>
     );
   }

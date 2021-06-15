@@ -1,17 +1,9 @@
 import React from 'react';
 import { screen } from 'helpers';
-
-import Terms from 'components/admin-analytics/Terms';
-import MultiTimeSeries from 'components/admin-analytics/MultiTimeSeries';
-import MultiSeriesChart from 'components/visualizations/MultiSeriesChart';
-import DonutChart from 'components/visualizations/DonutChart';
-import Table from 'components/visualizations/Table';
+import { AggregateTerms, DonutChart, Table, Aggregate, MultiSeriesChart } from 'react-tectonic';
 import Block from 'components/Block';
-
 import { formatUsd } from 'utils/formatting';
-
 import { Divider, Header } from 'semantic-ui-react';
-
 import Menu from './Menu';
 
 @screen
@@ -24,43 +16,39 @@ export default class AnalyticsOverview extends React.Component {
           <Block columns={2}>
             <React.Fragment>
               <Header as="h4" content="Purchases by Category" textAlign="center" />
-              <Terms index={'bar-purchases'} aggField="event.consumption.category" termsSize={10}>
-                {(data) => {
-                  return <DonutChart data={data} limit={5} percent />;
-                }}
-              </Terms>
+              <AggregateTerms index={'bar-purchases'} aggField="event.consumption.category" termsSize={10}>
+                <DonutChart limit={5} percent />
+              </AggregateTerms>
             </React.Fragment>
             <React.Fragment>
               <Header as="h4" content="Revenue by Category" textAlign="center" />
               <Divider hidden />
-              <Terms
+
+              <AggregateTerms
                 index={'bar-purchases'}
                 aggField="event.consumption.category"
                 field="event.consumption.price"
                 operation="sum"
                 termsSize={10}>
-                {(data) => {
-                  return (
-                    <Table data={data} valueField="value" valueFieldName="Revenue" valueFieldFormatter={formatUsd} />
-                  );
-                }}
-              </Terms>
+                <Table valueField="value" valueFieldName="Revenue" valueFieldFormatter={formatUsd} />
+              </AggregateTerms>
             </React.Fragment>
           </Block>
 
           <Block>
             <Header as="h4" content="Revenue by Category" textAlign="center" />
 
-            <Terms
+            <AggregateTerms
               index={'bar-purchases'}
               aggField="event.consumption.category"
               field="event.consumption.price"
               operation="sum"
               termsSize={10}>
-              {(terms) => {
+              {({ data: terms }) => {
                 return (
-                  <MultiTimeSeries
-                    fetches={terms.map((term) => {
+                  <Aggregate
+                    type="time-series"
+                    requests={terms.map((term) => {
                       return {
                         index: 'bar-purchases',
                         operation: 'sum',
@@ -72,49 +60,39 @@ export default class AnalyticsOverview extends React.Component {
                         },
                       };
                     })}>
-                    {(data) => {
-                      return (
-                        <MultiSeriesChart
-                          data={data}
-                          height={250}
-                          area
-                          stacked
-                          valueField="value"
-                          valueFieldFormatter={formatUsd}
-                          valueFieldNames={terms.map((term) => term.key)}
-                        />
-                      );
-                    }}
-                  </MultiTimeSeries>
+                    <MultiSeriesChart
+                      height={250}
+                      variant="area"
+                      area
+                      stacked
+                      valueField="value"
+                      valueFieldFormatter={formatUsd}
+                      valueFieldNames={terms.map((term) => term.key)}
+                    />
+                  </Aggregate>
                 );
               }}
-            </Terms>
+            </AggregateTerms>
           </Block>
 
           <Block columns={2}>
             <React.Fragment>
               <Header as="h4" content="Purchases by Consumption" textAlign="center" />
-              <Terms index={'bar-purchases'} aggField="event.consumption.name" termsSize={10}>
-                {(data) => {
-                  return <DonutChart data={data} limit={8} percent />;
-                }}
-              </Terms>
+              <AggregateTerms index={'bar-purchases'} aggField="event.consumption.name" termsSize={10}>
+                <DonutChart limit={8} percent />
+              </AggregateTerms>
             </React.Fragment>
             <React.Fragment>
               <Header as="h4" content="Revenue by Consumption" textAlign="center" />
               <Divider hidden />
-              <Terms
+              <AggregateTerms
                 index={'bar-purchases'}
                 aggField="event.consumption.name"
                 field="event.consumption.price"
                 operation="sum"
                 termsSize={10}>
-                {(data) => {
-                  return (
-                    <Table data={data} valueField="value" valueFieldName="Revenue" valueFieldFormatter={formatUsd} />
-                  );
-                }}
-              </Terms>
+                <Table valueField="value" valueFieldName="Revenue" valueFieldFormatter={formatUsd} />
+              </AggregateTerms>
             </React.Fragment>
           </Block>
         </div>
