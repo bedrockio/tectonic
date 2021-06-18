@@ -1,6 +1,8 @@
 const path = require('path');
 const yargs = require('yargs');
 const webpack = require('webpack');
+const config = require('@bedrockio/config');
+
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const TerserWebpackPlugin = require('terser-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
@@ -27,14 +29,14 @@ const BUILD = process.env.NODE_ENV === 'production';
 
 const PARAMS = {
   BUILD,
-  ...require('./env'),
+  ...config.getAll(),
 };
 
 const templatePath = getTemplatePath();
 
 module.exports = {
   mode: BUILD ? 'production' : 'development',
-  devtool: BUILD ? 'source-map' : 'cheap-module-source-map',
+  devtool: BUILD ? 'source-map' : 'eval-cheap-module-source-map',
   entry: getEntryPoints(),
   output: {
     publicPath: '/',
@@ -44,10 +46,6 @@ module.exports = {
   resolve: {
     alias: {
       'react-dom': '@hot-loader/react-dom',
-      '../../theme.config$': path.resolve(
-        path.join(__dirname, 'src'),
-        'theme/theme.config'
-      ),
     },
     extensions: ['.js', '.json', '.jsx'],
     modules: [path.join(__dirname, 'src'), 'node_modules'],
@@ -166,11 +164,10 @@ module.exports = {
       (compiler) => {
         new TerserWebpackPlugin({
           terserOptions: {
-            mangle: {
-              // Preventing function name mangling for now
-              // to allow screen name magic to work.
-              keep_fnames: true,
-            },
+            // Preventing function and class name mangling
+            // for now to allow screen name magic to work.
+            keep_fnames: true,
+            keep_classnames: true,
           },
         }).apply(compiler);
       },
@@ -237,7 +234,6 @@ function getTemplatePlugins() {
       chunks: [app, 'vendor'],
       templateParameters: {
         app,
-        PUBLIC_ENV: JSON.stringify(PARAMS.PUBLIC),
         ...PARAMS,
       },
       minify: {

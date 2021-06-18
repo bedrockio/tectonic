@@ -10,9 +10,8 @@ import './table.less';
 
 export default class StandardPage extends React.Component {
   render() {
-    const { page, openApi } = this.props;
-
-    let markdown = enrichMarkdown(page.markdown, localStorage.getItem('jwt'));
+    const { credentials, page, openApi } = this.props;
+    let markdown = enrichMarkdown(page.markdown, credentials);
     markdown = executeOpenApiMacros(openApi, markdown);
     return (
       <div className="docs markdown-body">

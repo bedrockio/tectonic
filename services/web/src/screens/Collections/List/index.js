@@ -1,10 +1,10 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Table, Divider, Button, Message } from 'semantic-ui-react';
+import { Table, Button, Message } from 'semantic';
 import { formatDateTime } from 'utils/date';
 import { request } from 'utils/api';
 import { screen } from 'helpers';
-import { Confirm, HelpTip, Breadcrumbs, SearchProvider } from 'components';
+import { Confirm, HelpTip, Breadcrumbs, SearchProvider, Layout } from 'components';
 
 import Filters from 'modals/Filters';
 import EditCollection from 'modals/EditCollection';
@@ -28,15 +28,19 @@ export default class CollectionList extends React.Component {
         {({ items: collections, getSorted, setSort, filters, setFilters, reload }) => {
           return (
             <React.Fragment>
-              <Breadcrumbs active="Collections">
-                <Filters onSave={setFilters} filters={filters}>
-                  {/* --- Generator: filters */}
-                  <Filters.Text label="Name" name="name" />
-                  {/* --- Generator: end */}
-                </Filters>
-                <EditCollection trigger={<Button primary content="New Collection" icon="plus" />} onSave={reload} />
-              </Breadcrumbs>
-              <Divider hidden />
+              <Breadcrumbs active="Collections" />
+              <Layout horizontal center spread>
+                <h1>Collections</h1>
+                <Layout.Group>
+                  <Filters onSave={setFilters} filters={filters}>
+                    {/* --- Generator: filters */}
+                    <Filters.Text label="Name" name="name" />
+                    {/* --- Generator: end */}
+                  </Filters>
+                  <EditCollection trigger={<Button primary content="New Collection" icon="plus" />} onSave={reload} />
+                </Layout.Group>
+              </Layout>
+
               {collections.length === 0 ? (
                 <Message>No collections created yet</Message>
               ) : (

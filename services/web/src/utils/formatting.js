@@ -20,17 +20,6 @@ export const numberWithDots = (x) => {
   return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
 };
 
-export const formatUsdLabel = (value, precision = 2) => {
-  if (isNaN(value)) return <span>&ndash;</span>;
-  return <span>${(value / 100).toFixed(precision).replace(/\d(?=(\d{3})+\.)/g, '$&,')}</span>;
-};
-
-export const formatUsd = (value) => {
-  if (isNaN(value)) return '';
-  const usd = Math.round(value / 100);
-  return `$${numberWithCommas(usd)}`;
-};
-
 export function formatOption(types, key) {
   const status = types[key];
   const props = {
@@ -41,4 +30,21 @@ export function formatOption(types, key) {
     props.color = status.color;
   }
   return <Label {...props} />;
+}
+
+export function formatAddress(address) {
+  const components = [];
+  if (address.line1) {
+    components.push(address.line1);
+  }
+  if (address.city) {
+    components.push(address.city);
+  }
+  if (address.stateOrProvince) {
+    components.push(address.stateOrProvince);
+  }
+  if (address.countryCode) {
+    components.push(address.countryCode);
+  }
+  return components.join(', ');
 }

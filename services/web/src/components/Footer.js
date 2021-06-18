@@ -1,12 +1,10 @@
 import React from 'react';
 import { withSession } from 'stores';
-import { Container } from 'semantic-ui-react';
 import { Layout } from './Layout';
-import tectonic from 'assets/tectonic.svg';
+import logo from 'assets/logo.svg';
 
 @withSession
 export default class Footer extends React.Component {
-
   render() {
     const { user } = this.context;
     if (!user) {
@@ -14,12 +12,10 @@ export default class Footer extends React.Component {
     }
     return (
       <footer>
-        <Container>
-          <Layout horizontal center right>
-            Built with&nbsp;&nbsp;
-            <img width="112" height="24" src={tectonic} />
-          </Layout>
-        </Container>
+        <Layout horizontal center right>
+          <span style={{ marginRight: '10px' }}>Built with</span>
+          <img width="112" height="24" src={logo} />
+        </Layout>
       </footer>
     );
   }

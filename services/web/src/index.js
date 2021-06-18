@@ -4,11 +4,17 @@ import 'react-hot-loader';
 
 import React from 'react';
 import ReactDOM from 'react-dom';
+
+import 'react-tectonic/lib/styles.css';
+
 import { BrowserRouter } from 'react-router-dom';
 import { HelmetProvider } from 'react-helmet-async';
 import { SessionProvider } from 'stores';
-import App from './App';
+
+import 'layouts';
 import 'utils/sentry';
+
+import App from './App';
 
 const Wrapper = () => (
   <BrowserRouter>

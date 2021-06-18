@@ -1,11 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
-import { Breadcrumb } from 'semantic-ui-react';
+import { Breadcrumb } from 'semantic';
 import { Layout } from './Layout';
 
 export default class Breadcrumbs extends React.Component {
-
   getPath() {
     const { link, path } = this.props;
     if (link) {
@@ -18,33 +17,26 @@ export default class Breadcrumbs extends React.Component {
   render() {
     const { active } = this.props;
     return (
-      <Layout horizontal center spread>
-        <Breadcrumb size="big">
+      <div style={{ marginBottom: '5px' }}>
+        <Breadcrumb size="mini">
           <Breadcrumb.Section link as={Link} to="/">
             Home
           </Breadcrumb.Section>
-          <Breadcrumb.Divider icon="right chevron" />
+          <Breadcrumb.Divider icon="chevron-right" />
           {this.getPath().map((link, i) => {
             return (
               <React.Fragment key={i}>
-                <Breadcrumb.Section>
-                  {link}
-                </Breadcrumb.Section>
-                <Breadcrumb.Divider icon="right chevron" />
+                <Breadcrumb.Section>{link}</Breadcrumb.Section>
+                <Breadcrumb.Divider icon="chevron-right" />
               </React.Fragment>
             );
           })}
-          <Breadcrumb.Section active>
-            {active}
-          </Breadcrumb.Section>
+          <Breadcrumb.Section active>{active}</Breadcrumb.Section>
         </Breadcrumb>
-        <Layout.Group>
-          {this.props.children}
-        </Layout.Group>
-      </Layout>
+        <Layout.Group>{this.props.children}</Layout.Group>
+      </div>
     );
   }
-
 }
 
 Breadcrumbs.propTypes = {

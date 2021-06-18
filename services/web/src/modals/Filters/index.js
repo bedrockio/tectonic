@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Modal, Form, Ref, Icon, Button, Label } from 'semantic-ui-react';
+import { Modal, Form, Ref, Icon, Button, Label } from 'semantic';
 import DateField from 'components/form-fields/Date';
 
 import Text from './Text';
@@ -10,7 +10,6 @@ import Dropdown from './Dropdown';
 import Checkbox from './Checkbox';
 
 export default class Filters extends React.Component {
-
   static Text = Text;
   static Date = Date;
   static Number = Number;
@@ -30,14 +29,15 @@ export default class Filters extends React.Component {
       const input = this.formRef.current.querySelector('input[name]');
       input?.focus();
     });
-  }
+  };
 
   onFilterChange = (evt, { name, value }) => {
     this.setFilter(name, value);
-  }
+  };
 
   onSubmit = () => {
     this.props.onSave(this.state);
+    this.props.onClose(true);
   };
 
   onReset = () => {
@@ -66,28 +66,26 @@ export default class Filters extends React.Component {
         onOpen={this.onModalOpen}
         trigger={
           this.hasFilters() ? (
-            <Button as="div" labelPosition="right" style={{ margin: '0 10px' }}>
+            <Button as="div" labelPosition="right">
               <Button basic primary size={size}>
                 <Icon name="filter" />
                 Filter
               </Button>
-              <Label as="a" basic color="blue" pointing="left">
+              <Label as="a" basic color="olive" pointing="left">
                 {Object.keys(this.props.filters).length}
               </Label>
             </Button>
           ) : (
-            <Button basic primary size={size} style={{ margin: '0 10px' }}>
+            <Button basic primary size={size}>
               <Icon name="filter" />
               Filter
             </Button>
           )
         }>
         <Modal.Header>Filter</Modal.Header>
-        <Modal.Content scrolling>
+        <Modal.Content>
           <Ref innerRef={this.formRef}>
-            <Form
-              id="filters"
-              onSubmit={this.onSubmit}>
+            <Form id="filters" onSubmit={this.onSubmit}>
               {this.renderFilters()}
               {this.renderDateFilters()}
             </Form>

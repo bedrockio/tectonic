@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Form } from 'semantic-ui-react';
+import { Form } from 'semantic';
 
 export default class NumberFilter extends React.Component {
   render() {
@@ -11,14 +11,16 @@ export default class NumberFilter extends React.Component {
         type="number"
         min={min}
         max={max}
-        icon={value != '' && {
-          name: 'close',
-          link: true,
-          onClick: (evt) => {
-            onChange(evt, { name, value: '' });
-            evt.target.parentNode.querySelector('input').focus();
-          },
-        }}
+        icon={
+          value != '' && {
+            name: 'close',
+            link: true,
+            onClick: (evt) => {
+              onChange(evt, { name, value: '' });
+              evt.target.parentNode.querySelector('input').focus();
+            },
+          }
+        }
         {...this.props}
       />
     );

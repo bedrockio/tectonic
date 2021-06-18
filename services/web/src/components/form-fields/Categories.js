@@ -1,34 +1,31 @@
 import React from 'react';
-import { Form } from 'semantic-ui-react';
+import { Form } from 'semantic';
 import { request } from 'utils/api';
 import SearchDropdown from '../SearchDropdown';
 
 export default class Categories extends React.Component {
-
-  fetchCategories = (filter) => {
-    return request({
+  fetchCategories = async (query) => {
+    const { data } = await request({
       method: 'POST',
       path: '/1/categories/search',
       body: {
-        ...filter,
+        name: query,
       },
     });
+    return data;
   };
 
   render() {
     return (
       <Form.Field>
-        <label>
-          Categories
-        </label>
+        <label>Categories</label>
         <SearchDropdown
           fluid
           multiple
-          fetchData={this.fetchCategories}
+          onDataNeeded={this.fetchCategories}
           {...this.props}
         />
       </Form.Field>
     );
   }
-
 }
