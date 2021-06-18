@@ -1,10 +1,10 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Table, Divider, Button, Message } from 'semantic-ui-react';
+import { Table, Divider, Button, Message } from 'semantic';
 import { formatDateTime } from 'utils/date';
 import { request } from 'utils/api';
 import { screen } from 'helpers';
-import { Confirm, HelpTip, Breadcrumbs, SearchProvider } from 'components';
+import { Confirm, HelpTip, Breadcrumbs, SearchProvider, Layout } from 'components';
 
 import Filters from 'modals/Filters';
 import EditApplicationCredential from 'modals/EditApplicationCredential';
@@ -28,17 +28,21 @@ export default class ApplicationCredentialsList extends React.Component {
         {({ items: applicationCredentials, getSorted, setSort, filters, setFilters, reload }) => {
           return (
             <React.Fragment>
-              <Breadcrumbs active="Application Credentials">
-                <Filters onSave={setFilters} filters={filters}>
-                  {/* --- Generator: filters */}
-                  <Filters.Text label="Name" name="name" />
-                  {/* --- Generator: end */}
-                </Filters>
-                <EditApplicationCredential
-                  trigger={<Button primary content="New Application Credential" icon="plus" />}
-                  onSave={reload}
-                />
-              </Breadcrumbs>
+              <Breadcrumbs active="Application Credentials" />
+              <Layout horizontal center spread>
+                <h1>Application Credentials</h1>
+                <Layout.Group>
+                  <Filters onSave={setFilters} filters={filters}>
+                    {/* --- Generator: filters */}
+                    <Filters.Text label="Name" name="name" />
+                    {/* --- Generator: end */}
+                  </Filters>
+                  <EditApplicationCredential
+                    trigger={<Button primary content="New Application Credential" icon="plus" />}
+                    onSave={reload}
+                  />
+                </Layout.Group>
+              </Layout>
               <Divider hidden />
               {applicationCredentials.length === 0 ? (
                 <Message>No application credentials created yet</Message>

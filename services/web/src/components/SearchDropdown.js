@@ -107,6 +107,7 @@ export default class SearchDropdown extends React.Component {
 SearchDropdown.propTypes = {
   onDataNeeded: PropTypes.func.isRequired,
   getOptionLabel: PropTypes.func,
+  ...SearchDropdown.propTypes,
 };
 
 SearchDropdown.defaultProps = {

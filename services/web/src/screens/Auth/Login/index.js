@@ -1,6 +1,6 @@
 import React from 'react';
 import { request } from 'utils/api';
-import { Segment } from 'semantic-ui-react';
+import { Segment } from 'semantic';
 import { withSession } from 'stores';
 import { screen } from 'helpers';
 

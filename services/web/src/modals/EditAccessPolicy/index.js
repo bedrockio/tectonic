@@ -3,27 +3,19 @@ import { Form, Modal, Message, Button } from 'semantic-ui-react';
 import { request } from 'utils/api';
 
 import CollectionPolicy from './CollectionPolicy';
+import { modal } from 'helpers';
 
+@modal
 export default class EditAccessPolicy extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      open: false,
       error: null,
       loading: false,
       policy: props.policy || {
         collections: [],
       },
     };
-  }
-
-  componentDidUpdate(lastProps) {
-    const { policy } = this.props;
-    if (policy && policy !== lastProps.policy) {
-      this.setState({
-        policy,
-      });
-    }
   }
 
   isUpdate() {
@@ -48,12 +40,12 @@ export default class EditAccessPolicy extends React.Component {
   };
 
   onSubmit = async () => {
+    this.setState({
+      error: null,
+      loading: true,
+    });
+    const { policy } = this.state;
     try {
-      this.setState({
-        error: null,
-        loading: true,
-      });
-      const { policy } = this.state;
       if (this.isUpdate()) {
         await request({
           method: 'PATCH',
@@ -70,11 +62,8 @@ export default class EditAccessPolicy extends React.Component {
           policy: {},
         });
       }
-      this.setState({
-        open: false,
-        loading: false,
-      });
       this.props.onSave();
+      this.props.close();
     } catch (error) {
       this.setState({
         error,
@@ -84,17 +73,10 @@ export default class EditAccessPolicy extends React.Component {
   };
 
   render() {
-    const { trigger } = this.props;
-    const { policy, open, loading, error } = this.state;
+    const { policy, loading, error } = this.state;
 
     return (
-      <Modal
-        closeIcon
-        open={open}
-        trigger={trigger}
-        closeOnDimmerClick={false}
-        onOpen={() => this.setState({ open: true })}
-        onClose={() => this.setState({ open: false })}>
+      <>
         <Modal.Header>{this.isUpdate() ? `Edit Access Policy "${policy.name}"` : 'New Access Policy'}</Modal.Header>
         <Modal.Content scrolling>
           <Form noValidate id="edit-policy" error={!!error}>
@@ -132,7 +114,7 @@ export default class EditAccessPolicy extends React.Component {
             content={this.isUpdate() ? 'Update' : 'Create'}
           />
         </Modal.Actions>
-      </Modal>
+      </>
     );
   }
 }

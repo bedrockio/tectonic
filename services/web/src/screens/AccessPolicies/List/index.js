@@ -1,10 +1,10 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Table, Divider, Button, Message } from 'semantic-ui-react';
+import { Table, Divider, Button, Message } from 'semantic';
 import { formatDateTime } from 'utils/date';
 import { request } from 'utils/api';
 import { screen } from 'helpers';
-import { Confirm, HelpTip, Breadcrumbs, SearchProvider } from 'components';
+import { Confirm, HelpTip, Breadcrumbs, SearchProvider, Layout } from 'components';
 
 import Filters from 'modals/Filters';
 import EditAccessPolicy from 'modals/EditAccessPolicy';
@@ -28,17 +28,22 @@ export default class AccessPolicyList extends React.Component {
         {({ items: accessPolicies, getSorted, setSort, filters, setFilters, reload }) => {
           return (
             <React.Fragment>
-              <Breadcrumbs active="Access Policies">
-                <Filters onSave={setFilters} filters={filters}>
-                  {/* --- Generator: filters */}
-                  <Filters.Text label="Name" name="name" />
-                  {/* --- Generator: end */}
-                </Filters>
-                <EditAccessPolicy
-                  trigger={<Button primary content="New Access Policy" icon="plus" />}
-                  onSave={reload}
-                />
-              </Breadcrumbs>
+              <Breadcrumbs active="Access Policies" />
+              <Layout horizontal center spread>
+                <h1>Access Policies</h1>
+                <Layout.Group>
+                  <Filters onSave={setFilters} filters={filters}>
+                    {/* --- Generator: filters */}
+                    <Filters.Text label="Name" name="name" />
+                    {/* --- Generator: end */}
+                  </Filters>
+                  <EditAccessPolicy
+                    trigger={<Button primary content="New Access Policy" icon="plus" />}
+                    onSave={reload}
+                  />
+                </Layout.Group>
+              </Layout>
+
               <Divider hidden />
               {accessPolicies.length === 0 ? (
                 <Message>No access policies created yet</Message>

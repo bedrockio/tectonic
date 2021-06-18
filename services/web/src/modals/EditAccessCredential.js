@@ -3,28 +3,20 @@ import { Form, Modal, Message, Button } from 'semantic-ui-react';
 import { request } from 'utils/api';
 import AutoFocus from 'components/AutoFocus';
 import SearchDropdown from 'components/SearchDropdown';
+import { modal } from 'helpers';
 
 // --- Generator: imports
 // --- Generator: end
 
+@modal
 export default class EditAccessCredential extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      open: false,
       error: null,
       loading: false,
       accessCredential: props.accessCredential || {},
     };
-  }
-
-  componentDidUpdate(lastProps) {
-    const { accessCredential } = this.props;
-    if (accessCredential && accessCredential !== lastProps.accessCredential) {
-      this.setState({
-        accessCredential,
-      });
-    }
   }
 
   isUpdate() {
@@ -49,33 +41,31 @@ export default class EditAccessCredential extends React.Component {
   };
 
   onSubmit = async () => {
+    this.setState({
+      error: null,
+      loading: true,
+    });
+    const { accessCredential } = this.state;
+    const body = {
+      ...accessCredential,
+      accessPolicy: accessCredential.accessPolicy?.id || accessCredential.accessPolicy,
+    };
     try {
-      this.setState({
-        error: null,
-        loading: true,
-      });
-      const { accessCredential } = this.state;
       if (this.isUpdate()) {
         await request({
           method: 'PATCH',
           path: `/1/access-credentials/${accessCredential.id}`,
-          body: accessCredential,
+          body,
         });
       } else {
         await request({
           method: 'POST',
           path: '/1/access-credentials',
-          body: accessCredential,
-        });
-        this.setState({
-          accessCredential: {},
+          body,
         });
       }
-      this.setState({
-        open: false,
-        loading: false,
-      });
       this.props.onSave();
+      this.props.close();
     } catch (error) {
       this.setState({
         error,
@@ -85,16 +75,9 @@ export default class EditAccessCredential extends React.Component {
   };
 
   render() {
-    const { trigger } = this.props;
-    const { accessCredential, open, loading, error } = this.state;
+    const { accessCredential, loading, error } = this.state;
     return (
-      <Modal
-        closeIcon
-        open={open}
-        trigger={trigger}
-        closeOnDimmerClick={false}
-        onOpen={() => this.setState({ open: true })}
-        onClose={() => this.setState({ open: false })}>
+      <>
         <Modal.Header>{this.isUpdate() ? `Edit "${accessCredential.name}"` : 'New AccessCredential'}</Modal.Header>
         <Modal.Content scrolling>
           <AutoFocus>
@@ -112,14 +95,14 @@ export default class EditAccessCredential extends React.Component {
               <Form.Field>
                 <label>Policy</label>
                 <SearchDropdown
-                  value={accessCredential.accessPolicy?.id || accessCredential.accessPolicy}
+                  value={accessCredential.accessPolicy}
                   name="accessPolicy"
                   onChange={this.setField}
-                  fetchData={() =>
+                  onDataNeeded={() =>
                     request({
                       method: 'POST',
                       path: `/1/access-policies/search`,
-                    })
+                    }).then(({ data }) => data)
                   }
                 />
               </Form.Field>
@@ -137,7 +120,7 @@ export default class EditAccessCredential extends React.Component {
             content={this.isUpdate() ? 'Update' : 'Create'}
           />
         </Modal.Actions>
-      </Modal>
+      </>
     );
   }
 }

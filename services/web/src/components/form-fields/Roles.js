@@ -1,14 +1,6 @@
 import React from 'react';
 import { request } from 'utils/api';
-import {
-  Form,
-  Loader,
-  Popup,
-  Icon,
-  Message,
-  Modal,
-  Button,
-} from 'semantic';
+import { Form, Loader, Popup, Icon, Message, Modal, Button } from 'semantic';
 import SearchDropdown from 'components/SearchDropdown';
 import FetchObject from 'components/FetchObject';
 import { union } from 'lodash';
@@ -46,9 +38,7 @@ export default class Roles extends React.Component {
   }
 
   setGlobalValues(values) {
-    const otherRoles = this.state.roles.filter(
-      (role) => role.scope !== 'global'
-    );
+    const otherRoles = this.state.roles.filter((role) => role.scope !== 'global');
     const roles = otherRoles.concat(
       values.map((value) => {
         return {
@@ -64,9 +54,7 @@ export default class Roles extends React.Component {
   }
 
   getGlobalValues() {
-    return this.state.roles
-      .filter((role) => role.scope === 'global')
-      .map((role) => role.role);
+    return this.state.roles.filter((role) => role.scope === 'global').map((role) => role.role);
   }
 
   getScopedValues(scope, scopeRef) {
@@ -76,9 +64,7 @@ export default class Roles extends React.Component {
   }
 
   setScopedValues(scope, scopeRef, values) {
-    const otherRoles = this.state.roles.filter(
-      (role) => !(role.scope === scope && role.scopeRef === scopeRef)
-    );
+    const otherRoles = this.state.roles.filter((role) => !(role.scope === scope && role.scopeRef === scopeRef));
     const roles = otherRoles.concat(
       values.map((value) => {
         return {
@@ -95,9 +81,7 @@ export default class Roles extends React.Component {
   }
 
   getScopeRefs(roles, scope) {
-    return union(
-      roles.filter((role) => role.scope === scope).map((role) => role.scopeRef)
-    );
+    return union(roles.filter((role) => role.scope === scope).map((role) => role.scopeRef));
   }
 
   fetchOrganizations = async () => {
@@ -124,7 +108,7 @@ export default class Roles extends React.Component {
           id: key,
         };
       })
-      .filter((role) => role.allowScopes.includes(scope))
+      .filter((role) => (role.allowScopes || []).includes(scope))
       .map((role) => {
         return {
           value: role.id,
@@ -135,12 +119,7 @@ export default class Roles extends React.Component {
   }
 
   render() {
-    const {
-      error,
-      loading,
-      scopedOrganizationIds,
-      showAddOrganizationModal,
-    } = this.state;
+    const { error, loading, scopedOrganizationIds, showAddOrganizationModal } = this.state;
     const { enableOrganizationScopes } = this.props;
     if (loading) return <Loader />;
     if (error) return <Message error content={error.message} />;
@@ -177,10 +156,7 @@ export default class Roles extends React.Component {
         {scopedOrganizationIds.map((organizationId) => {
           const name = `organization-${organizationId}`;
           return (
-            <FetchObject
-              key={name}
-              id={organizationId}
-              endpoint="organizations">
+            <FetchObject key={name} id={organizationId} endpoint="organizations">
               {(organization) => {
                 return (
                   <Form.Dropdown
@@ -209,13 +185,7 @@ export default class Roles extends React.Component {
                     multiple
                     value={this.getScopedValues('organization', organizationId)}
                     options={this.getOptionsForScope('organization')}
-                    onChange={(e, { value }) =>
-                      this.setScopedValues(
-                        'organization',
-                        organizationId,
-                        value
-                      )
-                    }
+                    onChange={(e, { value }) => this.setScopedValues('organization', organizationId, value)}
                   />
                 );
               }}

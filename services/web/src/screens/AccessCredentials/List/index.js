@@ -1,10 +1,10 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Table, Divider, Button, Message } from 'semantic-ui-react';
+import { Table, Divider, Button, Message } from 'semantic';
 import { formatDateTime } from 'utils/date';
 import { request } from 'utils/api';
 import { screen } from 'helpers';
-import { Confirm, HelpTip, Breadcrumbs, SearchProvider } from 'components';
+import { Confirm, HelpTip, Breadcrumbs, SearchProvider, Layout } from 'components';
 
 import Filters from 'modals/Filters';
 import EditAccessCredential from 'modals/EditAccessCredential';
@@ -28,17 +28,21 @@ export default class AccessCredentialsList extends React.Component {
         {({ items: accessCredentials, getSorted, setSort, filters, setFilters, reload }) => {
           return (
             <React.Fragment>
-              <Breadcrumbs active="Access Credentials">
-                <Filters onSave={setFilters} filters={filters}>
-                  {/* --- Generator: filters */}
-                  <Filters.Text label="Name" name="name" />
-                  {/* --- Generator: end */}
-                </Filters>
-                <EditAccessCredential
-                  trigger={<Button primary content="New Access Credential" icon="plus" />}
-                  onSave={reload}
-                />
-              </Breadcrumbs>
+              <Breadcrumbs active="Access Credentials" />
+              <Layout horizontal center spread>
+                <h1>Access Credentials</h1>
+                <Layout.Group>
+                  <Filters onSave={setFilters} filters={filters}>
+                    {/* --- Generator: filters */}
+                    <Filters.Text label="Name" name="name" />
+                    {/* --- Generator: end */}
+                  </Filters>
+                  <EditAccessCredential
+                    trigger={<Button primary content="New Access Credential" icon="plus" />}
+                    onSave={reload}
+                  />
+                </Layout.Group>
+              </Layout>
               <Divider hidden />
               {accessCredentials.length === 0 ? (
                 <Message>No access credentials created yet</Message>

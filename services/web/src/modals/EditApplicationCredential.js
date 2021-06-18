@@ -1,29 +1,18 @@
 import React from 'react';
-import { Form, Modal, Message, Button } from 'semantic-ui-react';
+import { Form, Modal, Message, Button } from 'semantic';
 import { request } from 'utils/api';
 import AutoFocus from 'components/AutoFocus';
+import { modal } from 'helpers';
 
-// --- Generator: imports
-// --- Generator: end
-
+@modal
 export default class EditApplicationCredential extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      open: false,
       error: null,
       loading: false,
       applicationCredential: props.applicationCredential || {},
     };
-  }
-
-  componentDidUpdate(lastProps) {
-    const { applicationCredential } = this.props;
-    if (applicationCredential && applicationCredential !== lastProps.applicationCredential) {
-      this.setState({
-        applicationCredential,
-      });
-    }
   }
 
   isUpdate() {
@@ -48,12 +37,12 @@ export default class EditApplicationCredential extends React.Component {
   };
 
   onSubmit = async () => {
+    this.setState({
+      error: null,
+      loading: true,
+    });
+    const { applicationCredential } = this.state;
     try {
-      this.setState({
-        error: null,
-        loading: true,
-      });
-      const { applicationCredential } = this.state;
       if (this.isUpdate()) {
         await request({
           method: 'PATCH',
@@ -66,15 +55,9 @@ export default class EditApplicationCredential extends React.Component {
           path: '/1/application-credentials',
           body: applicationCredential,
         });
-        this.setState({
-          applicationCredential: {},
-        });
       }
-      this.setState({
-        open: false,
-        loading: false,
-      });
       this.props.onSave();
+      this.props.close();
     } catch (error) {
       this.setState({
         error,
@@ -84,16 +67,9 @@ export default class EditApplicationCredential extends React.Component {
   };
 
   render() {
-    const { trigger } = this.props;
-    const { applicationCredential, open, loading, error } = this.state;
+    const { applicationCredential, loading, error } = this.state;
     return (
-      <Modal
-        closeIcon
-        open={open}
-        trigger={trigger}
-        closeOnDimmerClick={false}
-        onOpen={() => this.setState({ open: true })}
-        onClose={() => this.setState({ open: false })}>
+      <>
         <Modal.Header>
           {this.isUpdate() ? `Edit "${applicationCredential.name}"` : 'New ApplicationCredential'}
         </Modal.Header>
@@ -123,7 +99,7 @@ export default class EditApplicationCredential extends React.Component {
             content={this.isUpdate() ? 'Update' : 'Create'}
           />
         </Modal.Actions>
-      </Modal>
+      </>
     );
   }
 }

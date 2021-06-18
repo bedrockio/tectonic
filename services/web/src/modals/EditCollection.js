@@ -1,29 +1,21 @@
 import React from 'react';
-import { Modal, Form, Button, Message } from 'semantic-ui-react';
+import { Modal, Form, Button, Message } from 'semantic';
 import { request } from 'utils/api';
 import AutoFocus from 'components/AutoFocus';
+import { modal } from 'helpers';
 
 // --- Generator: imports
 // --- Generator: end
 
+@modal
 export default class EditCollection extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      open: false,
       error: null,
       loading: false,
       collection: props.collection || {},
     };
-  }
-
-  componentDidUpdate(lastProps) {
-    const { collection } = this.props;
-    if (collection && collection !== lastProps.collection) {
-      this.setState({
-        collection,
-      });
-    }
   }
 
   isUpdate() {
@@ -44,11 +36,13 @@ export default class EditCollection extends React.Component {
   };
 
   onSubmit = async () => {
+    this.setState({
+      error: null,
+      loading: true,
+    });
+
+    const { collection } = this.state;
     try {
-      this.setState({
-        loading: true,
-      });
-      const { collection } = this.state;
       if (this.isUpdate()) {
         await request({
           method: 'PATCH',
@@ -61,15 +55,9 @@ export default class EditCollection extends React.Component {
           path: '/1/collections',
           body: collection,
         });
-        this.setState({
-          collection: {},
-        });
       }
-      this.setState({
-        open: false,
-        loading: false,
-      });
       this.props.onSave();
+      this.props.close();
     } catch (error) {
       this.setState({
         error,
@@ -79,16 +67,9 @@ export default class EditCollection extends React.Component {
   };
 
   render() {
-    const { trigger } = this.props;
-    const { collection, open, loading, error } = this.state;
+    const { collection, loading, error } = this.state;
     return (
-      <Modal
-        closeIcon
-        open={open}
-        trigger={trigger}
-        closeOnDimmerClick={false}
-        onOpen={() => this.setState({ open: true })}
-        onClose={() => this.setState({ open: false })}>
+      <>
         <Modal.Header>{this.isUpdate() ? `Edit "${collection.name}"` : 'New Collection'}</Modal.Header>
         <Modal.Content scrolling>
           <AutoFocus>
@@ -122,7 +103,7 @@ export default class EditCollection extends React.Component {
             content={this.isUpdate() ? 'Update' : 'Create'}
           />
         </Modal.Actions>
-      </Modal>
+      </>
     );
   }
 }

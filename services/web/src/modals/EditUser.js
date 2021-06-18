@@ -1,28 +1,20 @@
 import React from 'react';
-import { Form, Modal, Message, Button } from 'semantic-ui-react';
+import { Form, Modal, Message, Button } from 'semantic';
 import { request } from 'utils/api';
 import AutoFocus from 'components/AutoFocus';
 import Roles from 'components/form-fields/Roles';
+import { modal } from 'helpers';
 
+@modal
 export default class EditUser extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      open: false,
       touched: false,
       loading: false,
       error: null,
       user: props.user || {},
     };
-  }
-
-  componentDidUpdate(lastProps) {
-    const { user } = this.props;
-    if (user && user !== lastProps.user) {
-      this.setState({
-        user,
-      });
-    }
   }
 
   isUpdate() {
@@ -39,12 +31,13 @@ export default class EditUser extends React.Component {
   }
 
   onSubmit = async () => {
+    const { user } = this.state;
+    this.setState({
+      loading: true,
+      touched: true,
+    });
+
     try {
-      const { user } = this.state;
-      this.setState({
-        loading: true,
-        touched: true,
-      });
       if (this.isUpdate()) {
         await request({
           method: 'PATCH',
@@ -57,16 +50,9 @@ export default class EditUser extends React.Component {
           path: '/1/users',
           body: user,
         });
-        this.setState({
-          user: {},
-          touched: false,
-        });
       }
-      this.setState({
-        open: false,
-        loading: false,
-      });
       this.props.onSave();
+      this.props.close();
     } catch (error) {
       this.setState({
         error,
@@ -76,25 +62,13 @@ export default class EditUser extends React.Component {
   };
 
   render() {
-    const { trigger } = this.props;
-    const { user, open, touched, loading, error } = this.state;
+    const { user, touched, loading, error } = this.state;
     return (
-      <Modal
-        closeIcon
-        closeOnDimmerClick={false}
-        onClose={() => this.setState({ open: false })}
-        onOpen={() => this.setState({ open: true })}
-        open={open}
-        trigger={trigger}>
-        <Modal.Header>
-          {this.isUpdate() ? `Edit "${user.name}"` : 'New User'}
-        </Modal.Header>
+      <>
+        <Modal.Header>{this.isUpdate() ? `Edit "${user.name}"` : 'New User'}</Modal.Header>
         <Modal.Content>
           <AutoFocus>
-            <Form
-              id="edit-user"
-              onSubmit={this.onSubmit}
-              error={touched && error}>
+            <Form id="edit-user" onSubmit={this.onSubmit} error={touched && error}>
               {error && <Message error content={error.message} />}
               <Form.Input
                 value={user.name || ''}
@@ -119,10 +93,7 @@ export default class EditUser extends React.Component {
                 />
               )}
 
-              <Roles
-                value={user.roles || []}
-                onChange={(value) => this.setField('roles', value)}
-              />
+              <Roles value={user.roles || []} onChange={(value) => this.setField('roles', value)} />
             </Form>
           </AutoFocus>
         </Modal.Content>
@@ -135,7 +106,7 @@ export default class EditUser extends React.Component {
             content={this.isUpdate() ? 'Update' : 'Create'}
           />
         </Modal.Actions>
-      </Modal>
+      </>
     );
   }
 }

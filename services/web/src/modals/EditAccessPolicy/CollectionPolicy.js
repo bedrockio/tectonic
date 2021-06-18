@@ -21,7 +21,8 @@ export default class EditAccessPolicy extends React.Component {
     this.props.onChange([
       ...this.props.collections,
       {
-        collection,
+        collection: collection.id,
+        collectionId: collection.id,
         scope: JSON.parse(scope),
       },
     ]);
@@ -43,9 +44,9 @@ export default class EditAccessPolicy extends React.Component {
               flexDirection: 'row',
               justifyContent: 'space-between',
             }}
-            key={`${collection.collection}-${JSON.stringify(collection.scope)}`}>
+            key={`${collection.collectionId}-${JSON.stringify(collection.scope)}`}>
             <Form.Field>
-              <label>Collection</label> {collection.collection}
+              <label>Collection</label> {collection.collectionId}
             </Form.Field>
             <Form.Field disabled>
               <label>Scope</label>
@@ -70,11 +71,11 @@ export default class EditAccessPolicy extends React.Component {
                 collection: value,
               });
             }}
-            fetchData={() =>
+            onDataNeeded={() =>
               request({
                 method: 'POST',
                 path: `/1/collections/search`,
-              })
+              }).then(({ data }) => data)
             }
           />
         </Form.Field>
@@ -89,7 +90,7 @@ export default class EditAccessPolicy extends React.Component {
           }}
         />
 
-        <Button disabled={!collection.length} onClick={() => this.handleAdd()}>
+        <Button disabled={!collection} onClick={() => this.handleAdd()}>
           Add Policy
         </Button>
       </Segment>
