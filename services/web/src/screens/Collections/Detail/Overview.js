@@ -15,20 +15,10 @@ export default class CollectionOverview extends React.Component {
     return (
       <React.Fragment>
         <Menu {...this.props} />
-        {/* --- Generator: overview-fields */}
-        <Header as="h1">{collection.name}</Header>
         <p>{collection.description}</p>
         <Header as="h3">Details</Header>
         <Table definition>
           <Table.Body>
-            <Table.Row>
-              <Table.Cell>Categories</Table.Cell>
-              <Table.Cell>
-                {collection.categories.map((category) => (
-                  <Label key={category.id} content={category.name} />
-                ))}
-              </Table.Cell>
-            </Table.Row>
             <Table.Row>
               <Table.Cell>ID</Table.Cell>
               <Table.Cell>{collection.id}</Table.Cell>

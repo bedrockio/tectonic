@@ -23,13 +23,9 @@ const createFixtures = async () => {
   });
   logger.info(`Added admin user ${adminUser.email} to database`);
 
-  const demoCategory = await Category.create({ name: 'demo' });
-  const barCategory = await Category.create({ name: 'bar' });
-
   const collection = await Collection.create({
     name: `bar-purchases`,
-    description: 'POS system purchases',
-    categories: [demoCategory, barCategory],
+    description: "Example data from a cocktail bar's point-of-sale system",
   });
 
   await ensureCollectionIndex(collection.id);
@@ -37,18 +33,18 @@ const createFixtures = async () => {
   //const events = loadJsonStreamFile(__dirname + './routes/policy/__tests__/fixtures/bar-purchases.ndjson');
 
   const accessPolicy = await AccessPolicy.create({
-    name: 'Bar Purchases Demo - Access Policy',
+    name: 'bar-purchases-collection-access',
     collections: [{ collectionId: collection.id }],
   });
 
   const accessCredential = await AccessCredential.create({
-    name: 'Bar Purchases Demo - Full Access',
+    name: 'bar-purchases-full-access',
     accessPolicy,
   });
   console.info(`Created accessCredential ${accessCredential.id}`);
 
   const applicationCredential = await ApplicationCredential.create({
-    name: 'Admin - Application Credential',
+    name: 'default-application',
   });
   console.info(`Created applicationCredential ${applicationCredential.id}`);
 

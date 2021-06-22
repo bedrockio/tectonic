@@ -12,7 +12,7 @@ export default ({ collection, onSave }) => {
       <Breadcrumbs link={<Link to="/collections">Collections</Link>} active={collection.name || 'Loading...'} />
 
       <Layout horizontal center spread>
-        <h1>{collection.name} Collection</h1>
+        <h1>{collection.name}</h1>
         <Layout.Group>
           <EditCollection
             collection={collection}
