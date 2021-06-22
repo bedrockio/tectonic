@@ -96,6 +96,7 @@ describe('/1/access-policies', () => {
       await AccessPolicy.create({ name });
 
       const headers = await getHeaders();
+      // pre-existing name:
       const response = await request(
         'PUT',
         '/1/access-policies',
@@ -112,6 +113,26 @@ describe('/1/access-policies', () => {
       );
       expect(response.error).toBe(false);
       expect(response.status).toBe(200);
+
+      // No pre-existing name:
+      const name2 = name + '2';
+      const response2 = await request(
+        'PUT',
+        '/1/access-policies',
+        {
+          name: name2,
+          collections: [
+            {
+              collection: collection.name, // fetch by name
+              scope: { systemId },
+            },
+          ],
+        },
+        { headers }
+      );
+      expect(response2.error).toBe(false);
+      expect(response2.status).toBe(200);
+      expect(response2.body.data.name).toBe(name2);
     });
   });
 
