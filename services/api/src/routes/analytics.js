@@ -31,11 +31,11 @@ function interpretError(error) {
 
 async function checkCollectionAccess(ctx, next) {
   const { collection } = ctx.request.body;
-  const collectionObject = await Collection.findByIdOrName(collection);
-  if (!collectionObject) {
+  const dbCollection = await Collection.findByIdOrName(collection);
+  if (!dbCollection) {
     ctx.throw(401, `Collection '${collection}' could not be found`);
   }
-  const collectionId = collectionObject._id.toString();
+  const collectionId = dbCollection.id;
 
   const { accessPolicy, scopeArgs } = ctx.state.authAccessCredential;
   if (!accessPolicy || !accessPolicy.collections || !Array.isArray(accessPolicy.collections)) {

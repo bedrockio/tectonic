@@ -32,17 +32,17 @@ router.use(authenticate()).post(
     const { collection, events } = ctx.request.body;
     const ingestedAt = new Date().toISOString();
 
-    let collectionObject;
+    let dbCollection;
     try {
-      collectionObject = await Collection.findByIdOrName(collection);
+      dbCollection = await Collection.findByIdOrName(collection);
     } catch (e) {
       console.error(e);
       throw new NotFoundError(`Collection ${collection} not valid`);
     }
-    if (!collection) {
+    if (!dbCollection) {
       throw new NotFoundError(`Collection ${collection} not found`);
     }
-    const collectionId = collectionObject.id;
+    const collectionId = dbCollection.id;
 
     const hash = createHash('sha256')
       .update(`${collectionId}-${JSON.stringify(events)}`)
