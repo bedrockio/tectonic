@@ -28,9 +28,9 @@ export default class ApplicationCredentialsList extends React.Component {
         {({ items: applicationCredentials, getSorted, setSort, filters, setFilters, reload }) => {
           return (
             <React.Fragment>
-              <Breadcrumbs active="Application Credentials" />
+              <Breadcrumbs active="Applications" />
               <Layout horizontal center spread>
-                <h1>Application Credentials</h1>
+                <h1>Applications</h1>
                 <Layout.Group>
                   <Filters onSave={setFilters} filters={filters}>
                     {/* --- Generator: filters */}
@@ -38,7 +38,7 @@ export default class ApplicationCredentialsList extends React.Component {
                     {/* --- Generator: end */}
                   </Filters>
                   <EditApplicationCredential
-                    trigger={<Button primary content="New Application Credential" icon="plus" />}
+                    trigger={<Button primary content="New Application" icon="plus" />}
                     onSave={reload}
                   />
                 </Layout.Group>
@@ -68,9 +68,7 @@ export default class ApplicationCredentialsList extends React.Component {
                         <Table.Row key={applicationCredential.id}>
                           {/* --- Generator: list-body-cells */}
                           <Table.Cell>
-                            <Link to={`/application-credentials/${applicationCredential.id}`}>
-                              {applicationCredential.name}
-                            </Link>
+                            <Link to={`/applications/${applicationCredential.id}`}>{applicationCredential.name}</Link>
                           </Table.Cell>
                           {/* --- Generator: end */}
                           <Table.Cell>{formatDateTime(applicationCredential.createdAt)}</Table.Cell>

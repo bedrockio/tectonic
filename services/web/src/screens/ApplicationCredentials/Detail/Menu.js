@@ -10,7 +10,7 @@ export default ({ applicationCredential, onSave }) => {
   return (
     <React.Fragment>
       <Breadcrumbs
-        link={<Link to="/application-credentials">Application Credentials</Link>}
+        link={<Link to="/applications">Application Credentials</Link>}
         active={applicationCredential.name || 'Loading...'}>
         <Layout horizontal center spread>
           <h1>{applicationCredential.name} Application Credentials</h1>
@@ -25,7 +25,7 @@ export default ({ applicationCredential, onSave }) => {
       </Breadcrumbs>
       <Divider hidden />
       <Menu tabular>
-        <Menu.Item name="Overview" to={`/application-credentials/${applicationCredential.id}`} as={NavLink} exact />
+        <Menu.Item name="Overview" to={`/applications/${applicationCredential.id}`} as={NavLink} exact />
       </Menu>
       <Divider hidden />
     </React.Fragment>

@@ -68,7 +68,7 @@ export default class AccessCredentialsList extends React.Component {
                         <Table.Row key={accessCredential.id}>
                           {/* --- Generator: list-body-cells */}
                           <Table.Cell>
-                            <Link to={`/access-credentials/${accessCredential.id}`}>{accessCredential.name}</Link>
+                            <Link to={`/access/credentials/${accessCredential.id}`}>{accessCredential.name}</Link>
                           </Table.Cell>
                           {/* --- Generator: end */}
                           <Table.Cell>{formatDateTime(accessCredential.createdAt)}</Table.Cell>

@@ -23,9 +23,9 @@ const App = () => (
   <Switch>
     <AuthSwitch path="/" loggedIn={Dashboard} loggedOut={Login} exact />
     <Protected path="/collections/:id?" allowed={Collections} />
-    <Protected path="/access-policies/:id?" allowed={AccessPolicies} />
-    <Protected path="/access-credentials/:id?" allowed={AccessCredentials} />
-    <Protected path="/application-credentials/:id?" allowed={ApplicationCredentials} />
+    <Protected path="/access/policies/:id?" allowed={AccessPolicies} />
+    <Protected path="/access/credentials/:id?" allowed={AccessCredentials} />
+    <Protected path="/applications/:id?" allowed={ApplicationCredentials} />
     <Protected path="/settings" allowed={Settings} exact />
     <Protected path="/users/:id?" allowed={Users} />
     <Route path="/docs/ui" component={Components} exact />

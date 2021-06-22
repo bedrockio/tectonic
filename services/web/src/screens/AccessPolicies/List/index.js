@@ -69,7 +69,7 @@ export default class AccessPolicyList extends React.Component {
                         <Table.Row key={policy.id}>
                           {/* --- Generator: list-body-cells */}
                           <Table.Cell>
-                            <Link to={`/access-policies/${policy.id}`}>{policy.name}</Link>
+                            <Link to={`/access/policies/${policy.id}`}>{policy.name}</Link>
                           </Table.Cell>
                           {/* --- Generator: end */}
                           <Table.Cell>{formatDateTime(policy.createdAt)}</Table.Cell>

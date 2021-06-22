@@ -67,14 +67,14 @@ export default class ApplicationCredentialDetail extends React.Component {
     } else if (error) {
       return (
         <React.Fragment>
-          <Breadcrumbs link={<Link to="/application-credentials">Application Credentials</Link>} active="Not Found" />
+          <Breadcrumbs link={<Link to="/applications">Application Credentials</Link>} active="Not Found" />
           <Header content="Sorry that application credential wasn't found." />
         </React.Fragment>
       );
     }
     return (
       <Switch>
-        <Route exact path="/application-credentials/:id" render={(props) => <Overview {...props} {...this.state} />} />
+        <Route exact path="/applications/:id" render={(props) => <Overview {...props} {...this.state} />} />
         {/* --- Generator: routes */}
         {/* --- Generator: end */}
       </Switch>

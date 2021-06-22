@@ -8,8 +8,8 @@ export default class AccessCredentials extends React.Component {
   render() {
     return (
       <Switch>
-        <Route path="/access-credentials" component={List} exact />
-        <Route path="/access-credentials/:id" component={Detail} />
+        <Route path="/access/credentials" component={List} exact />
+        <Route path="/access/credentials/:id" component={Detail} />
       </Switch>
     );
   }

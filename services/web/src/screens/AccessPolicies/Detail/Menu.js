@@ -9,7 +9,7 @@ import EditAccessPolicy from 'modals/EditAccessPolicy';
 export default ({ policy, onSave }) => {
   return (
     <React.Fragment>
-      <Breadcrumbs link={<Link to="/access-policies">Access Policies</Link>} active={policy.name || 'Loading...'}>
+      <Breadcrumbs link={<Link to="/access/policies">Access Policies</Link>} active={policy.name || 'Loading...'}>
         <Layout horizontal center spread>
           <h1>{policy.name} Application Credentials</h1>
           <Layout.Group>
@@ -23,10 +23,10 @@ export default ({ policy, onSave }) => {
       </Breadcrumbs>
       <Divider hidden />
       <Menu tabular>
-        <Menu.Item name="Overview" to={`/access-policies/${policy.id}`} as={NavLink} exact />
+        <Menu.Item name="Overview" to={`/access/policies/${policy.id}`} as={NavLink} exact />
         <Menu.Item
           name="AccessCredentials"
-          to={`/access-policies/${policy.id}/access-credentials`}
+          to={`/access/policies/${policy.id}/access-credentials`}
           as={NavLink}
           exact
         />

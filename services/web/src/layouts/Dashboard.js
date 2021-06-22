@@ -25,25 +25,30 @@ export default class DashboardLayout extends React.Component {
               <Layout.Group grow overflow>
                 <Protected endpoint="collections">
                   <Sidebar.Link to="/collections">
-                    <Icon name="store" />
+                    <Icon name="database" />
                     Collections
                   </Sidebar.Link>
 
-                  <Sidebar.Link to="/access-policies">
-                    <Icon name="file-alt" />
-                    Access Policies
-                  </Sidebar.Link>
-
-                  <Sidebar.Link to="/access-credentials">
+                  <Sidebar.Link to="/access/credentials">
                     <Icon name="key" />
                     Access Credentials
                   </Sidebar.Link>
 
-                  <Sidebar.Link to="/application-credentials">
-                    <Icon name="key" />
-                    Application Credentials
+                  <Sidebar.Accordion active="/access">
+                    <Sidebar.Link to="/access/policies">
+                      <Icon name="file-alt" />
+                      Access Policies
+                    </Sidebar.Link>
+                  </Sidebar.Accordion>
+
+                  <Sidebar.Link to="/applications">
+                    <Icon name="cube" />
+                    Applications
                   </Sidebar.Link>
                 </Protected>
+              </Layout.Group>
+              <Layout.Group>
+                <Sidebar.Divider />
 
                 <Protected endpoint="users">
                   <Sidebar.Link to="/users">
@@ -51,13 +56,6 @@ export default class DashboardLayout extends React.Component {
                     Users
                   </Sidebar.Link>
                 </Protected>
-              </Layout.Group>
-              <Layout.Group>
-                <Sidebar.Divider />
-                <Sidebar.Link to="/settings">
-                  <Icon name="cog" />
-                  Settings
-                </Sidebar.Link>
                 <Sidebar.Link to="/docs/getting-started">
                   <Icon name="terminal" />
                   Docs

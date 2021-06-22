@@ -10,7 +10,7 @@ export default ({ accessCredential, onSave }) => {
   return (
     <React.Fragment>
       <Breadcrumbs
-        link={<Link to="/access-credentials">Access Credentials</Link>}
+        link={<Link to="/access/credentials">Access Credentials</Link>}
         active={accessCredential.name || 'Loading...'}
       />
       <Layout horizontal center spread>
@@ -26,10 +26,10 @@ export default ({ accessCredential, onSave }) => {
 
       <Divider hidden />
       <Menu tabular>
-        <Menu.Item name="Overview" to={`/access-credentials/${accessCredential.id}`} as={NavLink} exact />
+        <Menu.Item name="Overview" to={`/access/credentials/${accessCredential.id}`} as={NavLink} exact />
         {/* <Menu.Item
           name="AccessPolicies"
-          to={`/access-credentials/${accessCredential.id}/access-policies`}
+          to={`/access/credentials/${accessCredential.id}/access-policies`}
           as={NavLink}
           exact
         /> */}

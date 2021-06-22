@@ -8,8 +8,8 @@ export default class AccessPolicies extends React.Component {
   render() {
     return (
       <Switch>
-        <Route path="/access-policies" component={List} exact />
-        <Route path="/access-policies/:id" component={Detail} />
+        <Route path="/access/policies" component={List} exact />
+        <Route path="/access/policies/:id" component={Detail} />
       </Switch>
     );
   }
