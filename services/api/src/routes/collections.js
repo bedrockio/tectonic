@@ -25,8 +25,36 @@ router
       body: Collection.getValidator(),
     }),
     async (ctx) => {
+      const { name } = ctx.request.body;
+      const existingCollection = await Collection.findOne({ name });
+      if (existingCollection) {
+        ctx.throw(401, `Collection with name "${name}" already exists. You could use PUT endpoint instead.`);
+      }
       const collection = await Collection.create(ctx.request.body);
       await ensureCollectionIndex(collection.id);
+      ctx.body = {
+        data: collection,
+      };
+    }
+  )
+  .put(
+    '/',
+    validate({
+      body: Collection.getValidator(),
+    }),
+    async (ctx) => {
+      const { name } = ctx.request.body;
+      const existingCollection = await Collection.findOne({ name });
+      let collection;
+      if (existingCollection) {
+        existingCollection.assign(ctx.request.body);
+        await existingCollection.save();
+        collection = existingCollection;
+      } else {
+        collection = await Collection.create(ctx.request.body);
+        await ensureCollectionIndex(collection.id);
+      }
+
       ctx.body = {
         data: collection,
       };

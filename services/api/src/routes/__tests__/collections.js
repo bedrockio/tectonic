@@ -26,11 +26,34 @@ describe('/1/collections', () => {
       expect(response.status).toBe(200);
       expect(data.name).toBe('some other collection');
     });
+
+    it('should not be able to create collection with existing name', async () => {
+      await Collection.deleteMany({});
+      const user = await createUser();
+      const name = 'some other collection';
+      await Collection.create({ name });
+      const response = await request('POST', '/1/collections', { name }, { user });
+      expect(response.status).toBe(401);
+    });
+  });
+
+  describe('PUT /', () => {
+    it('should be able to create collection', async () => {
+      await Collection.deleteMany({});
+      const user = await createUser();
+      const name = 'some other collection';
+      await Collection.create({ name });
+      const response = await request('PUT', '/1/collections', { name }, { user });
+      const data = response.body.data;
+      expect(response.status).toBe(200);
+      expect(data.name).toBe(name);
+    });
   });
 
   describe('GET /:collection', () => {
     it('should be able to access collection', async () => {
       const user = await createUser();
+      await Collection.deleteMany({});
       const collection = await Collection.create({
         name: 'test 1',
         description: 'Some description',
