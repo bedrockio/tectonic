@@ -6,7 +6,6 @@ const categories = require('./categories');
 const status = require('./status');
 const events = require('./events');
 const batches = require('./batches');
-const adminAnalytics = require('./admin-analytics');
 const accessPolicies = require('./access-policies');
 const accessCredentials = require('./access-credentials');
 const applicationCredentials = require('./application-credentials');
@@ -25,6 +24,5 @@ router.use('/access-policies', accessPolicies.routes());
 router.use('/access-credentials', accessCredentials.routes());
 router.use('/application-credentials', applicationCredentials.routes());
 router.use('/analytics', analytics.routes());
-router.use('/admin-analytics', adminAnalytics.routes()); // TODO: Remove when analytics kitchen sink is ready
 
 module.exports = router;
