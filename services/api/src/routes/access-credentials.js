@@ -30,9 +30,43 @@ router
       }),
     }),
     async (ctx) => {
+      const { name } = ctx.request.body;
+      const existingAccessCredential = await AccessCredential.findOne({ name });
+      if (existingAccessCredential) {
+        ctx.throw(401, `Access Credential with name "${name}" already exists. You could use PUT endpoint instead.`);
+      }
       // TODO add logic to check accessCredential validity
       // Check if accessPolicy is a name or id
       const accessCredential = await AccessCredential.create(ctx.request.body);
+      const token = createCredentialToken(accessCredential);
+      ctx.body = {
+        data: { ...accessCredential.toObject(), token },
+      };
+    }
+  )
+  .put(
+    '/',
+    validate({
+      body: Joi.object({
+        name: Joi.string().required(),
+        accessPolicy: Joi.string().required(), // name or id
+        scopeArgs: Joi.object().optional(), // TODO: add validator for this field
+      }),
+    }),
+    async (ctx) => {
+      // TODO add logic to check accessCredential validity
+      // Check if accessPolicy is a name or id
+      const { name, accessPolicy, scopeArgs = {} } = ctx.request.body;
+      const existingAccessCredential = await AccessCredential.findOne({ name });
+      let accessCredential;
+      if (existingAccessCredential) {
+        existingAccessCredential.accessPolicy = accessPolicy;
+        existingAccessCredential.scopeArgs = scopeArgs;
+        await existingAccessCredential.save();
+        accessCredential = existingAccessCredential;
+      } else {
+        accessCredential = await AccessCredential.create(ctx.request.body);
+      }
       const token = createCredentialToken(accessCredential);
       ctx.body = {
         data: { ...accessCredential.toObject(), token },
