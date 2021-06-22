@@ -90,7 +90,7 @@ async function timeSeries(index, operation, field, options = undefined) {
       },
     },
   };
-  // console.log(JSON.stringify(body, null, 2));
+  console.log(JSON.stringify(body, null, 2));
   const result = await elasticsearchClient.search({
     index,
     body,

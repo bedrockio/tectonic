@@ -1,16 +1,14 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<svg width="37px" height="36px" viewBox="0 0 37 36" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-    <title>Group 7</title>
-    <g id="Landing" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-        <g id="04-Landing---Real-Text" transform="translate(-170.000000, -62.000000)">
-            <g id="Group-7" transform="translate(170.000000, 62.000000)">
-                <polygon id="Fill-1" fill="#423629" points="9.01992857 35.9960786 26.6991429 35.95815 36.2153571 23.0045786"></polygon>
-                <polygon id="Fill-2" fill="#423629" points="33.2418214 0.000257142857 16.90425 7.07554286 36.2156786 23.0049"></polygon>
-                <polygon id="Fill-3" fill="#574C41" points="11.2780929 15.4284429 9.01973571 35.9960143 36.2158071 23.0045143 16.9043786 7.0758"></polygon>
-                <polygon id="Fill-4" fill="#6B6256" points="0 18.2640214 9.01992857 35.99595 11.2782857 15.4283786"></polygon>
-                <polygon id="Fill-5" fill="#B3AAA0" points="0 18.2640214 11.2782857 15.4283786 16.9039286 7.07573571 2.94364286 5.33166429"></polygon>
-                <polygon id="Fill-6" fill="#8C8479" points="33.2418214 0.000257142857 2.94396429 5.33211429 16.90425 7.07554286"></polygon>
-            </g>
-        </g>
-    </g>
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 25.2.1, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 1000 1000" style="enable-background:new 0 0 1000 1000;" xml:space="preserve">
+<style type="text/css">
+	.st0{fill:#77A741;}
+</style>
+<path class="st0" d="M900,530.7H766.9L660.8,237.6c-2.1-6-8.3-9.4-14.2-9.8c-6.5,0.2-12,4.5-13.9,10.6L503,670.5L333.1,376.2
+	c-2.9-4.8-8.3-7.9-13.9-7.3s-10.5,4.3-12.5,9.4l-58.9,152.4H114.5c-8.1,0-14.7,6.7-14.7,14.7c0,8.1,6.6,14.6,14.7,14.6h143.4
+	c6,0,11.5-3.7,13.7-9.4l51.5-133.2l171.5,297c0.2,0.2,0.5,0.3,0.6,0.6c1.1,1.7,2.6,3,4.2,4.1c0.6,0.4,1.2,0.8,1.9,1
+	c0.7,0.4,1.1,0.9,1.8,1c1.3,0.5,2.8,0.8,4.2,0.8c2.5,0,5-0.7,7.4-2c0.3-0.2,0.5-0.6,0.8-0.8c0.4-0.3,0.7-0.8,1.1-1
+	c2-1.7,3.7-3.7,4.6-6.4c0-0.2,0.2-0.3,0.3-0.4l126.9-422.1l94.5,260.7c0.4,1.4,1.1,2.8,2.1,4.1c0.7,0.9,1.4,1.5,2,2.3
+	c2.6,2.2,6,3.5,9.6,3.6l0,0c0,0,0,0,0.2,0l0,0H900c8.2,0,14.7-6.6,14.7-14.6S908.2,530.7,900,530.7z"/>
 </svg>

@@ -42,7 +42,14 @@ export default (props) => {
             type="password"
           />
         </Form.Field>
-        <Button fluid primary size="large" content="Login" loading={loading} disabled={loading} />
+        <Button
+          fluid
+          primary
+          size="large"
+          content="Login"
+          loading={loading}
+          disabled={loading}
+        />
       </Form>
     </AutoFocus>
   );
