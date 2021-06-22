@@ -48,29 +48,44 @@ router
       }
       const policy = await AccessPolicy.create(policyObject);
       ctx.body = {
-        data: policy,
+        data: policy.toCollectionJSON(),
       };
     }
   )
   .patch(
-    // TODO: update patch to work with collection id or name
     '/:policyId',
     validate({
-      body: AccessPolicy.getPatchValidator(),
+      body: Joi.object({
+        name: Joi.string(),
+        collections: Joi.array().items(collectionSchema).min(1),
+      }),
     }),
     async (ctx) => {
       const policy = ctx.state.policy;
-      policy.assign(ctx.request.body);
+      const { name, collections } = ctx.request.body;
+      if (name) {
+        policy.name = name;
+      }
+      if (collections) {
+        policy.collections = [];
+        for (const col of collections) {
+          const collection = await Collection.findByIdOrName(col.collection);
+          if (!collection) ctx.throw(401, `collection "${col.collection}" doesn't exist`);
+          col.collectionId = collection.id;
+          delete col.collection;
+          policy.collections.push(col);
+        }
+      }
       await policy.save();
       ctx.body = {
-        data: policy,
+        data: policy.toCollectionJSON(),
       };
     }
   )
   .get('/:policyId', async (ctx) => {
     const { policy } = await ctx.state;
     ctx.body = {
-      data: policy,
+      data: policy.toCollectionJSON(),
     };
   })
   .post(
@@ -107,9 +122,13 @@ router
         .skip(skip)
         .limit(limit);
 
+      const mappedData = data.map((accessPolicy) => {
+        return accessPolicy.toCollectionJSON();
+      });
+
       const total = await AccessPolicy.countDocuments(query);
       ctx.body = {
-        data,
+        data: mappedData,
         meta: {
           total,
           skip,
