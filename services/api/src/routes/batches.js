@@ -3,7 +3,7 @@ const Joi = require('@hapi/joi');
 const validate = require('../utils/middleware/validate');
 const { authenticate } = require('../lib/middleware/authenticate');
 const { NotFoundError } = require('../utils/errors');
-const { Batch } = require('../models');
+const { Batch, Collection } = require('../models');
 
 const router = new Router();
 
@@ -17,18 +17,6 @@ router
     }
     return next();
   })
-  .post(
-    '/',
-    validate({
-      body: Batch.getValidator(),
-    }),
-    async (ctx) => {
-      const batch = await Batch.create(ctx.request.body);
-      ctx.body = {
-        data: batch,
-      };
-    }
-  )
   .get('/:batchId', async (ctx) => {
     const { batch } = await ctx.state;
     ctx.body = {
@@ -49,18 +37,22 @@ router
           order: 'desc',
         }),
         ids: Joi.array().items(Joi.string()),
-        collectionId: Joi.string(),
+        collection: Joi.string(),
         limit: Joi.number().positive().default(50),
       }),
     }),
     async (ctx) => {
-      const { ids = [], sort, name, skip, limit, collectionId } = ctx.request.body;
+      const { ids = [], sort, name, skip, limit, collection } = ctx.request.body;
       const query = {
         ...(ids.length ? { _id: { $in: ids } } : {}),
         deletedAt: { $exists: false },
       };
-      if (collectionId) {
-        query.collectionId = collectionId;
+      if (collection) {
+        const collectionObject = await Collection.findByIdOrName(collection);
+        if (!collectionObject) {
+          ctx.throw(401, `Collection '${collection}' could not be found`);
+        }
+        query.collectionId = collectionObject.id;
       }
       if (name) {
         query.name = {
@@ -81,20 +73,6 @@ router
           skip,
           limit,
         },
-      };
-    }
-  )
-  .patch(
-    '/:batchId',
-    validate({
-      body: Batch.getPatchValidator(),
-    }),
-    async (ctx) => {
-      const batch = ctx.state.batch;
-      batch.assign(ctx.request.body);
-      await batch.save();
-      ctx.body = {
-        data: batch,
       };
     }
   )

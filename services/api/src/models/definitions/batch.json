@@ -3,9 +3,9 @@
     "collectionId": { "type": "ObjectId", "required": true, "autopopulate": false },
     "ingestedAt": { "type": "Date", "required": true },
     "numEvents": { "type": "Number", "required": true },
-    "memorySize": { "type": "String", "required": true },
     "minOccurredAt": { "type": "Date", "required": true },
     "maxOccurredAt": { "type": "Date", "required": true },
+    "memorySize": { "type": "String", "required": false },
     "rawUrl": { "type": "String", "required": false },
     "hash": { "type": "String", "required": false }
   }

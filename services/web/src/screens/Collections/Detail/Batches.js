@@ -18,7 +18,7 @@ export default class CollectionBatches extends React.Component {
       path: '/1/batches/search',
       body: {
         ...params,
-        collectionId: collection.id,
+        collection: collection.id,
       },
     });
   };
