@@ -1,7 +1,8 @@
 const process = require('process');
 const { logger } = require('@bedrockio/instrumentation');
 
-const { initialize: initDB } = require('../src/utils/database');
+const { initialize } = require('../src/utils/database');
+const { createFixtures } = require('../src/fixtures');
 const { Collection, ApplicationCredential } = require('../src/models');
 const { createCredentialToken } = require('../src/lib/tokens');
 const { loadJsonStreamFile } = require('../src/lib/analytics');
@@ -59,8 +60,18 @@ async function publishBarPurchases(token) {
 }
 
 async function run() {
-  await initDB();
-  const applicationCredential = await ApplicationCredential.findOne();
+  await initialize();
+  let applicationCredential = await ApplicationCredential.findOne();
+  if (!applicationCredential) {
+    const result = await createFixtures();
+    if (!result) {
+      logger.info('No DB fixtures to load, database is populated');
+    }
+    applicationCredential = await ApplicationCredential.findOne();
+  }
+  if (!applicationCredential) {
+    throw new Error('Could not find applicationCredential');
+  }
   const token = createCredentialToken(applicationCredential);
   // await publishEvseMeterValues();
   // await publishEvseControllers();

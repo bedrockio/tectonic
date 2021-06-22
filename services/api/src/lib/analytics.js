@@ -75,7 +75,7 @@ async function timeSeries(index, operation, field, options = undefined) {
   body.aggs = {
     timeSeries: {
       date_histogram: {
-        field: options.dateField || 'createdAt',
+        field: options.dateField || 'ingestedAt',
         interval: options.interval || '1d',
         min_doc_count: 0,
       },

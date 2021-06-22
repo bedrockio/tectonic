@@ -81,6 +81,7 @@ router
       let policy;
       if (existingPolicy) {
         existingPolicy.collections = newCollections;
+        await existingPolicy.save();
         policy = existingPolicy.toCollectionJSON();
       } else {
         policy = await AccessPolicy.create({ name, collections: newCollections });
