@@ -1,4 +1,4 @@
-const { User, Collection, Category, AccessPolicy, AccessCredential, ApplicationCredential } = require('./models');
+const { User, Collection, AccessPolicy, AccessCredential, ApplicationCredential } = require('./models');
 const config = require('@bedrockio/config');
 const { logger } = require('@bedrockio/instrumentation');
 const { ensureCollectionIndex, ensureAlias, getCollectionIndex } = require('./lib/analytics');
