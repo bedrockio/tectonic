@@ -58,6 +58,42 @@ router
       };
     }
   )
+  .put(
+    '/',
+    validate({
+      body: Joi.object({
+        name: Joi.string().required(),
+        collections: Joi.array().items(collectionSchema).min(1).required(),
+      }),
+    }),
+    async (ctx) => {
+      const { name, collections } = ctx.request.body;
+
+      const newCollections = [];
+
+      for (const col of collections) {
+        const collection = await Collection.findByIdOrName(col.collection);
+        if (!collection) ctx.throw(401, `collection "${col.collection}" doesn't exist`);
+        col.collectionId = collection.id;
+        delete col.collection;
+        newCollections.push(col);
+      }
+
+      const existingPolicy = await AccessPolicy.findOne({ name });
+      let policy;
+      if (existingPolicy) {
+        existingPolicy.collections = newCollections;
+        policy = existingPolicy.toCollectionJSON();
+      } else {
+        policy = await AccessPolicy.create({ name, collections: newCollections });
+        policy = policy.toCollectionJSON();
+      }
+
+      ctx.body = {
+        data: policy,
+      };
+    }
+  )
   .patch(
     '/:policyId',
     validate({

@@ -26,6 +26,11 @@ module.exports = async function handleRequest(httpMethod, url, bodyOrQuery = {},
         .post(url)
         .set(headers)
         .send({ ...bodyOrQuery });
+    } else if (httpMethod === 'PUT') {
+      promise = request(app.callback())
+        .put(url)
+        .set(headers)
+        .send({ ...bodyOrQuery });
     } else if (httpMethod === 'PATCH') {
       promise = request(app.callback())
         .patch(url)
@@ -49,8 +54,5 @@ module.exports = async function handleRequest(httpMethod, url, bodyOrQuery = {},
     return promise;
   }
 
-  if (httpMethod === 'PUT') {
-    throw Error('Use PATCH instead of PUT the api support PATCH not PUT');
-  }
   throw Error(`Method not support ${httpMethod} by handleRequest`);
 };

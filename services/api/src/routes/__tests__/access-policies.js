@@ -82,6 +82,37 @@ describe('/1/access-policies', () => {
       expect(response.error).not.toBeNull();
       expect(response.status).toBe(401);
     });
+
+    it('should be able to create access-policy with existing name on put', async () => {
+      await Collection.deleteMany({});
+      await AccessPolicy.deleteMany({});
+
+      const collection = await Collection.create({
+        name: 'access-policy-collection-test',
+      });
+      const systemId = '5fd6036fccd06f4d6b1d8bd2';
+
+      const name = 'access-policy-test';
+      await AccessPolicy.create({ name });
+
+      const headers = await getHeaders();
+      const response = await request(
+        'PUT',
+        '/1/access-policies',
+        {
+          name,
+          collections: [
+            {
+              collection: collection.name, // fetch by name
+              scope: { systemId },
+            },
+          ],
+        },
+        { headers }
+      );
+      expect(response.error).toBe(false);
+      expect(response.status).toBe(200);
+    });
   });
 
   describe('GET /:policyId', () => {
