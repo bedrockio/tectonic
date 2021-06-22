@@ -4,7 +4,6 @@ import { Icon, Container } from 'semantic';
 import Footer from 'components/Footer';
 import { Layout } from 'components';
 import Protected from 'components/Protected';
-import Organization from 'modals/Organization';
 import Sidebar from './Sidebar';
 
 import logo from 'assets/logo.svg';
@@ -20,18 +19,7 @@ export default class DashboardLayout extends React.Component {
               <img height="30" src={logo} />
             </NavLink>
             <Layout vertical spread>
-              <Sidebar.Item>
-                <Organization
-                  trigger={
-                    <div>
-                      <Icon name="building" />
-                      Bedrock Inc.
-                      <Icon name="caret-down" className="right" />
-                    </div>
-                  }
-                  size="tiny"
-                />
-              </Sidebar.Item>
+              <Sidebar.Divider />
               <Layout.Group>
                 <Sidebar.Header>Main Menu</Sidebar.Header>
               </Layout.Group>

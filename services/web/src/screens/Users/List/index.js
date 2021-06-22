@@ -1,16 +1,10 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Table, Divider, Button, Message, Label } from 'semantic';
+import { Table, Button, Message, Label } from 'semantic';
 import { formatDateTime } from 'utils/date';
 import { request } from 'utils/api';
 import { screen } from 'helpers';
-import {
-  Confirm,
-  HelpTip,
-  Breadcrumbs,
-  SearchProvider,
-  Layout,
-} from 'components';
+import { Confirm, HelpTip, Breadcrumbs, SearchProvider, Layout } from 'components';
 import { formatRoles } from 'utils/permissions';
 
 import Filters from 'modals/Filters';
@@ -29,14 +23,7 @@ export default class UserList extends React.Component {
   render() {
     return (
       <SearchProvider onDataNeeded={this.onDataNeeded}>
-        {({
-          items: users,
-          getSorted,
-          setSort,
-          filters,
-          setFilters,
-          reload,
-        }) => {
+        {({ items: users, getSorted, setSort, filters, setFilters, reload }) => {
           return (
             <React.Fragment>
               <Breadcrumbs active="Users" />
@@ -44,16 +31,9 @@ export default class UserList extends React.Component {
                 <h1>Users</h1>
                 <Layout.Group>
                   <Filters onSave={setFilters} filters={filters}>
-                    <Filters.Text
-                      label="Search"
-                      name="keyword"
-                      placeholder="Enter name, email, or user id"
-                    />
+                    <Filters.Text label="Search" name="keyword" placeholder="Enter name, email, or user id" />
                   </Filters>
-                  <EditUser
-                    trigger={<Button primary content="New User" icon="plus" />}
-                    onSave={reload}
-                  />
+                  <EditUser trigger={<Button primary content="New User" icon="plus" />} onSave={reload} />
                 </Layout.Group>
               </Layout>
               {users.length === 0 ? (
@@ -62,33 +42,20 @@ export default class UserList extends React.Component {
                 <Table celled sortable>
                   <Table.Header>
                     <Table.Row>
-                      <Table.HeaderCell
-                        onClick={() => setSort('name')}
-                        sorted={getSorted('name')}>
+                      <Table.HeaderCell onClick={() => setSort('name')} sorted={getSorted('name')}>
                         Name
                       </Table.HeaderCell>
-                      <Table.HeaderCell
-                        onClick={() => setSort('email')}
-                        sorted={getSorted('email')}>
+                      <Table.HeaderCell onClick={() => setSort('email')} sorted={getSorted('email')}>
                         Email
                       </Table.HeaderCell>
-                      <Table.HeaderCell
-                        onClick={() => setSort('roles')}
-                        sorted={getSorted('roles')}>
+                      <Table.HeaderCell onClick={() => setSort('roles')} sorted={getSorted('roles')}>
                         Roles
                       </Table.HeaderCell>
-                      <Table.HeaderCell
-                        onClick={() => setSort('createdAt')}
-                        sorted={getSorted('createdAt')}>
+                      <Table.HeaderCell onClick={() => setSort('createdAt')} sorted={getSorted('createdAt')}>
                         Joined
-                        <HelpTip
-                          title="Joined"
-                          text="This is the date and time the user was created."
-                        />
+                        <HelpTip title="Joined" text="This is the date and time the user was created." />
                       </Table.HeaderCell>
-                      <Table.HeaderCell textAlign="center">
-                        Actions
-                      </Table.HeaderCell>
+                      <Table.HeaderCell textAlign="center">Actions</Table.HeaderCell>
                     </Table.Row>
                   </Table.Header>
                   <Table.Body>
@@ -112,15 +79,9 @@ export default class UserList extends React.Component {
                               />
                             ))}
                           </Table.Cell>
-                          <Table.Cell>
-                            {formatDateTime(user.createdAt)}
-                          </Table.Cell>
+                          <Table.Cell>{formatDateTime(user.createdAt)}</Table.Cell>
                           <Table.Cell textAlign="center">
-                            <EditUser
-                              user={user}
-                              trigger={<Button basic icon="edit" />}
-                              onSave={reload}
-                            />
+                            <EditUser user={user} trigger={<Button basic icon="edit" />} onSave={reload} />
                             <Confirm
                               negative
                               confirmText="Delete"
