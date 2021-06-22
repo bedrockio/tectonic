@@ -24,16 +24,13 @@ describe('/1/access-policies', () => {
     it('should be able to create access-policy', async () => {
       await Collection.deleteMany({});
       await AccessPolicy.deleteMany({});
-      await ApplicationCredential.deleteMany({});
 
       const collection = await Collection.create({
         name: 'access-policy-collection-test',
       });
       const systemId = '5fd6036fccd06f4d6b1d8bd2';
-      const applicationCredential = await ApplicationCredential.create({
-        name: 'application-cred-test',
-      });
-      const headers = { Authorization: `Bearer ${createCredentialToken(applicationCredential)}` };
+
+      const headers = await getHeaders();
       const response = await request(
         'POST',
         '/1/access-policies',
@@ -53,6 +50,37 @@ describe('/1/access-policies', () => {
       expect(response.status).toBe(200);
       expect(data.name).toBe('access-policy-test');
       expect(data.collections[0].collection).toStrictEqual(collection.id);
+    });
+
+    it('should not be able to create access-policy with existing name', async () => {
+      await Collection.deleteMany({});
+      await AccessPolicy.deleteMany({});
+
+      const collection = await Collection.create({
+        name: 'access-policy-collection-test',
+      });
+      const systemId = '5fd6036fccd06f4d6b1d8bd2';
+
+      const name = 'access-policy-test';
+      await AccessPolicy.create({ name });
+
+      const headers = await getHeaders();
+      const response = await request(
+        'POST',
+        '/1/access-policies',
+        {
+          name,
+          collections: [
+            {
+              collection: collection.name, // fetch by name
+              scope: { systemId },
+            },
+          ],
+        },
+        { headers }
+      );
+      expect(response.error).not.toBeNull();
+      expect(response.status).toBe(401);
     });
   });
 

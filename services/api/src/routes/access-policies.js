@@ -34,6 +34,12 @@ router
     }),
     async (ctx) => {
       const { name, collections } = ctx.request.body;
+
+      const existingPolicy = await AccessPolicy.findOne({ name });
+      if (existingPolicy) {
+        ctx.throw(401, `Collection with name "${name}" already exists. You could use PUT endpoint instead.`);
+      }
+
       const policyObject = {
         name,
         collections: [],
