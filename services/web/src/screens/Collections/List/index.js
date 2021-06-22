@@ -41,6 +41,12 @@ export default class CollectionList extends React.Component {
                 </Layout.Group>
               </Layout>
 
+              <p>
+                Collections allow you to store data that has the same shape. Tectonic will create a raw data lake that
+                can be independently queried, as well as an analytics lake (Elasticsearch indices) that can be used to
+                drive analytics.
+              </p>
+
               {collections.length === 0 ? (
                 <Message>No collections created yet</Message>
               ) : (
@@ -50,12 +56,15 @@ export default class CollectionList extends React.Component {
                       {/* --- Generator: list-header-cells */}
                       <Table.HeaderCell width={3} onClick={() => setSort('name')} sorted={getSorted('name')}>
                         Name
+                        <HelpTip
+                          title="Name"
+                          text="Names are unique and can only be composed of lowercase alpha numeric characters and dashes"
+                        />
                       </Table.HeaderCell>
                       <Table.HeaderCell width={6}>Description</Table.HeaderCell>
                       {/* --- Generator: end */}
                       <Table.HeaderCell onClick={() => setSort('createdAt')} sorted={getSorted('createdAt')}>
                         Created
-                        <HelpTip title="Created" text="This is the date and time the collection was created." />
                       </Table.HeaderCell>
                       <Table.HeaderCell textAlign="center">Actions</Table.HeaderCell>
                     </Table.Row>

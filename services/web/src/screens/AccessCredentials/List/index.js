@@ -43,7 +43,13 @@ export default class AccessCredentialsList extends React.Component {
                   />
                 </Layout.Group>
               </Layout>
-              <Divider hidden />
+
+              <p>
+                An Access Credential can be used to access one or more Collections. It's recommended that you create a
+                unique Access Credential for each of your users or accounts. Access Credentials can be revoked at any
+                time for a user and allow you to restrict read or write access to your Collections.
+              </p>
+
               {accessCredentials.length === 0 ? (
                 <Message>No access credentials created yet</Message>
               ) : (
@@ -53,11 +59,14 @@ export default class AccessCredentialsList extends React.Component {
                       {/* --- Generator: list-header-cells */}
                       <Table.HeaderCell width={10} onClick={() => setSort('name')} sorted={getSorted('name')}>
                         Name
+                        <HelpTip
+                          title="Name"
+                          text="Names are unique and can only be composed of lowercase alpha numeric characters and dashes"
+                        />
                       </Table.HeaderCell>
                       {/* --- Generator: end */}
                       <Table.HeaderCell onClick={() => setSort('createdAt')} sorted={getSorted('createdAt')}>
                         Created
-                        <HelpTip title="Created" text="This is the date and time the credential was created." />
                       </Table.HeaderCell>
                       <Table.HeaderCell textAlign="center">Actions</Table.HeaderCell>
                     </Table.Row>

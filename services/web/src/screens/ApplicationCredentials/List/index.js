@@ -43,7 +43,13 @@ export default class ApplicationCredentialsList extends React.Component {
                   />
                 </Layout.Group>
               </Layout>
-              <Divider hidden />
+
+              <p>
+                An Application has a long term token that allows your backend to have administrative access to Tectonic.
+                Using an Application token you can ingest data, create Access Credentials, Access Policies, or manage
+                Collections.
+              </p>
+
               {applicationCredentials.length === 0 ? (
                 <Message>No application credentials created yet</Message>
               ) : (
@@ -53,11 +59,14 @@ export default class ApplicationCredentialsList extends React.Component {
                       {/* --- Generator: list-header-cells */}
                       <Table.HeaderCell width={10} onClick={() => setSort('name')} sorted={getSorted('name')}>
                         Name
+                        <HelpTip
+                          title="Name"
+                          text="Names are unique and can only be composed of lowercase alpha numeric characters and dashes"
+                        />
                       </Table.HeaderCell>
                       {/* --- Generator: end */}
                       <Table.HeaderCell onClick={() => setSort('createdAt')} sorted={getSorted('createdAt')}>
                         Created
-                        <HelpTip title="Created" text="This is the date and time the credential was created." />
                       </Table.HeaderCell>
                       <Table.HeaderCell textAlign="center">Actions</Table.HeaderCell>
                     </Table.Row>

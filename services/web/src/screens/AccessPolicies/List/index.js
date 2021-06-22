@@ -44,7 +44,11 @@ export default class AccessPolicyList extends React.Component {
                 </Layout.Group>
               </Layout>
 
-              <Divider hidden />
+              <p>
+                An Access Policy specifies what data can be accessed in one or more collections. Access Policies are
+                used by the Access Credentials to manage who has access to what data.
+              </p>
+
               {accessPolicies.length === 0 ? (
                 <Message>No access policies created yet</Message>
               ) : (
@@ -54,11 +58,14 @@ export default class AccessPolicyList extends React.Component {
                       {/* --- Generator: list-header-cells */}
                       <Table.HeaderCell width={10} onClick={() => setSort('name')} sorted={getSorted('name')}>
                         Name
+                        <HelpTip
+                          title="Name"
+                          text="Names are unique and can only be composed of lowercase alpha numeric characters and dashes"
+                        />
                       </Table.HeaderCell>
                       {/* --- Generator: end */}
                       <Table.HeaderCell onClick={() => setSort('createdAt')} sorted={getSorted('createdAt')}>
                         Created
-                        <HelpTip title="Created" text="This is the date and time the policy was created." />
                       </Table.HeaderCell>
                       <Table.HeaderCell textAlign="center">Actions</Table.HeaderCell>
                     </Table.Row>
