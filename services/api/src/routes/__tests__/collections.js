@@ -48,7 +48,7 @@ describe('/1/collections', () => {
       const data = response.body.data;
       expect(response.status).toBe(200);
       expect(data.name).toBe(name);
-      // Not pre-existing name:
+      // No pre-existing name:
       const name2 = name + '2';
       const response2 = await request('PUT', '/1/collections', { name: name2 }, { user });
       const data2 = response2.body.data;
