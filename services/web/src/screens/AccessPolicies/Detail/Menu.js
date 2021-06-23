@@ -11,7 +11,7 @@ export default ({ policy, onSave }) => {
     <React.Fragment>
       <Breadcrumbs link={<Link to="/access/policies">Access Policies</Link>} active={policy.name || 'Loading...'}>
         <Layout horizontal center spread>
-          <h1>{policy.name} Application Credentials</h1>
+          <h1>Policy: {policy.name}</h1>
           <Layout.Group>
             <EditAccessPolicy
               policy={policy}

@@ -7,6 +7,7 @@ import { screen } from 'helpers';
 import { Layout, Confirm, HelpTip, SearchProvider } from 'components';
 
 import Filters from 'modals/Filters';
+import ViewToken from 'modals/ViewToken';
 
 import Menu from './Menu';
 
@@ -38,7 +39,7 @@ export default class AccessPolicyAccessCredentials extends React.Component {
                     <Layout horizontal center spread>
                       Access Credentials
                       <Layout.Group>
-                        <Filters size="tiny" onSave={setFilters} filters={filters}>
+                        <Filters onSave={setFilters} filters={filters}>
                           <Filters.Text label="accessCredentialId" name="id" />
                         </Filters>
                       </Layout.Group>
@@ -50,11 +51,16 @@ export default class AccessPolicyAccessCredentials extends React.Component {
                     <Table celled sortable>
                       <Table.Header>
                         <Table.Row>
-                          {/* --- Generator: list-header-cells */}
-                          <Table.HeaderCell width={10} onClick={() => setSort('name')} sorted={getSorted('name')}>
+                          <Table.HeaderCell width={5} onClick={() => setSort('name')} sorted={getSorted('name')}>
                             Name
                           </Table.HeaderCell>
-                          {/* --- Generator: end */}
+                          <Table.HeaderCell width={3}>
+                            Token
+                            <HelpTip
+                              title="Token"
+                              text="This is a JSON Web Token that allows access to this Tectonic instance based on the policy configured"
+                            />
+                          </Table.HeaderCell>
                           <Table.HeaderCell onClick={() => setSort('createdAt')} sorted={getSorted('createdAt')}>
                             Created
                             <HelpTip title="Created" text="This is the date and time the policy was created." />
@@ -69,6 +75,13 @@ export default class AccessPolicyAccessCredentials extends React.Component {
                               {/* --- Generator: list-body-cells */}
                               <Table.Cell>
                                 <Link to={`/access-credentials/${accessCredential.id}`}>{accessCredential.name}</Link>
+                              </Table.Cell>
+                              <Table.Cell>
+                                <ViewToken
+                                  endpoint="access-credentials"
+                                  credential={accessCredential}
+                                  trigger={<Button icon="key" content="Show Token" basic />}
+                                />
                               </Table.Cell>
                               {/* --- Generator: end */}
                               <Table.Cell>{formatDateTime(accessCredential.createdAt)}</Table.Cell>
