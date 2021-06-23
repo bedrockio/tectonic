@@ -33,7 +33,7 @@ router
       const { name } = ctx.request.body;
       const existingAccessCredential = await AccessCredential.findOne({ name });
       if (existingAccessCredential) {
-        ctx.throw(401, `Access Credential with name "${name}" already exists. You could use PUT endpoint instead.`);
+        ctx.throw(401, `Access Credential with name '${name}' already exists. You could use PUT endpoint instead.`);
       }
       // TODO add logic to check accessCredential validity
       // Check if accessPolicy is a name or id

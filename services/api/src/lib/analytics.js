@@ -115,7 +115,7 @@ async function timeSeries(index, operation, field, options = undefined) {
       },
     },
   };
-  console.info(JSON.stringify(body, null, 2));
+  if (ENV_NAME != 'test') console.info(JSON.stringify(body, null, 2));
   const result = await elasticsearchClient.search({
     index,
     body,

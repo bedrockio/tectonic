@@ -36,7 +36,7 @@ router
       const { name, collections } = ctx.request.body;
       const existingPolicy = await AccessPolicy.findOne({ name });
       if (existingPolicy) {
-        ctx.throw(401, `Collection with name "${name}" already exists. You could use PUT endpoint instead.`);
+        ctx.throw(401, `Collection with name '${name}' already exists. You could use PUT endpoint instead.`);
       }
 
       const policyObject = {
@@ -46,7 +46,7 @@ router
 
       for (const col of collections) {
         const collection = await Collection.findByIdOrName(col.collection);
-        if (!collection) ctx.throw(401, `collection "${col.collection}" doesn't exist`);
+        if (!collection) ctx.throw(401, `collection '${col.collection}' doesn't exist`);
         col.collectionId = collection.id;
         delete col.collection;
         policyObject.collections.push(col);
@@ -71,7 +71,7 @@ router
 
       for (const col of collections) {
         const collection = await Collection.findByIdOrName(col.collection);
-        if (!collection) ctx.throw(401, `collection "${col.collection}" doesn't exist`);
+        if (!collection) ctx.throw(401, `collection '${col.collection}' doesn't exist`);
         col.collectionId = collection.id;
         delete col.collection;
         newCollections.push(col);
@@ -111,7 +111,7 @@ router
         policy.collections = [];
         for (const col of collections) {
           const collection = await Collection.findByIdOrName(col.collection);
-          if (!collection) ctx.throw(401, `collection "${col.collection}" doesn't exist`);
+          if (!collection) ctx.throw(401, `collection '${col.collection}' doesn't exist`);
           col.collectionId = collection.id;
           delete col.collection;
           policy.collections.push(col);

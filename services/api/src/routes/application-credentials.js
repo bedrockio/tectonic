@@ -30,7 +30,7 @@ router
       if (existingApplicationCredential) {
         ctx.throw(
           401,
-          `Application Credential with name "${name}" already exists. You could use PUT endpoint instead.`
+          `Application Credential with name '${name}' already exists. You could use PUT endpoint instead.`
         );
       }
       // TODO add logic to check applicationCredential validity
