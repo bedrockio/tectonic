@@ -72,13 +72,35 @@ async function timeSeries(index, operation, field, options = undefined) {
   const body = parseFilterOptions(options, true);
   body.from = 0;
   body.size = 0;
+  const { dateField, interval } = options;
+  const date_histogram = {
+    field: dateField || 'ingestedAt',
+    interval: interval || '1d',
+    min_doc_count: 0,
+  };
+  console.info('range', options.range);
+  if (options.range && options.range[dateField]) {
+    date_histogram.extended_bounds = {};
+    const { from, to, gte, gt, lte, lt } = options.range[dateField];
+    if (from) {
+      date_histogram.extended_bounds.min = from;
+    } else if (gte) {
+      date_histogram.extended_bounds.min = gte;
+    } else if (gt) {
+      date_histogram.extended_bounds.min = gt;
+    }
+    if (to) {
+      date_histogram.extended_bounds.max = to;
+    } else if (lte) {
+      date_histogram.extended_bounds.max = lte;
+    } else if (lt) {
+      date_histogram.extended_bounds.max = lt;
+    }
+  }
+
   body.aggs = {
     timeSeries: {
-      date_histogram: {
-        field: options.dateField || 'ingestedAt',
-        interval: options.interval || '1d',
-        min_doc_count: 0,
-      },
+      date_histogram,
       aggs: {
         fieldOperation: field
           ? {
