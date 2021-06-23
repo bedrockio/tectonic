@@ -32,8 +32,8 @@ jobs:
       - name: Install Dependencies
         run: yarn install
 
-      # - name: Run Lint
-      #   run: yarn lint
+      - name: Run Lint
+        run: yarn lint
 
   api:
     runs-on: ubuntu-latest
