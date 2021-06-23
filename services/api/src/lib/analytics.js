@@ -78,7 +78,6 @@ async function timeSeries(index, operation, field, options = undefined) {
     interval: interval || '1d',
     min_doc_count: 0,
   };
-  console.info('range', options.range);
   if (options.range && options.range[dateField]) {
     date_histogram.extended_bounds = {};
     const { from, to, gte, gt, lte, lt } = options.range[dateField];
@@ -112,7 +111,7 @@ async function timeSeries(index, operation, field, options = undefined) {
       },
     },
   };
-  console.log(JSON.stringify(body, null, 2));
+  console.info(JSON.stringify(body, null, 2));
   const result = await elasticsearchClient.search({
     index,
     body,
