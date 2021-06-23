@@ -28,7 +28,6 @@ const createFixtures = async () => {
   });
 
   await ensureCollectionIndex(collection.id);
-  //await ensureAlias(getCollectionIndex(collection.id), collection.name);
   //const events = loadJsonStreamFile(__dirname + './routes/policy/__tests__/fixtures/bar-purchases.ndjson');
 
   const accessPolicy = await AccessPolicy.create({
@@ -47,16 +46,12 @@ const createFixtures = async () => {
   });
   console.info(`Created applicationCredential ${applicationCredential.id}`);
 
-  // const evseCategory = await Category.create({ name: 'evse' });
-
   // const collection2 = await Collection.create({
   //   name: `evse-controllers`,
   //   description: 'MongoDB EVSE controller data',
-  //   categories: [demoCategory, evseCategory],
   // });
 
   // await ensureCollectionIndex(collection2.id);
-  // await ensureAlias(getCollectionIndex(collection2.id), collection2.name);
 
   // // const policy2 = await Policy.create({
   // //   name: 'Access for Maintenance Account 5f15901ef8909f9ea57425b9',
@@ -74,11 +69,9 @@ const createFixtures = async () => {
   // const collection3 = await Collection.create({
   //   name: `evse-metervalues`,
   //   description: 'MongoDB EVSE meter value event data',
-  //   categories: [demoCategory, evseCategory],
   // });
 
   // await ensureCollectionIndex(collection3.id);
-  // await ensureAlias(getCollectionIndex(collection3.id), collection3.name);
 
   // // const policy3 = await Policy.create({
   // //   name: 'MeterValues for EVSE Controller 5fd6036fccd06f4d6b1d8bd2',
