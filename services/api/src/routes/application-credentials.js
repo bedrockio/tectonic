@@ -33,7 +33,6 @@ router
           `Application Credential with name '${name}' already exists. You could use PUT endpoint instead.`
         );
       }
-      // TODO add logic to check applicationCredential validity
       const applicationCredential = await ApplicationCredential.create(ctx.request.body);
       ctx.body = {
         data: applicationCredential,
@@ -46,7 +45,6 @@ router
       body: ApplicationCredential.getValidator(),
     }),
     async (ctx) => {
-      // TODO add logic to check applicationCredential validity
       const { name } = ctx.request.body;
       const existingApplicationCredential = await ApplicationCredential.findOne({ name });
       let applicationCredential;
@@ -144,6 +142,11 @@ router
       body: ApplicationCredential.getPatchValidator(),
     }),
     async (ctx) => {
+      const { name } = ctx.request.body;
+      const existingApplicationCredential = await ApplicationCredential.findOne({ name });
+      if (existingApplicationCredential) {
+        ctx.throw(401, `Application Credential with name '${name}' already exists.`);
+      }
       const applicationCredential = ctx.state.applicationCredential;
       applicationCredential.assign(ctx.request.body);
       await applicationCredential.save();

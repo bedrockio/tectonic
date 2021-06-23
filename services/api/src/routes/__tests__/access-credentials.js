@@ -73,7 +73,7 @@ describe('/1/access-credentials', () => {
       expect(response.status).toBe(401);
     });
 
-    it('should be able to create access-policy with existing name on put', async () => {
+    it('should be able to create access-credential with existing name on put', async () => {
       await Collection.deleteMany({});
       await AccessPolicy.deleteMany({});
       await AccessCredential.deleteMany({});
@@ -198,7 +198,7 @@ describe('/1/access-credentials', () => {
   });
 
   describe('DELETE /:credential', () => {
-    it('should be able to delete access policy', async () => {
+    it('should be able to delete access credential', async () => {
       await Collection.deleteMany({});
       await AccessPolicy.deleteMany({});
       await AccessCredential.deleteMany({});
