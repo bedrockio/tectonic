@@ -8,9 +8,7 @@ import { Confirm, HelpTip, Breadcrumbs, SearchProvider, Layout } from 'component
 
 import Filters from 'modals/Filters';
 import EditApplicationCredential from 'modals/EditApplicationCredential';
-
-// --- Generator: list-imports
-// --- Generator: end
+import ViewToken from 'modals/ViewToken';
 
 @screen
 export default class ApplicationCredentialsList extends React.Component {
@@ -56,15 +54,20 @@ export default class ApplicationCredentialsList extends React.Component {
                 <Table celled sortable>
                   <Table.Header>
                     <Table.Row>
-                      {/* --- Generator: list-header-cells */}
-                      <Table.HeaderCell width={10} onClick={() => setSort('name')} sorted={getSorted('name')}>
+                      <Table.HeaderCell width={3} onClick={() => setSort('name')} sorted={getSorted('name')}>
                         Name
                         <HelpTip
                           title="Name"
                           text="Names are unique and can only be composed of lowercase alpha numeric characters and dashes"
                         />
                       </Table.HeaderCell>
-                      {/* --- Generator: end */}
+                      <Table.HeaderCell width={3}>
+                        Token
+                        <HelpTip
+                          title="Token"
+                          text="This is a JSON Web Token that allows you administrative access to this Tectonic instance"
+                        />
+                      </Table.HeaderCell>
                       <Table.HeaderCell onClick={() => setSort('createdAt')} sorted={getSorted('createdAt')}>
                         Created
                       </Table.HeaderCell>
@@ -75,11 +78,16 @@ export default class ApplicationCredentialsList extends React.Component {
                     {applicationCredentials.map((applicationCredential) => {
                       return (
                         <Table.Row key={applicationCredential.id}>
-                          {/* --- Generator: list-body-cells */}
                           <Table.Cell>
                             <Link to={`/applications/${applicationCredential.id}`}>{applicationCredential.name}</Link>
                           </Table.Cell>
-                          {/* --- Generator: end */}
+                          <Table.Cell>
+                            <ViewToken
+                              endpoint="application-credentials"
+                              credential={applicationCredential}
+                              trigger={<Button icon="key" content="Show Token" basic />}
+                            />
+                          </Table.Cell>
                           <Table.Cell>{formatDateTime(applicationCredential.createdAt)}</Table.Cell>
                           <Table.Cell textAlign="center">
                             <EditApplicationCredential
@@ -89,10 +97,10 @@ export default class ApplicationCredentialsList extends React.Component {
                             />
                             <Confirm
                               negative
-                              confirmText="Delete"
-                              header={`Are you sure you want to delete "${applicationCredential.name}"?`}
-                              content="All data will be permanently deleted"
-                              trigger={<Button basic icon="trash" />}
+                              confirmText="Delete &amp; Revoke"
+                              header={`Delete and revoke "${applicationCredential.name}"?`}
+                              content="Are you sure you want to delete and revoke this credential? API access will no longer be possible by this Application."
+                              trigger={<Button basic icon="ban" />}
                               onConfirm={async () => {
                                 await request({
                                   method: 'DELETE',

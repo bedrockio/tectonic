@@ -8,9 +8,7 @@ import { Confirm, HelpTip, Breadcrumbs, SearchProvider, Layout } from 'component
 
 import Filters from 'modals/Filters';
 import EditAccessCredential from 'modals/EditAccessCredential';
-
-// --- Generator: list-imports
-// --- Generator: end
+import ViewToken from 'modals/ViewToken';
 
 @screen
 export default class AccessCredentialsList extends React.Component {
@@ -57,16 +55,23 @@ export default class AccessCredentialsList extends React.Component {
                   <Table.Header>
                     <Table.Row>
                       {/* --- Generator: list-header-cells */}
-                      <Table.HeaderCell width={10} onClick={() => setSort('name')} sorted={getSorted('name')}>
+                      <Table.HeaderCell width={5} onClick={() => setSort('name')} sorted={getSorted('name')}>
                         Name
                         <HelpTip
                           title="Name"
                           text="Names are unique and can only be composed of lowercase alpha numeric characters and dashes"
                         />
                       </Table.HeaderCell>
-                      {/* --- Generator: end */}
-                      <Table.HeaderCell onClick={() => setSort('createdAt')} sorted={getSorted('createdAt')}>
-                        Created
+                      <Table.HeaderCell width={3}>
+                        Token
+                        <HelpTip
+                          title="Token"
+                          text="This is a JSON Web Token that allows access to this Tectonic instance based on the policy configured"
+                        />
+                      </Table.HeaderCell>
+                      <Table.HeaderCell width={5}>
+                        Policy
+                        <HelpTip title="Access Policy" text="The Access Policy attached to this Access Credential" />
                       </Table.HeaderCell>
                       <Table.HeaderCell textAlign="center">Actions</Table.HeaderCell>
                     </Table.Row>
@@ -75,16 +80,25 @@ export default class AccessCredentialsList extends React.Component {
                     {accessCredentials.map((accessCredential) => {
                       return (
                         <Table.Row key={accessCredential.id}>
-                          {/* --- Generator: list-body-cells */}
                           <Table.Cell>
                             <Link to={`/access/credentials/${accessCredential.id}`}>{accessCredential.name}</Link>
                           </Table.Cell>
-                          {/* --- Generator: end */}
-                          <Table.Cell>{formatDateTime(accessCredential.createdAt)}</Table.Cell>
+                          <Table.Cell>
+                            <ViewToken
+                              endpoint="access-credentials"
+                              credential={accessCredential}
+                              trigger={<Button icon="key" content="Show Token" basic />}
+                            />
+                          </Table.Cell>
+                          <Table.Cell>
+                            <Link to={`/access/policies/${accessCredential.accessPolicy.id}`}>
+                              {accessCredential.accessPolicy.name}
+                            </Link>
+                          </Table.Cell>
                           <Table.Cell textAlign="center">
                             <EditAccessCredential
                               accessCredential={accessCredential}
-                              trigger={<Button style={{ marginLeft: '20px' }} basic icon="edit" />}
+                              trigger={<Button basic icon="edit" />}
                               onSave={reload}
                             />
                             <Confirm

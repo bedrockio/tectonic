@@ -5,6 +5,7 @@ import { NavLink } from 'react-router-dom';
 import { Breadcrumbs, Layout } from 'components';
 
 import EditApplicationCredential from 'modals/EditApplicationCredential';
+import ViewToken from 'modals/ViewToken';
 
 export default ({ applicationCredential, onSave }) => {
   return (
@@ -13,8 +14,13 @@ export default ({ applicationCredential, onSave }) => {
         link={<Link to="/applications">Application Credentials</Link>}
         active={applicationCredential.name || 'Loading...'}>
         <Layout horizontal center spread>
-          <h1>{applicationCredential.name} Application Credentials</h1>
+          <h1>{applicationCredential.name}</h1>
           <Layout.Group>
+            <ViewToken
+              endpoint="application-credentials"
+              credential={applicationCredential}
+              trigger={<Button icon="key" content="Show Token" basic />}
+            />
             <EditApplicationCredential
               applicationCredential={applicationCredential}
               onSave={onSave}
@@ -23,10 +29,6 @@ export default ({ applicationCredential, onSave }) => {
           </Layout.Group>
         </Layout>
       </Breadcrumbs>
-      <Divider hidden />
-      <Menu tabular>
-        <Menu.Item name="Overview" to={`/applications/${applicationCredential.id}`} as={NavLink} exact />
-      </Menu>
       <Divider hidden />
     </React.Fragment>
   );

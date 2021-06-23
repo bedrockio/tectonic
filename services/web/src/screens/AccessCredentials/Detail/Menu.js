@@ -5,6 +5,7 @@ import { NavLink } from 'react-router-dom';
 import { Breadcrumbs, Layout } from 'components';
 
 import EditAccessCredential from 'modals/EditAccessCredential';
+import ViewToken from 'modals/ViewToken';
 
 export default ({ accessCredential, onSave }) => {
   return (
@@ -14,8 +15,13 @@ export default ({ accessCredential, onSave }) => {
         active={accessCredential.name || 'Loading...'}
       />
       <Layout horizontal center spread>
-        <h1>{accessCredential.name} Application Credentials</h1>
+        <h1>{accessCredential.name}</h1>
         <Layout.Group>
+          <ViewToken
+            endpoint="access-credentials"
+            credential={accessCredential}
+            trigger={<Button icon="key" content="Show Token" basic />}
+          />
           <EditAccessCredential
             accessCredential={accessCredential}
             onSave={onSave}
@@ -24,18 +30,6 @@ export default ({ accessCredential, onSave }) => {
         </Layout.Group>
       </Layout>
 
-      <Divider hidden />
-      <Menu tabular>
-        <Menu.Item name="Overview" to={`/access/credentials/${accessCredential.id}`} as={NavLink} exact />
-        {/* <Menu.Item
-          name="AccessPolicies"
-          to={`/access/credentials/${accessCredential.id}/access-policies`}
-          as={NavLink}
-          exact
-        /> */}
-        {/* --- Generator: menus */}
-        {/* --- Generator: end */}
-      </Menu>
       <Divider hidden />
     </React.Fragment>
   );

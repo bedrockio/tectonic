@@ -4,9 +4,8 @@ import { screen } from 'helpers';
 import Menu from './Menu';
 import ReactJson from 'react-json-view';
 
-// --- Generator: overview-imports
+import CodeBlockJson from 'components/CodeBlockJson';
 import { formatDateTime } from 'utils/date';
-// --- Generator: end
 
 @screen
 export default class AccessCredentialOverview extends React.Component {
@@ -15,15 +14,9 @@ export default class AccessCredentialOverview extends React.Component {
     return (
       <React.Fragment>
         <Menu {...this.props} />
-        {/* --- Generator: overview-fields */}
-        <Header as="h1">{accessCredential.name}</Header>
-        <p>{accessCredential.description}</p>
-        {/* --- Generator: end */}
         <Header as="h3">Details</Header>
         <Table definition>
           <Table.Body>
-            {/* --- Generator: overview-rows */}
-            {/* --- Generator: end */}
             <Table.Row>
               <Table.Cell>Created At</Table.Cell>
               <Table.Cell>{formatDateTime(accessCredential.createdAt)}</Table.Cell>
@@ -34,10 +27,8 @@ export default class AccessCredentialOverview extends React.Component {
             </Table.Row>
           </Table.Body>
         </Table>
-        <Header as="h1">JSON</Header>
-        <Segment style={{ overflow: 'auto' }}>
-          <ReactJson src={accessCredential} />
-        </Segment>
+        <Header as="h3">JSON</Header>
+        <CodeBlockJson value={accessCredential} />
       </React.Fragment>
     );
   }

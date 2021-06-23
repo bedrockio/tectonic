@@ -75,9 +75,15 @@ router
   )
   .get('/:credential', async (ctx) => {
     const { accessCredential } = await ctx.state;
+    ctx.body = {
+      data: { ...accessCredential.toObject() },
+    };
+  })
+  .get('/:credential/token', async (ctx) => {
+    const { accessCredential } = await ctx.state;
     const token = createCredentialToken(accessCredential);
     ctx.body = {
-      data: { ...accessCredential.toObject(), token },
+      data: { token },
     };
   })
   .get('/', async (ctx) => {
