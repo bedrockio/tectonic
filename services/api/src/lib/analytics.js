@@ -72,7 +72,7 @@ async function timeSeries(index, operation, field, options = undefined) {
   const body = parseFilterOptions(options, true);
   body.from = 0;
   body.size = 0;
-  const { dateField, interval } = options;
+  const { dateField, interval, timeZone } = options;
   const date_histogram = {
     field: dateField || 'ingestedAt',
     interval: interval || '1d',
@@ -95,6 +95,10 @@ async function timeSeries(index, operation, field, options = undefined) {
     } else if (lt) {
       date_histogram.extended_bounds.max = lt;
     }
+  }
+
+  if (timeZone) {
+    date_histogram.time_zone = timeZone;
   }
 
   body.aggs = {

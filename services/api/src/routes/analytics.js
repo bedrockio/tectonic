@@ -119,13 +119,14 @@ router
         filter: Joi.object(filterOptions),
         operation: Joi.string().required(),
         field: Joi.string().optional(),
-        interval: Joi.string(),
-        dateField: Joi.string(),
+        interval: Joi.string().optional(),
+        dateField: Joi.string().optional(),
+        timeZone: Joi.string().optional(),
       }),
     }),
     checkCollectionAccess,
     async (ctx) => {
-      const { filter = {}, operation, field, interval, dateField } = ctx.request.body;
+      const { filter = {}, operation, field, interval, dateField, timeZone } = ctx.request.body;
       const { collectionId, scope } = ctx.state.accessPolicyCollection;
       const index = getCollectionIndex(collectionId);
       filter.scope = scope; // Each scope key-value pair is added as ES bool.must.term
@@ -133,6 +134,7 @@ router
         ctx.body = await timeSeries(index, operation, field, {
           interval,
           dateField,
+          timeZone,
           ...filter,
         });
       } catch (err) {
