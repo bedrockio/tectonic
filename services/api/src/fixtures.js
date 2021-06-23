@@ -1,8 +1,7 @@
 const { User, Collection, AccessPolicy, AccessCredential, ApplicationCredential } = require('./models');
 const config = require('@bedrockio/config');
 const { logger } = require('@bedrockio/instrumentation');
-const { ensureCollectionIndex, ensureAlias, getCollectionIndex } = require('./lib/analytics');
-// const { createPolicyToken } = require('./lib/tokens');
+const { ensureCollectionIndex } = require('./lib/analytics');
 
 const adminConfig = {
   name: config.get('ADMIN_NAME'),
@@ -29,7 +28,7 @@ const createFixtures = async () => {
   });
 
   await ensureCollectionIndex(collection.id);
-  await ensureAlias(getCollectionIndex(collection.id), collection.name);
+  //await ensureAlias(getCollectionIndex(collection.id), collection.name);
   //const events = loadJsonStreamFile(__dirname + './routes/policy/__tests__/fixtures/bar-purchases.ndjson');
 
   const accessPolicy = await AccessPolicy.create({
@@ -71,7 +70,6 @@ const createFixtures = async () => {
   // //   ],
   // // });
   // // logger.info(`Created policy: '${policy2.name}'`);
-  // // logger.info(`Policy token: ${createPolicyToken(policy2)}`);
 
   // const collection3 = await Collection.create({
   //   name: `evse-metervalues`,
@@ -95,7 +93,6 @@ const createFixtures = async () => {
   // //   ],
   // // });
   // // logger.info(`Created policy: '${policy3.name}'`);
-  // // logger.info(`Policy token: ${createPolicyToken(policy3)}`);
 
   return true;
 };
