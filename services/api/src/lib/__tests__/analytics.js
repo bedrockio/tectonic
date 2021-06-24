@@ -4,12 +4,11 @@ const {
   search,
   get,
   fetch,
-  indexEvent,
   loadJsonStreamFile,
-  refreshIndex,
   stats,
   cardinality,
   ensureIndex,
+  elasticsearchClient,
 } = require('./../analytics');
 
 const testIndex = 'tectonic-analytics-test';
@@ -20,6 +19,7 @@ const indexEvents = async () => {
   const events = loadJsonStreamFile(__dirname + '/fixtures/analytics/performance-member-summary.ndjson');
   await ensureIndex(testIndex, { recreate: true });
   let i = 0;
+  const bulkEvents = [];
   for (const event of events) {
     event.ingestedAt = Date.parse(event['date-created']);
     event.createdAt = new Date(event.ingestedAt); // used in for timeseries field
@@ -29,10 +29,14 @@ const indexEvents = async () => {
     if (i < 5) {
       event.isFirstFive = true;
     }
-    await indexEvent(testIndex, event);
+    bulkEvents.push({ index: { _index: testIndex, _id: event.id } });
+    bulkEvents.push(event);
     i += 1;
   }
-  await refreshIndex(testIndex);
+  await elasticsearchClient.bulk({
+    body: bulkEvents,
+    refresh: true,
+  });
 };
 
 beforeAll(async () => {
