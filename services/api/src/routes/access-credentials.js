@@ -164,6 +164,11 @@ router
       body: AccessCredential.getPatchValidator(),
     }),
     async (ctx) => {
+      const { name } = ctx.request.body;
+      const existingAccessCredential = await AccessCredential.findOne({ name });
+      if (existingAccessCredential) {
+        ctx.throw(401, `Access Credential with name '${name}' already exists.`);
+      }
       const accessCredential = ctx.state.accessCredential;
       accessCredential.assign(ctx.request.body);
       await accessCredential.save();

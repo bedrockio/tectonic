@@ -2,6 +2,7 @@ const { setupDb, teardownDb, request } = require('../../utils/testing');
 const { ApplicationCredential, Collection, AccessPolicy } = require('../../models');
 // const { ensureCollectionIndex, getCollectionIndex, deleteIndex } = require('../../lib/analytics');
 const { createCredentialToken } = require('../../lib/tokens');
+const { uniqueId } = require('lodash');
 
 beforeAll(async () => {
   await setupDb();
@@ -11,20 +12,20 @@ afterAll(async () => {
   await teardownDb();
 });
 
-async function getHeaders() {
+beforeEach(async () => {
+  await Collection.deleteMany({});
+  await AccessPolicy.deleteMany({});
   await ApplicationCredential.deleteMany({});
-  const applicationCredential = await ApplicationCredential.create({
-    name: 'application-cred-test',
-  });
+});
+
+async function getHeaders() {
+  const applicationCredential = await ApplicationCredential.create({ name: `${uniqueId('application-credential')}` });
   return { Authorization: `Bearer ${createCredentialToken(applicationCredential)}` };
 }
 
 describe('/1/access-policies', () => {
   describe('POST /', () => {
     it('should be able to create access-policy', async () => {
-      await Collection.deleteMany({});
-      await AccessPolicy.deleteMany({});
-
       const collection = await Collection.create({
         name: 'access-policy-collection-test',
       });
@@ -53,9 +54,6 @@ describe('/1/access-policies', () => {
     });
 
     it('should not be able to create access-policy with existing name', async () => {
-      await Collection.deleteMany({});
-      await AccessPolicy.deleteMany({});
-
       const collection = await Collection.create({
         name: 'access-policy-collection-test',
       });
@@ -84,9 +82,6 @@ describe('/1/access-policies', () => {
     });
 
     it('should be able to create access-policy with existing name on put', async () => {
-      await Collection.deleteMany({});
-      await AccessPolicy.deleteMany({});
-
       const collection = await Collection.create({
         name: 'access-policy-collection-test',
       });
@@ -138,9 +133,6 @@ describe('/1/access-policies', () => {
 
   describe('GET /:policyId', () => {
     it('should be able to access policy', async () => {
-      await Collection.deleteMany({});
-      await AccessPolicy.deleteMany({});
-
       const collection = await Collection.create({
         name: 'access-policy-collection-test',
       });
@@ -160,9 +152,6 @@ describe('/1/access-policies', () => {
 
   describe('POST /search', () => {
     it('should list out access policies', async () => {
-      await Collection.deleteMany({});
-      await AccessPolicy.deleteMany({});
-
       const collection = await Collection.create({
         name: 'access-policy-collection-test',
       });
@@ -178,7 +167,12 @@ describe('/1/access-policies', () => {
       });
 
       const headers = await getHeaders();
-      const response = await request('POST', '/1/access-policies/search', {}, { headers });
+      const response = await request(
+        'POST',
+        '/1/access-policies/search',
+        { sort: { field: 'name', order: 'desc' } },
+        { headers }
+      );
 
       expect(response.status).toBe(200);
       const body = response.body;
@@ -192,19 +186,12 @@ describe('/1/access-policies', () => {
 
   describe('PATCH /:policyId', () => {
     it('admins should be able to update access policy', async () => {
-      await Collection.deleteMany({});
-      await AccessPolicy.deleteMany({});
+      const collection = await Collection.create({ name: 'access-policy-collection-test' });
+      const collection2 = await Collection.create({ name: 'access-policy-collection-test-2' });
 
-      const collection = await Collection.create({
-        name: 'access-policy-collection-test',
-      });
-
-      const collection2 = await Collection.create({
-        name: 'access-policy-collection-test-2',
-      });
-
+      const name = 'access-test-1';
       const accessPolicy = await AccessPolicy.create({
-        name: 'access-test-1',
+        name,
         collections: [{ collectionId: collection.id }],
       });
 
@@ -212,20 +199,30 @@ describe('/1/access-policies', () => {
       const response = await request(
         'PATCH',
         `/1/access-policies/${accessPolicy.id}`,
-        { collections: [{ collection: collection2.name }] },
+        { collections: [{ collection: collection2.name }], name: 'new name' },
         { headers }
       );
       if (response.error) console.error(response.error);
       expect(response.status).toBe(200);
       expect(response.body.data.collections[0].collection).toBe(collection2.id);
+
+      // pre-existing name
+      await AccessPolicy.create({
+        name,
+        collections: [{ collectionId: collection.id }],
+      });
+      const response2 = await request(
+        'PATCH',
+        `/1/access-policies/${accessPolicy.id}`,
+        { collections: [{ collection: collection2.name }], name },
+        { headers }
+      );
+      expect(response2.status).toBe(401);
     });
   });
 
   describe('DELETE /:policyId', () => {
     it('should be able to delete access policy', async () => {
-      await Collection.deleteMany({});
-      await AccessPolicy.deleteMany({});
-
       const collection = await Collection.create({
         name: 'access-policy-collection-test',
       });

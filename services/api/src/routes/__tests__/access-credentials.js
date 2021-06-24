@@ -1,6 +1,7 @@
 const { setupDb, teardownDb, request } = require('../../utils/testing');
 const { ApplicationCredential, AccessCredential, Collection, AccessPolicy } = require('../../models');
 const { createCredentialToken } = require('../../lib/tokens');
+const { uniqueId } = require('lodash');
 
 beforeAll(async () => {
   await setupDb();
@@ -10,21 +11,21 @@ afterAll(async () => {
   await teardownDb();
 });
 
-async function getHeaders() {
+beforeEach(async () => {
+  await Collection.deleteMany({});
+  await AccessPolicy.deleteMany({});
+  await AccessCredential.deleteMany({});
   await ApplicationCredential.deleteMany({});
-  const applicationCredential = await ApplicationCredential.create({
-    name: 'application-cred-test',
-  });
+});
+
+async function getHeaders() {
+  const applicationCredential = await ApplicationCredential.create({ name: `${uniqueId('application-credential')}` });
   return { Authorization: `Bearer ${createCredentialToken(applicationCredential)}` };
 }
 
 describe('/1/access-credentials', () => {
   describe('POST /', () => {
     it('should be able to create access-credential', async () => {
-      await Collection.deleteMany({});
-      await AccessPolicy.deleteMany({});
-      await AccessCredential.deleteMany({});
-
       const collection = await Collection.create({ name: 'collection-test' });
       const accessPolicy = await AccessPolicy.create({
         name: 'access-policy-test',
@@ -48,10 +49,6 @@ describe('/1/access-credentials', () => {
     });
 
     it('should not be able to create access-credential with existing name', async () => {
-      await Collection.deleteMany({});
-      await AccessPolicy.deleteMany({});
-      await AccessCredential.deleteMany({});
-
       const collection = await Collection.create({ name: 'collection-test' });
       const accessPolicy = await AccessPolicy.create({
         name: 'access-policy-test',
@@ -74,10 +71,6 @@ describe('/1/access-credentials', () => {
     });
 
     it('should be able to create access-credential with existing name on put', async () => {
-      await Collection.deleteMany({});
-      await AccessPolicy.deleteMany({});
-      await AccessCredential.deleteMany({});
-
       const collection = await Collection.create({ name: 'collection-test' });
       const accessPolicy = await AccessPolicy.create({
         name: 'access-policy-test',
@@ -116,10 +109,6 @@ describe('/1/access-credentials', () => {
 
   describe('GET /:accessCredential', () => {
     it('should be able to get access credential', async () => {
-      await Collection.deleteMany({});
-      await AccessPolicy.deleteMany({});
-      await AccessCredential.deleteMany({});
-
       const collection = await Collection.create({ name: 'collection-test' });
       const accessPolicy = await AccessPolicy.create({
         name: 'access-policy-test',
@@ -140,10 +129,6 @@ describe('/1/access-credentials', () => {
 
   describe('POST /search', () => {
     it('should list out access credentials', async () => {
-      await Collection.deleteMany({});
-      await AccessPolicy.deleteMany({});
-      await AccessCredential.deleteMany({});
-
       const collection = await Collection.create({ name: 'collection-test' });
       const accessPolicy = await AccessPolicy.create({
         name: 'access-policy-test',
@@ -155,7 +140,12 @@ describe('/1/access-credentials', () => {
       const accessCredential2 = await AccessCredential.create({ name: name + '-2', accessPolicy });
 
       const headers = await getHeaders();
-      const response = await request('POST', '/1/access-credentials/search', {}, { headers });
+      const response = await request(
+        'POST',
+        '/1/access-credentials/search',
+        { sort: { field: 'name', order: 'desc' } },
+        { headers }
+      );
 
       expect(response.status).toBe(200);
       const data = response.body.data;
@@ -167,10 +157,6 @@ describe('/1/access-credentials', () => {
 
   describe('PATCH /:credential', () => {
     it('admins should be able to update access credential', async () => {
-      await Collection.deleteMany({});
-      await AccessPolicy.deleteMany({});
-      await AccessCredential.deleteMany({});
-
       const collection = await Collection.create({ name: 'collection-test' });
       const accessPolicy = await AccessPolicy.create({
         name: 'access-policy-test',
@@ -188,21 +174,27 @@ describe('/1/access-credentials', () => {
       const response = await request(
         'PATCH',
         `/1/access-credentials/${accessCredential.id}`,
-        { accessPolicy: accessPolicy2.id },
+        { accessPolicy: accessPolicy2.id, name: 'new name' },
         { headers }
       );
       if (response.error) console.error(response.error);
       expect(response.status).toBe(200);
       expect(response.body.data.accessPolicy.id).toBe(accessPolicy2.id);
+
+      // pre-existing name
+      await AccessCredential.create({ name, accessPolicy });
+      const response2 = await request(
+        'PATCH',
+        `/1/access-credentials/${accessCredential.id}`,
+        { accessPolicy: accessPolicy2.id, name },
+        { headers }
+      );
+      expect(response2.status).toBe(401);
     });
   });
 
   describe('DELETE /:credential', () => {
     it('should be able to delete access credential', async () => {
-      await Collection.deleteMany({});
-      await AccessPolicy.deleteMany({});
-      await AccessCredential.deleteMany({});
-
       const collection = await Collection.create({ name: 'collection-test' });
       const accessPolicy = await AccessPolicy.create({
         name: 'access-policy-test',

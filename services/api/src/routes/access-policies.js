@@ -105,6 +105,10 @@ router
       const policy = ctx.state.policy;
       const { name, collections } = ctx.request.body;
       if (name) {
+        const existingAccessPolicy = await AccessPolicy.findOne({ name });
+        if (existingAccessPolicy) {
+          ctx.throw(401, `Access Policy with name '${name}' already exists.`);
+        }
         policy.name = name;
       }
       if (collections) {

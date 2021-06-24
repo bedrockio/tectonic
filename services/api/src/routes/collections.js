@@ -141,6 +141,11 @@ router
       body: Collection.getPatchValidator(),
     }),
     async (ctx) => {
+      const { name } = ctx.request.body;
+      const existingCollection = await Collection.findOne({ name });
+      if (existingCollection) {
+        ctx.throw(401, `Collection with name '${name}' already exists.`);
+      }
       const collection = ctx.state.collection;
       collection.assign(ctx.request.body);
       await collection.save();

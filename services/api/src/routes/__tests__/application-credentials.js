@@ -9,10 +9,13 @@ afterAll(async () => {
   await teardownDb();
 });
 
+beforeEach(async () => {
+  await ApplicationCredential.deleteMany({});
+});
+
 describe('/1/application-credentials', () => {
   describe('POST /', () => {
     it('should be able to create application-credential', async () => {
-      await ApplicationCredential.deleteMany({});
       const user = await createUser();
       const name = 'application-credential-test';
 
@@ -24,7 +27,6 @@ describe('/1/application-credentials', () => {
     });
 
     it('should not be able to create application-credential with existing name', async () => {
-      await ApplicationCredential.deleteMany({});
       const user = await createUser();
       const name = 'application-credential-test';
       await ApplicationCredential.create({ name });
@@ -35,7 +37,6 @@ describe('/1/application-credentials', () => {
     });
 
     it('should be able to create application-credential with existing name on put', async () => {
-      await ApplicationCredential.deleteMany({});
       const user = await createUser();
       const name = 'application-credential-test';
       await ApplicationCredential.create({ name });
@@ -57,7 +58,6 @@ describe('/1/application-credentials', () => {
 
   describe('GET /:applicationCredential', () => {
     it('should be able to get application credential', async () => {
-      await ApplicationCredential.deleteMany({});
       const user = await createUser();
       const name = 'application-credential-test';
       const applicationCredential = await ApplicationCredential.create({ name });
@@ -70,14 +70,18 @@ describe('/1/application-credentials', () => {
 
   describe('POST /search', () => {
     it('should list out application credentials', async () => {
-      await ApplicationCredential.deleteMany({});
       const user = await createUser();
       const name = 'application-credential-test';
       const name1 = name + '-1';
       const name2 = name + '-2';
       const applicationCredential1 = await ApplicationCredential.create({ name: name1 });
       const applicationCredential2 = await ApplicationCredential.create({ name: name2 });
-      const response = await request('POST', '/1/application-credentials/search', {}, { user });
+      const response = await request(
+        'POST',
+        '/1/application-credentials/search',
+        { sort: { field: 'name', order: 'desc' } },
+        { user }
+      );
 
       expect(response.status).toBe(200);
       const data = response.body.data;
@@ -91,7 +95,6 @@ describe('/1/application-credentials', () => {
 
   describe('PATCH /:credential', () => {
     it('admins should be able to update application credential', async () => {
-      await ApplicationCredential.deleteMany({});
       const user = await createUser();
       const name = 'application-credential-test';
       const name1 = name + '-1';
@@ -122,7 +125,6 @@ describe('/1/application-credentials', () => {
 
   describe('DELETE /:credential', () => {
     it('should be able to delete application credential', async () => {
-      await ApplicationCredential.deleteMany({});
       const user = await createUser();
       const name = 'application-credential-test';
       const applicationCredential = await ApplicationCredential.create({ name });

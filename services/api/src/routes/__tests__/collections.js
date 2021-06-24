@@ -10,6 +10,10 @@ afterAll(async () => {
   await teardownDb();
 });
 
+beforeEach(async () => {
+  await Collection.deleteMany({});
+});
+
 describe('/1/collections', () => {
   describe('POST /', () => {
     it('should be able to create collection', async () => {
@@ -28,7 +32,6 @@ describe('/1/collections', () => {
     });
 
     it('should not be able to create collection with existing name', async () => {
-      await Collection.deleteMany({});
       const user = await createUser();
       const name = 'some other collection';
       await Collection.create({ name });
@@ -39,7 +42,6 @@ describe('/1/collections', () => {
 
   describe('PUT /', () => {
     it('should be able to create collection', async () => {
-      await Collection.deleteMany({});
       const user = await createUser();
       const name = 'some other collection';
       await Collection.create({ name });
@@ -60,7 +62,6 @@ describe('/1/collections', () => {
   describe('GET /:collection', () => {
     it('should be able to access collection', async () => {
       const user = await createUser();
-      await Collection.deleteMany({});
       const collection = await Collection.create({
         name: 'test 1',
         description: 'Some description',
@@ -76,25 +77,25 @@ describe('/1/collections', () => {
   describe('POST /search', () => {
     it('should list out collections', async () => {
       const user = await createUser();
-      await Collection.deleteMany({});
-
       const collection1 = await Collection.create({
         name: 'test 1',
         description: 'Some description',
       });
-
       const collection2 = await Collection.create({
         name: 'test 2',
         description: 'Some description',
       });
-
-      const response = await request('POST', '/1/collections/search', {}, { user });
+      const response = await request(
+        'POST',
+        '/1/collections/search',
+        { sort: { field: 'name', order: 'desc' } },
+        { user }
+      );
 
       expect(response.status).toBe(200);
       const body = response.body;
       expect(body.data[1].name).toBe(collection1.name);
       expect(body.data[0].name).toBe(collection2.name);
-
       expect(body.meta.total).toBe(2);
     });
   });
@@ -102,25 +103,24 @@ describe('/1/collections', () => {
   describe('PATCH /:collection', () => {
     it('admins should be able to update collection', async () => {
       const user = await createUser();
-      await Collection.deleteMany({});
-
-      const collection = await Collection.create({
-        name: 'test 1',
-        description: 'Some description',
-      });
+      const name = 'test 1';
+      const collection = await Collection.create({ name, description: 'Some description' });
       const response = await request('PATCH', `/1/collections/${collection.id}`, { name: 'new name' }, { user });
       expect(response.status).toBe(200);
       expect(response.body.data.name).toBe('new name');
       const dbCollection = await Collection.findById(collection.id);
       expect(dbCollection.name).toEqual('new name');
+
+      // pre-existing name
+      await Collection.create({ name, description: 'Some description' });
+      const response2 = await request('PATCH', `/1/collections/${collection.id}`, { name }, { user });
+      expect(response2.status).toBe(401);
     });
   });
 
   describe('DELETE /:collection', () => {
     it('should be able to delete collection', async () => {
       const user = await createUser();
-      await Collection.deleteMany({});
-
       const collection = await Collection.create({
         name: 'test 1',
         description: 'Some description',
