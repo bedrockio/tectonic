@@ -29,6 +29,8 @@ describe('/1/collections', () => {
       const data = response.body.data;
       expect(response.status).toBe(200);
       expect(data.name).toBe('some other collection');
+      // Cleanup ensured creation of collection index
+      await deleteIndex(getCollectionIndex(data.id));
     });
 
     it('should not be able to create collection with existing name', async () => {
@@ -56,6 +58,8 @@ describe('/1/collections', () => {
       const data2 = response2.body.data;
       expect(response2.status).toBe(200);
       expect(data2.name).toBe(name2);
+      // Cleanup ensured creation of collection index
+      await deleteIndex(getCollectionIndex(data2.id));
     });
   });
 

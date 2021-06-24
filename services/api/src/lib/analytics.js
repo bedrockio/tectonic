@@ -115,7 +115,7 @@ async function timeSeries(index, operation, field, options = undefined) {
       },
     },
   };
-  if (ENV_NAME != 'test') console.info(JSON.stringify(body, null, 2));
+  if (ENV_NAME != 'test') logger.info(JSON.stringify(body, null, 2));
   const result = await elasticsearchClient.search({
     index,
     body,
@@ -440,7 +440,7 @@ const indexExists = async (index) => {
 const deleteIndex = async (index) => {
   const exists = await indexExists(index);
   if (exists) {
-    logger.info('Deleting index:', index);
+    if (ENV_NAME != 'test') logger.info('Deleting index:', index);
     await elasticsearchClient.indices.delete({ index });
   }
 };
@@ -469,7 +469,7 @@ const ensureCollectionIndex = async (collectionId, collectionIndexName) => {
   if (collectionIndexName) index += `-${collectionIndexName}`;
   const exists = await indexExists(index);
   if (!exists) {
-    logger.info(index, 'index does not exist yet. Creating now...');
+    if (ENV_NAME != 'test') logger.info(index, 'index does not exist yet. Creating now...');
     try {
       await elasticsearchClient.indices.create({
         index,
