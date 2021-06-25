@@ -6,6 +6,8 @@ import { screen } from 'helpers';
 import { Layout, Confirm, HelpTip, SearchProvider } from 'components';
 
 import Filters from 'modals/Filters';
+import InspectObject from 'modals/InspectObject';
+import InspectBatchEvents from 'modals/InspectBatchEvents';
 
 import Menu from './Menu';
 
@@ -50,22 +52,22 @@ export default class CollectionBatches extends React.Component {
                       <Table.Header>
                         <Table.Row>
                           {/* --- Generator: list-header-cells */}
-                          <Table.HeaderCell width={3} sorted={getSorted('id')} onClick={() => setSort('id')}>
+                          <Table.HeaderCell sorted={getSorted('id')} onClick={() => setSort('id')}>
                             BatchId
                           </Table.HeaderCell>
-                          <Table.HeaderCell width={1}>#Events</Table.HeaderCell>
-                          <Table.HeaderCell width={3}>RawUrl</Table.HeaderCell>
-                          <Table.HeaderCell width={1}>Hash</Table.HeaderCell>
-                          <Table.HeaderCell width={1}>Memory</Table.HeaderCell>
+                          <Table.HeaderCell width={1}>Events</Table.HeaderCell>
+                          <Table.HeaderCell width={2}>Size</Table.HeaderCell>
                           <Table.HeaderCell
                             width={3}
                             sorted={getSorted('ingestedAt')}
                             onClick={() => setSort('ingestedAt')}>
-                            IngestedAt
+                            Ingested
                             <HelpTip title="IngestedAt" text="This is the date and time the batch was ingested." />
                           </Table.HeaderCell>
                           {/* --- Generator: end */}
-                          <Table.HeaderCell textAlign="center">Actions</Table.HeaderCell>
+                          <Table.HeaderCell textAlign="center" width={3}>
+                            Actions
+                          </Table.HeaderCell>
                         </Table.Row>
                       </Table.Header>
                       <Table.Body>
@@ -75,12 +77,12 @@ export default class CollectionBatches extends React.Component {
                               {/* --- Generator: list-body-cells */}
                               <Table.Cell>{batch.id}</Table.Cell>
                               <Table.Cell>{batch.numEvents}</Table.Cell>
-                              <Table.Cell>{batch.rawUrl}</Table.Cell>
-                              <Table.Cell>{batch.hash}</Table.Cell>
                               <Table.Cell>{batch.memorySize}</Table.Cell>
                               <Table.Cell>{formatDateTime(batch.ingestedAt)}</Table.Cell>
                               {/* --- Generator: end */}
                               <Table.Cell textAlign="center">
+                                <InspectObject object={batch} trigger={<Button basic icon="file-code" />} />
+                                <InspectBatchEvents batch={batch} trigger={<Button basic icon="search" />} />
                                 <Confirm
                                   negative
                                   confirmText="Delete"
