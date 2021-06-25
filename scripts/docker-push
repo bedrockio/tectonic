@@ -1,0 +1,15 @@
+#!/bin/bash
+
+TAG=$1
+
+if [ "$TAG" == "" ]; then
+  TAG="latest"
+fi
+
+echo "Tag and Push: pubsub-emulator"
+docker tag tectonic-services-pubsub-emulator:$TAG bedrockio/tectonic-pubsub-emulator:$TAG
+docker push bedrockio/tectonic-pubsub-emulator:$TAG
+
+# echo "Tag and Push: api"
+# docker tag tectonic-services-api:$TAG bedrockio/tectonic-api:$TAG
+# docker push bedrockio/tectonic-api:$TAG

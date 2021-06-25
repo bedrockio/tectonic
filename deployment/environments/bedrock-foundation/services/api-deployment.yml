@@ -41,6 +41,8 @@ spec:
               value: qOQ+Sh4tro5qBZEhSsWGoHd1t1kyjOQjfywqE7s8
             - name: API_URL
               value: "https://tectonic-api.bedrock.foundation"
+            - name: APP_URL
+              value: "https://bedrock.foundation"
             - name: BATCHES_STORE
               value: gcs
             - name: BATCHES_GCS_BUCKET

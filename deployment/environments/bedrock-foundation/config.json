@@ -13,6 +13,7 @@
     },
     "services": [],
     "ingresses": ["tectonic-api", "tectonic-web"],
-    "label": "app"
+    "label": "app",
+    "bootstrapDeploy": false
   }
 }
