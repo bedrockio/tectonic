@@ -14,6 +14,6 @@
     "services": [],
     "ingresses": ["tectonic-api", "tectonic-web"],
     "label": "app",
-    "bootstrapDeploy": false
+    "bootstrapDeploy": true
   }
 }
