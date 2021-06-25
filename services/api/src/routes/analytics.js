@@ -37,6 +37,16 @@ async function checkCollectionAccess(ctx, next) {
   }
   const collectionId = dbCollection.id;
 
+  // Give admin user full access
+  if (ctx.state.authUser) {
+    ctx.state.accessPolicyCollection = {
+      collectionId,
+      scope: {},
+    };
+    return next();
+  }
+
+  // Check Access credential
   const { accessPolicy, scopeArgs } = ctx.state.authAccessCredential;
   if (!accessPolicy || !accessPolicy.collections || !Array.isArray(accessPolicy.collections)) {
     ctx.throw(401, `AccessCredential is missing valid accessPolicy`);

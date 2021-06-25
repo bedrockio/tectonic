@@ -59,6 +59,10 @@ async function fetchUser(ctx, next) {
 }
 
 async function fetchAccessCredential(ctx, next) {
+  if (ctx.state.jwt && ctx.state.jwt.type == 'user') {
+    return fetchUser(ctx, next);
+  }
+
   if (!ctx.state.authAccessCredential && ctx.state.jwt) {
     const { AccessCredential } = mongoose.models;
     if (ctx.state.jwt.type !== 'access') ctx.throw(401, 'Correct type is missing in associated token');

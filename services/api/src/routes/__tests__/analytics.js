@@ -7,7 +7,7 @@ const {
   bulkErrorLog,
   getCollectionIndex,
 } = require('../../lib/analytics');
-const { setupDb, teardownDb, request } = require('../../utils/testing');
+const { setupDb, teardownDb, request, createUser } = require('../../utils/testing');
 const { AccessPolicy, AccessCredential, Collection } = require('../../models');
 const { createCredentialToken } = require('../../lib/tokens');
 const mongoose = require('mongoose');
@@ -86,6 +86,13 @@ describe('/1/analytics', () => {
       const headers = { Authorization: `Bearer ${createCredentialToken(accessCredential)}` };
 
       const response = await request('POST', '/1/analytics/search', { collection: testCollection.name }, { headers });
+      expect(response.status).toBe(200);
+      expect(response.body.hits.hits.length).toBe(10);
+    });
+    it('should allow analytics search for admin user', async () => {
+      const user = await createUser();
+      const collectionId = testCollection.id;
+      const response = await request('POST', '/1/analytics/search', { collection: collectionId }, { user });
       expect(response.status).toBe(200);
       expect(response.body.hits.hits.length).toBe(10);
     });
