@@ -13,7 +13,7 @@ spec:
         app: api-elasticsearch-sink
     spec:
       containers:
-        - image: gcr.io/bedrock-foundation/tectonic-services-api-elasticsearch-sink
+        - image: bedrockio/tectonic-elasticsearch-sink
           imagePullPolicy: Always
           name: api-elasticsearch-sink
           env:

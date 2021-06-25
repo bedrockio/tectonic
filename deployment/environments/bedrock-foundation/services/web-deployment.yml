@@ -13,7 +13,7 @@ spec:
         app: web
     spec:
       containers:
-        - image: gcr.io/bedrock-foundation/tectonic-services-web
+        - image: bedrockio/tectonic-web
           imagePullPolicy: Always
           name: main
           env:
