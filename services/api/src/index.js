@@ -1,5 +1,12 @@
 const { setupTelemetry, logger } = require('@bedrockio/instrumentation');
-setupTelemetry();
+
+if (process.env.NODE_ENV === 'production') {
+  setupTelemetry({
+    http: {
+      ignoreIncomingPaths: ['/', '/1/status/mongodb'],
+    },
+  });
+}
 
 const { initialize: initPubSub } = require('./lib/pubsub');
 const { initialize: initDB } = require('./utils/database');

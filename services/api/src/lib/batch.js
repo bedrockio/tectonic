@@ -17,11 +17,11 @@ async function storeGcsFile(fileName, contentString) {
   const storage = new Storage();
   const bucketName = config.get('BATCHES_GCS_BUCKET');
   const bucket = storage.bucket(bucketName);
-  const file = bucket.file('fileName');
-  logger.info('Storing gcs file -> gs://%s/%s', bucketName, fileName);
+  const file = bucket.file(fileName);
+  const destination = `gs://${bucketName}/${fileName}`;
+  logger.info(`Storing gcs file -> ${destination}`);
   await file.save(contentString);
-  const [metaData] = await file.getMetadata();
-  return metaData.mediaLink;
+  return destination;
 }
 
 function dateToString(d) {
