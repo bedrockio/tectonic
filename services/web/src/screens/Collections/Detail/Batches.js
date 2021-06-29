@@ -83,20 +83,6 @@ export default class CollectionBatches extends React.Component {
                               <Table.Cell textAlign="center">
                                 <InspectObject object={batch} trigger={<Button basic icon="file-code" />} />
                                 <InspectBatchEvents batch={batch} trigger={<Button basic icon="search" />} />
-                                <Confirm
-                                  negative
-                                  confirmText="Delete"
-                                  header={`Are you sure you want to delete "${batch.id}"?`}
-                                  content="All data will be permanently deleted"
-                                  trigger={<Button basic icon="trash" />}
-                                  onConfirm={async () => {
-                                    await request({
-                                      method: 'DELETE',
-                                      path: `/1/batches/${batch.id}`,
-                                    });
-                                    reload();
-                                  }}
-                                />
                               </Table.Cell>
                             </Table.Row>
                           );

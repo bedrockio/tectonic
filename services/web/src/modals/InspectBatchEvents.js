@@ -34,7 +34,7 @@ export default class InspectBatchEvents extends React.Component {
         },
       });
       const events = hits.hits.map((item) => {
-        return item._source.event;
+        return item._source;
       });
       this.setState({
         events,
