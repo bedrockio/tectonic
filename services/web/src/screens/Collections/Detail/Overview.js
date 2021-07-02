@@ -4,9 +4,8 @@ import { screen } from 'helpers';
 import Menu from './Menu';
 import ReactJson from 'react-json-view';
 
-// --- Generator: overview-imports
 import { formatDateTime } from 'utils/date';
-// --- Generator: end
+import CodeBlockJson from 'components/CodeBlockJson';
 
 @screen
 export default class CollectionOverview extends React.Component {
@@ -34,9 +33,7 @@ export default class CollectionOverview extends React.Component {
           </Table.Body>
         </Table>
         <Header as="h1">Mapping</Header>
-        <Segment style={{ overflow: 'auto' }}>
-          <ReactJson src={collection.mapping} />
-        </Segment>
+        <CodeBlockJson value={collection.mapping} />
       </React.Fragment>
     );
   }
