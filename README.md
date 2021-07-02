@@ -2,7 +2,6 @@
 
 More documentation about specific services and components can be found in the following sections:
 
-- [deployment/](deployment/) - Provisioning, Deployment automation, how to's, playbooks and procedures
 - [services/api](services/api) - Data API and data model layer that powers all applications
 - [services/web](services/web) - Web application and administration dashboard
 - [services/pubsub-emulator](services/pubsub-emulator) - Docker container to run the gcloud pubsub emulator
