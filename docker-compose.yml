@@ -96,7 +96,6 @@ services:
       - ./services/web/src:/service/src
     ports:
       - "3200:3200"
-      - "34001:34001"
     depends_on:
       - api
 
