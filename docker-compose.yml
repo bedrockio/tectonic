@@ -105,11 +105,6 @@ services:
     command: --serviceExecutor adaptive
     logging:
       driver: none
-    environment:
-      - MONGO_DATA_DIR=/data/db
-      - MONGO_LOG_DIR=/dev/null
-    volumes:
-      - db-data:/data/db
     ports:
       - 27017
 
