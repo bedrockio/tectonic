@@ -19,12 +19,9 @@ function createUserToken(user) {
   );
 }
 
-function createCredentialToken(credential, type = 'access') {
+function createCredentialToken(credential) {
+  const type = credential.accessPolicy ? 'access' : 'application';
   const { _id: credentialId } = credential;
-  if (!['access', `application`].includes(type)) {
-    return null;
-  }
-
   return jwt.sign({ credentialId, type }, secrets[type], { expiresIn: expiresIn[type] });
 }
 

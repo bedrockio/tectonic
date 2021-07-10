@@ -70,14 +70,6 @@ function createSchema(definition, options = {}) {
     });
   });
 
-  schema.static('findByIdOrName', function (objectId) {
-    if (mongoose.isValidObjectId(objectId)) {
-      return this.findById(objectId);
-    } else {
-      return this.findOne({ name: objectId });
-    }
-  });
-
   schema.methods.assign = function assign(fields) {
     fields = omitBy(fields, (value, key) => {
       return isDisallowedField(this.schema.obj[key]) || RESERVED_FIELDS.includes(key);
@@ -90,10 +82,95 @@ function createSchema(definition, options = {}) {
     }
   };
 
-  schema.methods.delete = function () {
+  schema.method('delete', function () {
     this.deletedAt = new Date();
     return this.save();
-  };
+  });
+
+  schema.method('restore', function restore() {
+    this.deletedAt = undefined;
+    return this.save();
+  });
+
+  schema.method('destroy', function destroy() {
+    return this.remove();
+  });
+
+  schema.static('findDeleted', function findOneDeleted(filter) {
+    return this.find({
+      ...filter,
+      deletedAt: { $exists: true },
+    });
+  });
+
+  schema.static('findOneDeleted', function findOneDeleted(filter) {
+    return this.findOne({
+      ...filter,
+      deletedAt: { $exists: true },
+    });
+  });
+
+  schema.static('findByIdDeleted', function findByIdDeleted(id) {
+    return this.findOne({
+      _id: id,
+      deletedAt: { $exists: true },
+    });
+  });
+
+  schema.static('existsDeleted', function existsDeleted() {
+    return this.exists({
+      deletedAt: { $exists: true },
+    });
+  });
+
+  schema.static('countDocumentsDeleted', function countDocumentsDeleted(filter) {
+    return this.countDocuments({
+      ...filter,
+      deletedAt: { $exists: true },
+    });
+  });
+
+  schema.static('findWithDeleted', function findOneWithDeleted(filter) {
+    return this.find({
+      ...filter,
+      deletedAt: undefined,
+    });
+  });
+
+  schema.static('findOneWithDeleted', function findOneWithDeleted(filter) {
+    return this.findOne({
+      ...filter,
+      deletedAt: undefined,
+    });
+  });
+
+  schema.static('findByIdWithDeleted', function findByIdWithDeleted(id) {
+    return this.findOne({
+      _id: id,
+      deletedAt: undefined,
+    });
+  });
+
+  schema.static('existsWithDeleted', function existsWithDeleted() {
+    return this.exists({
+      deletedAt: undefined,
+    });
+  });
+
+  schema.static('countDocumentsWithDeleted', function countDocumentsWithDeleted(filter) {
+    return this.countDocuments({
+      ...filter,
+      deletedAt: undefined,
+    });
+  });
+
+  schema.static('findByIdOrName', function (objectId) {
+    if (mongoose.isValidObjectId(objectId)) {
+      return this.findById(objectId);
+    } else {
+      return this.findOne({ name: objectId });
+    }
+  });
 
   return schema;
 }

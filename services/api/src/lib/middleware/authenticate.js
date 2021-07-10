@@ -34,12 +34,16 @@ function validateToken(ctx, token) {
   return payload;
 }
 
-function authenticate({ optional = false } = {}) {
+function authenticate({ optional = false, types } = {}) {
   return async (ctx, next) => {
     if (!ctx.state.jwt) {
       const token = getToken(ctx);
       if (token) {
         ctx.state.jwt = validateToken(ctx, token);
+        const type = ctx.state.jwt.type;
+        if (types && !types.includes(type)) {
+          ctx.throw(401, `jwt token type '${type}' is not allowed`);
+        }
       } else if (!optional) {
         ctx.throw(401, 'no jwt token found in request');
       }

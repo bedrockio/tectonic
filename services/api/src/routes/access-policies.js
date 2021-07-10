@@ -15,7 +15,7 @@ const collectionSchema = Joi.object({
 });
 
 router
-  .use(authenticate())
+  .use(authenticate({ types: ['user', 'application'] }))
   .param('policyId', async (id, ctx, next) => {
     const policy = await AccessPolicy.findById(id);
     ctx.state.policy = policy;
@@ -184,10 +184,7 @@ router
   )
   .delete('/:policyId', async (ctx) => {
     const policy = ctx.state.policy;
-    // hard delete
-    await AccessPolicy.deleteOne({ _id: policy.id });
-    // soft delete
-    // await policy.delete();
+    await policy.destroy();
     ctx.status = 204;
   });
 

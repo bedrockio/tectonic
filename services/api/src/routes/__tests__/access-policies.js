@@ -1,5 +1,5 @@
 const { setupDb, teardownDb, request } = require('../../utils/testing');
-const { ApplicationCredential, Collection, AccessPolicy } = require('../../models');
+const { ApplicationCredential, AccessCredential, Collection, AccessPolicy } = require('../../models');
 // const { ensureCollectionIndex, getCollectionIndex, deleteIndex } = require('../../lib/analytics');
 const { createCredentialToken } = require('../../lib/tokens');
 const { uniqueId } = require('lodash');
@@ -147,6 +147,25 @@ describe('/1/access-policies', () => {
       expect(response.status).toBe(200);
       expect(response.body.data.name).toBe(accessPolicy.name);
       expect(response.body.data.collections[0].collection).toBe(collection.id);
+    });
+
+    it('should not be able to access policy with access type credentials', async () => {
+      await AccessCredential.deleteMany({});
+      const collection = await Collection.create({
+        name: 'access-policy-collection-test',
+      });
+
+      const accessPolicy = await AccessPolicy.create({
+        name: 'access-test-1',
+        collections: [{ collectionId: collection.id }],
+      });
+
+      const accessCredential = await AccessCredential.create({ name: 'access-policy-test', accessPolicy });
+      const headers = { Authorization: `Bearer ${createCredentialToken(accessCredential)}` };
+
+      const response = await request('GET', `/1/access-policies/${accessPolicy.id}`, {}, { headers });
+      expect(JSON.parse(response?.error?.text)?.error?.message).toBe("jwt token type 'access' is not allowed");
+      expect(response.status).toBe(401);
     });
   });
 
