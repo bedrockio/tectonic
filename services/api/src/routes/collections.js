@@ -10,7 +10,7 @@ const { logger } = require('@bedrockio/instrumentation');
 const router = new Router();
 
 router
-  .use(authenticate())
+  .use(authenticate({ types: ['user', 'application'] }))
   .param('collectionId', async (id, ctx, next) => {
     const collection = await Collection.findById(id);
     ctx.state.collection = collection;

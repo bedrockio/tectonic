@@ -11,7 +11,7 @@ const { createCredentialToken } = require('../lib/tokens');
 const router = new Router();
 
 router
-  .use(authenticate())
+  .use(authenticate({ types: ['user', 'application'] }))
   .param('credential', async (idOrName, ctx, next) => {
     const accessCredential = await AccessCredential.findByIdOrName(idOrName);
     ctx.state.accessCredential = accessCredential;

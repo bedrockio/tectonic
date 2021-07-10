@@ -17,7 +17,7 @@ const passwordField = Joi.string()
   .message('Your password must be at least 6 characters long. Please try another.');
 
 router
-  .use(authenticate())
+  .use(authenticate({ types: ['user'] }))
   .use(fetchUser)
   .param('userId', async (id, ctx, next) => {
     const user = await User.findById(id);

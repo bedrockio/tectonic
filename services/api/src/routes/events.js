@@ -20,7 +20,7 @@ const eventSchema = Joi.object({
   occurredAt: Joi.string().required(),
 }).unknown(); // unknown: to allow any aother field
 
-router.use(authenticate()).post(
+router.use(authenticate({ types: ['user', 'application'] })).post(
   '/',
   validate({
     body: Joi.object({

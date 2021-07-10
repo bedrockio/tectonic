@@ -8,7 +8,7 @@ const { Batch, Collection } = require('../models');
 const router = new Router();
 
 router
-  .use(authenticate())
+  .use(authenticate({ types: ['user', 'application'] }))
   .param('batchId', async (id, ctx, next) => {
     const batch = await Batch.findById(id);
     ctx.state.batch = batch;

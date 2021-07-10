@@ -74,7 +74,7 @@ async function checkCollectionAccess(ctx, next) {
 }
 
 router
-  .use(authenticate())
+  .use(authenticate({ types: ['access', 'user', 'application'] }))
   .use(fetchAccessCredential)
   .post(
     '/terms',
