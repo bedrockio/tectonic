@@ -131,6 +131,33 @@ describe('/1/access-policies', () => {
       expect(response2.status).toBe(200);
       expect(response2.body.data.name).toBe(name2);
     });
+
+    it('should not be able to create access-policy with nested scope object', async () => {
+      const collection = await Collection.create({
+        name: 'access-policy-collection-test',
+      });
+
+      const headers = await getHeaders();
+      const response = await request(
+        'POST',
+        '/1/access-policies',
+        {
+          name: 'access-policy-test',
+          collections: [
+            {
+              collection: collection.name, // fetch by name
+              scope: { systemId: { mac: 'os' } },
+            },
+          ],
+        },
+        { headers }
+      );
+      // if (response.error) console.error(response.error);
+      expect(response.status).toBe(401);
+      expect(JSON.parse(response?.error?.text)?.error?.message).toBe(
+        'scope should be an object max 1 level deep and with string keys'
+      );
+    });
   });
 
   describe('GET /:policyId', () => {

@@ -15,6 +15,34 @@ const collectionSchema = Joi.object({
   excludeFields: Joi.array().items(Joi.string()).optional(),
 });
 
+function validateScope(scope) {
+  if (typeof scope != 'object') return false;
+  for (const key in scope) {
+    if (typeof key != 'string') return false;
+    if (typeof scope[key] == 'object') return false;
+  }
+  return true;
+}
+
+async function validateCollections(ctx, collections) {
+  const updatedCollections = [];
+  for (const col of collections) {
+    const collection = await Collection.findByIdOrName(col.collection);
+    if (!collection) ctx.throw(401, `collection '${col.collection}' doesn't exist`);
+    col.collectionId = collection.id;
+    delete col.collection;
+    updatedCollections.push(col);
+    if (col.scope) {
+      if (!validateScope(col.scope)) {
+        ctx.throw(401, `scope should be an object max 1 level deep and with string keys`);
+      }
+      col.scopeString = JSON.stringify(col.scope);
+      delete col.scope;
+    }
+  }
+  return updatedCollections;
+}
+
 router
   .use(authenticate({ types: ['user', 'application'] }))
   .param('policyId', async (id, ctx, next) => {
@@ -42,20 +70,9 @@ router
 
       const policyObject = {
         name,
-        collections: [],
+        collections: await validateCollections(ctx, collections),
       };
 
-      for (const col of collections) {
-        const collection = await Collection.findByIdOrName(col.collection);
-        if (!collection) ctx.throw(401, `collection '${col.collection}' doesn't exist`);
-        col.collectionId = collection.id;
-        delete col.collection;
-        policyObject.collections.push(col);
-        if (col.scope) {
-          col.scopeString = JSON.stringify(col.scope);
-          delete col.scope;
-        }
-      }
       const policy = await AccessPolicy.create(policyObject);
       ctx.body = {
         data: policy.toCollectionJSON(),
@@ -72,19 +89,7 @@ router
     }),
     async (ctx) => {
       const { name, collections } = ctx.request.body;
-      const newCollections = [];
-
-      for (const col of collections) {
-        const collection = await Collection.findByIdOrName(col.collection);
-        if (!collection) ctx.throw(401, `collection '${col.collection}' doesn't exist`);
-        col.collectionId = collection.id;
-        delete col.collection;
-        newCollections.push(col);
-        if (col.scope) {
-          col.scopeString = JSON.stringify(col.scope);
-          delete col.scope;
-        }
-      }
+      const newCollections = await validateCollections(ctx, collections);
 
       const existingPolicy = await AccessPolicy.findOne({ name });
       let policy;
@@ -121,18 +126,7 @@ router
         policy.name = name;
       }
       if (collections) {
-        policy.collections = [];
-        for (const col of collections) {
-          const collection = await Collection.findByIdOrName(col.collection);
-          if (!collection) ctx.throw(401, `collection '${col.collection}' doesn't exist`);
-          col.collectionId = collection.id;
-          delete col.collection;
-          if (col.scope) {
-            col.scopeString = JSON.stringify(col.scope);
-            delete col.scope;
-          }
-          policy.collections.push(col);
-        }
+        policy.collections = await validateCollections(ctx, collections);
       }
       await policy.save();
       ctx.body = {
