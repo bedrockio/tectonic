@@ -123,9 +123,9 @@ describe('/1/analytics', () => {
         collections: [
           {
             collectionId,
-            scope: {
+            scopeString: JSON.stringify({
               evseControllerId: '5fd6036fccd06f4d6b1d8bd2',
-            },
+            }),
           },
         ],
       });
@@ -146,10 +146,10 @@ describe('/1/analytics', () => {
         collections: [
           {
             collectionId,
-            scope: {
+            scopeString: JSON.stringify({
               evseControllerId: '5fd6036fccd06f4d6b1d8bd2',
               method: 'MeterValues',
-            },
+            }),
           },
         ],
       });
@@ -174,10 +174,10 @@ describe('/1/analytics', () => {
           },
           {
             collectionId,
-            scope: {
+            scopeString: JSON.stringify({
               evseControllerId: '5fd6036fccd06f4d6b1d8bd2',
               method: 'MeterValues',
-            },
+            }),
           },
         ],
       });

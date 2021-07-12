@@ -8,7 +8,7 @@ describe('Access', () => {
       expect(data.id).toBe(policy.id);
     });
 
-    it('should work with defaultQueries', () => {
+    it('should work with defaultQueries', async () => {
       const collection = new Collection();
       const defaultQuery = {
         userId: 'id42',
@@ -18,19 +18,15 @@ describe('Access', () => {
         name: 'access-policy-test',
         collections: {
           type: 'read',
-          scope: defaultQuery,
+          scopeString: JSON.stringify(defaultQuery),
           scopeParams: ['organizationId'],
           collectionId: collection.id,
-          fields: {
-            type: 'blacklist',
-            exclude: 'secret',
-          },
+          excludeFields: ['secret'],
         },
       });
       // console.info(policy);
-
       expect(policy.collections[0].collectionId.toString()).toBe(collection.id);
-      expect(policy.collections[0].scope.userId).toBe('id42');
+      expect(policy.collections[0].scopeString).toBe('{"userId":"id42"}');
     });
 
     it('should rename collectionId', () => {
@@ -43,20 +39,17 @@ describe('Access', () => {
         name: 'access-policy-test',
         collections: {
           type: 'read',
-          scope: defaultQuery,
+          scopeString: JSON.stringify(defaultQuery),
           scopeParams: ['organizationId'],
           collectionId: collection.id,
-          fields: {
-            type: 'blacklist',
-            exclude: 'secret',
-          },
+          excludeFields: ['secret'],
         },
       });
       // console.info(policy);
       const policyJSON = policy.toCollectionJSON();
 
       expect(policyJSON.collections[0].collection.toString()).toStrictEqual(collection.id);
-      expect(policyJSON.collections[0].scope.userId).toBe('id42');
+      expect(policy.collections[0].scopeString).toBe('{"userId":"id42"}');
     });
   });
 });

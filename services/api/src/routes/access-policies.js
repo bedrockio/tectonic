@@ -51,6 +51,10 @@ router
         col.collectionId = collection.id;
         delete col.collection;
         policyObject.collections.push(col);
+        if (col.scope) {
+          col.scopeString = JSON.stringify(col.scope);
+          delete col.scope;
+        }
       }
       const policy = await AccessPolicy.create(policyObject);
       ctx.body = {
@@ -76,6 +80,10 @@ router
         col.collectionId = collection.id;
         delete col.collection;
         newCollections.push(col);
+        if (col.scope) {
+          col.scopeString = JSON.stringify(col.scope);
+          delete col.scope;
+        }
       }
 
       const existingPolicy = await AccessPolicy.findOne({ name });
@@ -119,6 +127,10 @@ router
           if (!collection) ctx.throw(401, `collection '${col.collection}' doesn't exist`);
           col.collectionId = collection.id;
           delete col.collection;
+          if (col.scope) {
+            col.scopeString = JSON.stringify(col.scope);
+            delete col.scope;
+          }
           policy.collections.push(col);
         }
       }

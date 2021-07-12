@@ -41,7 +41,6 @@ async function checkCollectionAccess(ctx, next) {
   if (ctx.state.authUser) {
     ctx.state.accessPolicyCollection = {
       collectionId,
-      scope: {},
     };
     return next();
   }
@@ -57,7 +56,10 @@ async function checkCollectionAccess(ctx, next) {
   if (!accessPolicyCollection) {
     ctx.throw(401, `AccessPolicy has no access to collectionId: ${collectionId}`);
   }
-  accessPolicyCollection.scope = accessPolicyCollection.scope || {};
+  if (accessPolicyCollection.scopeString) {
+    accessPolicyCollection.scope = JSON.parse(accessPolicyCollection.scopeString);
+  }
+
   // check scopeParams
   if (accessPolicyCollection.scopeParams && accessPolicyCollection.scopeParams.length != 0) {
     for (const param of accessPolicyCollection.scopeParams) {
@@ -65,6 +67,7 @@ async function checkCollectionAccess(ctx, next) {
         ctx.throw(401, `Missing scopeArgs for policy scopeParams`);
       }
       // Add to scope
+      if (!accessPolicyCollection.scope) accessPolicyCollection.scope = {};
       accessPolicyCollection.scope[param] = scopeArgs[param];
     }
   }

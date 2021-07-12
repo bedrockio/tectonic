@@ -51,6 +51,8 @@ describe('/1/access-policies', () => {
       expect(response.status).toBe(200);
       expect(data.name).toBe('access-policy-test');
       expect(data.collections[0].collection).toStrictEqual(collection.id);
+      expect(data.collections[0].scope).toBeDefined();
+      expect(data.collections[0].scope.systemId).toBe(systemId);
     });
 
     it('should not be able to create access-policy with existing name', async () => {
@@ -214,16 +216,19 @@ describe('/1/access-policies', () => {
         collections: [{ collectionId: collection.id }],
       });
 
+      const systemId = '42';
       const headers = await getHeaders();
       const response = await request(
         'PATCH',
         `/1/access-policies/${accessPolicy.id}`,
-        { collections: [{ collection: collection2.name }], name: 'new name' },
+        { collections: [{ collection: collection2.name, scope: { systemId } }], name: 'new name' },
         { headers }
       );
       if (response.error) console.error(response.error);
       expect(response.status).toBe(200);
       expect(response.body.data.collections[0].collection).toBe(collection2.id);
+      expect(response.body.data.collections[0].scope).toBeDefined();
+      expect(response.body.data.collections[0].scope.systemId).toBe(systemId);
 
       // pre-existing name
       await AccessPolicy.create({

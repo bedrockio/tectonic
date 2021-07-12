@@ -11,6 +11,10 @@ schema.methods.toCollectionJSON = function toCollectionJSON() {
   for (const col of accessPolicy.collections) {
     col.collection = col.collectionId;
     delete col.collectionId;
+    if (col.scopeString) {
+      col.scope = JSON.parse(col.scopeString);
+      delete col.scopeString;
+    }
     collections.push(col);
   }
   accessPolicy.collections = collections;
