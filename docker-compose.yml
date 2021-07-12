@@ -112,13 +112,13 @@ services:
       context: ./services/pubsub-emulator
       dockerfile: Dockerfile
     ports:
-      - "8200:8200"
+      - 8200
 
   elasticsearch:
     image: elasticsearch:7.9.3
     container_name: elasticsearch
     ports:
-      - "9200:9200"
-      - "9300:9300"
+      - 9200
+      - 9300
     environment:
       - "discovery.type=single-node"
