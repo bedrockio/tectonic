@@ -198,7 +198,7 @@ describe('/1/analytics', () => {
         collections: [
           {
             collectionId,
-            excludeFields: ['event.messageId', 'event.params', 'batchId'],
+            excludeFields: ['event.messageId', 'event.params', 'batchId', 'doesNotExist', 'event.doesNotExist'],
           },
         ],
       });
@@ -224,6 +224,8 @@ describe('/1/analytics', () => {
       expect(hit.batchId).toBeUndefined();
       expect(hit.event.messageId).toBeUndefined();
       expect(hit.event.params).toBeUndefined();
+      expect(hit.doesNotExist).toBeUndefined();
+      expect(hit.event.doesNotExist).toBeUndefined();
     });
     it('should work with fields.includes', async () => {
       const collectionId = testCollection.id;
@@ -232,7 +234,7 @@ describe('/1/analytics', () => {
         collections: [
           {
             collectionId,
-            includeFields: ['event.messageId', 'event.params', 'batchId'],
+            includeFields: ['event.messageId', 'event.params', 'batchId', 'doesNotExist', 'event.doesNotExist'],
           },
         ],
       });
@@ -253,6 +255,8 @@ describe('/1/analytics', () => {
       const hit = response.body.hits.hits[0]._source;
       // undefined
       expect(hit.event.destination).toBeUndefined();
+      expect(hit.doesNotExist).toBeUndefined();
+      expect(hit.event.doesNotExist).toBeUndefined();
       // defined
       expect(hit.event).toBeDefined();
       expect(hit.batchId).toBeDefined();
