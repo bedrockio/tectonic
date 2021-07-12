@@ -164,12 +164,12 @@ router
     async (ctx) => {
       const { filter = {} } = ctx.request.body;
       // console.info('filter', filter);
-      const { collectionId, scope } = ctx.state.accessPolicyCollection;
+      const { collectionId, scope, includeFields, excludeFields } = ctx.state.accessPolicyCollection;
       const index = getCollectionIndex(collectionId);
       filter.scope = scope; // Each scope key-value pair is added as ES bool.must.term
       try {
         // console.info(JSON.stringify(filter, null, 2));
-        ctx.body = await search(index, filter);
+        ctx.body = await search(index, filter, includeFields, excludeFields);
       } catch (err) {
         interpretError(err);
       }

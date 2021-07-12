@@ -11,7 +11,8 @@ const collectionSchema = Joi.object({
   collection: Joi.string().required(),
   scope: Joi.object().optional(),
   scopeParams: Joi.array().items(Joi.string()).optional(),
-  // fields is ignored for now
+  includeFields: Joi.array().items(Joi.string()).optional(),
+  excludeFields: Joi.array().items(Joi.string()).optional(),
 });
 
 router

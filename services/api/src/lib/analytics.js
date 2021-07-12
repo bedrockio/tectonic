@@ -193,8 +193,18 @@ async function cardinality(index, fields, options = undefined) {
   return stats;
 }
 
-async function search(index, options = undefined) {
+async function search(index, options = undefined, includefields, excludeFields) {
   const body = parseFilterOptions(options);
+  if ((includefields || excludeFields) && !body._source) {
+    body._source = {};
+  }
+  if (includefields) {
+    body._source.includes = includefields;
+  }
+  if (excludeFields) {
+    body._source.excludes = excludeFields;
+  }
+
   const result = await elasticsearchClient.search({
     index,
     body,

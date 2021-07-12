@@ -53,6 +53,11 @@ afterAll(async () => {
   await teardownDb();
 });
 
+beforeEach(async () => {
+  await AccessCredential.deleteMany({});
+  await AccessPolicy.deleteMany({});
+});
+
 describe('/1/analytics', () => {
   describe('POST /search', () => {
     it('should allow analytics search for correct policy', async () => {
@@ -185,6 +190,74 @@ describe('/1/analytics', () => {
       const response = await request('POST', '/1/analytics/search', { collection: collectionId }, { headers });
       expect(response.status).toBe(200);
       expect(response.body.hits.hits.length).toBe(5); // ignores 'method': 'BogusValues'
+    });
+    it('should work with fields.excludes', async () => {
+      const collectionId = testCollection.id;
+      const accessPolicy = await AccessPolicy.create({
+        name: 'access-test-policy-excludes',
+        collections: [
+          {
+            collectionId,
+            excludeFields: ['event.messageId', 'event.params', 'batchId'],
+          },
+        ],
+      });
+      const accessCredential = await AccessCredential.create({
+        name: 'access-cred',
+        accessPolicy,
+      });
+      const headers = { Authorization: `Bearer ${createCredentialToken(accessCredential)}` };
+
+      const response = await request(
+        'POST',
+        '/1/analytics/search',
+        { collection: collectionId, filter: { size: 1 } },
+        { headers }
+      );
+      expect(response.status).toBe(200);
+      expect(response.body.hits.hits.length).toBe(1);
+      const hit = response.body.hits.hits[0]._source;
+      // defined
+      expect(hit.event).toBeDefined();
+      expect(hit.event.destination).toBeDefined();
+      // undefined
+      expect(hit.batchId).toBeUndefined();
+      expect(hit.event.messageId).toBeUndefined();
+      expect(hit.event.params).toBeUndefined();
+    });
+    it('should work with fields.includes', async () => {
+      const collectionId = testCollection.id;
+      const accessPolicy = await AccessPolicy.create({
+        name: 'access-test-policy-includes',
+        collections: [
+          {
+            collectionId,
+            includeFields: ['event.messageId', 'event.params', 'batchId'],
+          },
+        ],
+      });
+      const accessCredential = await AccessCredential.create({
+        name: 'access-cred',
+        accessPolicy,
+      });
+      const headers = { Authorization: `Bearer ${createCredentialToken(accessCredential)}` };
+
+      const response = await request(
+        'POST',
+        '/1/analytics/search',
+        { collection: collectionId, filter: { size: 1 } },
+        { headers }
+      );
+      expect(response.status).toBe(200);
+      expect(response.body.hits.hits.length).toBe(1);
+      const hit = response.body.hits.hits[0]._source;
+      // undefined
+      expect(hit.event.destination).toBeUndefined();
+      // defined
+      expect(hit.event).toBeDefined();
+      expect(hit.batchId).toBeDefined();
+      expect(hit.event.messageId).toBeDefined();
+      expect(hit.event.params).toBeDefined();
     });
   });
 });
