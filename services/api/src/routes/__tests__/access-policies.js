@@ -158,6 +158,34 @@ describe('/1/access-policies', () => {
         'scope should be an object max 1 level deep and with string keys'
       );
     });
+
+    it('should be able to create access-policy with dot in scope field name', async () => {
+      const collection = await Collection.create({
+        name: 'access-policy-collection-test',
+      });
+
+      const systemId = '5fd6036fccd06f4d6b1d8bd2';
+
+      const headers = await getHeaders();
+      const response = await request(
+        'POST',
+        '/1/access-policies',
+        {
+          name: 'access-policy-test',
+          collections: [
+            {
+              collection: collection.name, // fetch by name
+              scope: { 'event.systemId': systemId },
+            },
+          ],
+        },
+        { headers }
+      );
+      // if (response.error) console.error(response.error);
+      expect(response.error).toBe(false);
+      expect(response.status).toBe(200);
+      expect(response.body.data.collections[0].scope['event.systemId']).toBe(systemId);
+    });
   });
 
   describe('GET /:policyId', () => {
