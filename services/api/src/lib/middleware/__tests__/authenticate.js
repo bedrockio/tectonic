@@ -133,7 +133,7 @@ describe('fetchUser', () => {
   it('should fetch the authUser', async () => {
     const user = await createUser();
     const ctx = context();
-    ctx.state.jwt = { userId: user.id };
+    ctx.state.jwt = { type: 'user', userId: user.id };
     await fetchUser(ctx, () => {
       expect(ctx.state.authUser.id).toBe(user.id);
     });
@@ -159,7 +159,7 @@ describe('fetchUser', () => {
         tmp = user;
         count++;
       },
-      jwt: { userId: user.id },
+      jwt: { type: 'user', userId: user.id },
     };
     await fetchUser(ctx, () => {});
     await fetchUser(ctx, () => {});

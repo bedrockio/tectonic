@@ -55,6 +55,7 @@ function authenticate({ optional = false, types } = {}) {
 async function fetchUser(ctx, next) {
   if (!ctx.state.authUser && ctx.state.jwt) {
     const { User } = mongoose.models;
+    if (ctx.state.jwt.type !== 'user') ctx.throw(401, 'Correct type is missing in associated token');
     if (!ctx.state.jwt.userId) ctx.throw(401, 'userId is missing in associated token');
     ctx.state.authUser = await User.findById(ctx.state.jwt.userId);
     if (!ctx.state.authUser) ctx.throw(401, 'user associated to token could not not be found');
@@ -62,11 +63,19 @@ async function fetchUser(ctx, next) {
   await next();
 }
 
-async function fetchAccessCredential(ctx, next) {
-  if (ctx.state.jwt && ctx.state.jwt.type == 'user') {
-    return fetchUser(ctx, next);
+async function fetchApplicationCredential(ctx, next) {
+  if (!ctx.state.authApplicationCredential && ctx.state.jwt) {
+    const { ApplicationCredential } = mongoose.models;
+    if (ctx.state.jwt.type !== 'application') ctx.throw(401, 'Correct type is missing in associated token');
+    if (!ctx.state.jwt.credentialId) ctx.throw(401, 'credentialId is missing in associated token');
+    ctx.state.authApplicationCredential = await ApplicationCredential.findById(ctx.state.jwt.credentialId);
+    if (!ctx.state.authApplicationCredential)
+      ctx.throw(401, 'applicatioCredential associated to token could not not be found');
   }
+  await next();
+}
 
+async function fetchAccessCredential(ctx, next) {
   if (!ctx.state.authAccessCredential && ctx.state.jwt) {
     const { AccessCredential } = mongoose.models;
     if (ctx.state.jwt.type !== 'access') ctx.throw(401, 'Correct type is missing in associated token');
@@ -77,8 +86,18 @@ async function fetchAccessCredential(ctx, next) {
   await next();
 }
 
+async function fetchCredential(ctx, next) {
+  const type = ctx.state.jwt && ctx.state.jwt.type;
+
+  if (type == 'user') return fetchUser(ctx, next);
+  if (type == 'application') return fetchApplicationCredential(ctx, next);
+  if (type == 'access') return fetchAccessCredential(ctx, next);
+
+  ctx.throw(401, 'Correct type is missing in associated token');
+}
+
 module.exports = {
   authenticate,
   fetchUser,
-  fetchAccessCredential,
+  fetchCredential,
 };

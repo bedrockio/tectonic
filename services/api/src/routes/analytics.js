@@ -1,7 +1,7 @@
 const Router = require('@koa/router');
 const Joi = require('@hapi/joi');
 const validate = require('../utils/middleware/validate');
-const { authenticate, fetchAccessCredential } = require('../lib/middleware/authenticate');
+const { authenticate, fetchCredential } = require('../lib/middleware/authenticate');
 const { terms, timeSeries, search, stats, cardinality, getCollectionIndex } = require('../lib/analytics');
 const { Collection } = require('../models');
 
@@ -37,8 +37,8 @@ async function checkCollectionAccess(ctx, next) {
   }
   const collectionId = dbCollection.id;
 
-  // Give admin user full access
-  if (ctx.state.authUser) {
+  // Give admin user and application credential full access
+  if (ctx.state.authUser || ctx.state.authApplicationCredential) {
     ctx.state.accessPolicyCollection = {
       collectionId,
     };
@@ -78,7 +78,7 @@ async function checkCollectionAccess(ctx, next) {
 
 router
   .use(authenticate({ types: ['access', 'user', 'application'] }))
-  .use(fetchAccessCredential)
+  .use(fetchCredential)
   .post(
     '/terms',
     validate({
