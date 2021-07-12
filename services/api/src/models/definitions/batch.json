@@ -7,6 +7,10 @@
     "maxOccurredAt": { "type": "Date", "required": true },
     "memorySize": { "type": "String", "required": false },
     "rawUrl": { "type": "String", "required": false },
-    "hash": { "type": "String", "required": false }
+    "hash": { "type": "String", "required": false },
+    "author": {
+      "type": { "type": "String", "required": false, "enum": ["user", "access", "application"] },
+      "id": { "type": "String", "required": false }
+    }
   }
 }

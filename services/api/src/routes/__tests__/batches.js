@@ -19,12 +19,17 @@ describe('/1/batches', () => {
       });
       const now = Date.now();
       const numEvents = 10;
+      const author = {
+        type: 'user',
+        id: user.id,
+      };
       const batch = await Batch.create({
         collectionId: collection,
         ingestedAt: new Date(now),
         numEvents,
         minOccurredAt: new Date(now - 60 * 1000),
         maxOccurredAt: new Date(now + 60 * 1000),
+        author,
       });
       const response = await request('GET', `/1/batches/${batch.id}`, {}, { user });
       expect(response.status).toBe(200);
@@ -50,12 +55,17 @@ describe('/1/batches', () => {
 
       const now = Date.now();
       const numEvents = 10;
+      const author = {
+        type: 'user',
+        id: user.id,
+      };
       await Batch.create({
         collectionId: collection1,
         ingestedAt: new Date(now),
         numEvents,
         minOccurredAt: new Date(now - 60 * 1000),
         maxOccurredAt: new Date(now + 60 * 1000),
+        author,
       });
 
       await Batch.create({
@@ -64,6 +74,7 @@ describe('/1/batches', () => {
         numEvents: numEvents + 1,
         minOccurredAt: new Date(now - 60 * 1000),
         maxOccurredAt: new Date(now + 60 * 1000),
+        author,
       });
       const response = await request('POST', '/1/batches/search', {}, { user });
 
@@ -98,12 +109,17 @@ describe('/1/batches', () => {
 
       const now = Date.now();
       const numEvents = 10;
+      const author = {
+        type: 'user',
+        id: user.id,
+      };
       const batch = await Batch.create({
         collectionId: collection,
         ingestedAt: new Date(now),
         numEvents,
         minOccurredAt: new Date(now - 60 * 1000),
         maxOccurredAt: new Date(now + 60 * 1000),
+        author,
       });
 
       const response = await request('DELETE', `/1/batches/${batch.id}`, {}, { user });
