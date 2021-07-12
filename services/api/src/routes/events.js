@@ -5,7 +5,6 @@ const { NotFoundError } = require('../utils/errors');
 const validate = require('../utils/middleware/validate');
 const { publishMessage } = require('../lib/pubsub');
 const { Batch, Collection } = require('../models');
-// const { logger } = require('@bedrockio/instrumentation');
 const { memorySizeOf, chunkedAsyncMap } = require('../lib/events');
 const { storeBatchEvents } = require('../lib/batch');
 const { createHash } = require('crypto');

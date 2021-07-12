@@ -1,6 +1,5 @@
 const { setupDb, teardownDb, request } = require('../../utils/testing');
 const { ApplicationCredential, AccessCredential, Collection, AccessPolicy } = require('../../models');
-// const { ensureCollectionIndex, getCollectionIndex, deleteIndex } = require('../../lib/analytics');
 const { createCredentialToken } = require('../../lib/tokens');
 const { uniqueId } = require('lodash');
 

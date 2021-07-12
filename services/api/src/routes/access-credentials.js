@@ -6,7 +6,6 @@ const { authenticate } = require('../lib/middleware/authenticate');
 const { NotFoundError } = require('../utils/errors');
 const { AccessCredential } = require('../models');
 const { createCredentialToken } = require('../lib/tokens');
-//const { logger } = require('@bedrockio/instrumentation');
 
 const router = new Router();
 
