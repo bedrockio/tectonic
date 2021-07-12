@@ -11,7 +11,7 @@ if [ "$TAG" == "" ]; then
   TAG="latest"
 fi
 
-if [[ "$SERVICE" == "all" || "$SERVICE" == "pubsub-emulator" ]]; then
+if [ "$SERVICE" == "pubsub-emulator" ]; then
   echo "Tag and Push: pubsub-emulator"
   docker tag tectonic-services-pubsub-emulator:latest bedrockio/tectonic-pubsub-emulator:$TAG
   docker push bedrockio/tectonic-pubsub-emulator:$TAG
