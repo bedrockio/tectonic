@@ -74,7 +74,7 @@ describe('/1/analytics', () => {
 
       const response = await request('POST', '/1/analytics/search', { collection: collectionId }, { headers });
       expect(response.status).toBe(200);
-      expect(response.body.hits.hits.length).toBe(10);
+      expect(response.body.data.hits.hits.length).toBe(10);
     });
     it('should allow analytics search for correct policy with collection name', async () => {
       await AccessPolicy.deleteMany({});
@@ -92,14 +92,14 @@ describe('/1/analytics', () => {
 
       const response = await request('POST', '/1/analytics/search', { collection: testCollection.name }, { headers });
       expect(response.status).toBe(200);
-      expect(response.body.hits.hits.length).toBe(10);
+      expect(response.body.data.hits.hits.length).toBe(10);
     });
     it('should allow analytics search for admin user', async () => {
       const user = await createUser();
       const collectionId = testCollection.id;
       const response = await request('POST', '/1/analytics/search', { collection: collectionId }, { user });
       expect(response.status).toBe(200);
-      expect(response.body.hits.hits.length).toBe(10);
+      expect(response.body.data.hits.hits.length).toBe(10);
     });
     it('should deny analytics for incorrect policy', async () => {
       const accessPolicy = await AccessPolicy.create({
@@ -137,7 +137,7 @@ describe('/1/analytics', () => {
 
       const response = await request('POST', '/1/analytics/search', { collection: collectionId }, { headers });
       expect(response.status).toBe(200);
-      expect(response.body.hits.hits.length).toBe(6); // ignores 4 out of 10
+      expect(response.body.data.hits.hits.length).toBe(6); // ignores 4 out of 10
     });
     it('should allow multiple scoped fields analytics search', async () => {
       const collectionId = testCollection.id;
@@ -161,7 +161,7 @@ describe('/1/analytics', () => {
 
       const response = await request('POST', '/1/analytics/search', { collection: collectionId }, { headers });
       expect(response.status).toBe(200);
-      expect(response.body.hits.hits.length).toBe(5); // ignores 'method': 'BogusValues'
+      expect(response.body.data.hits.hits.length).toBe(5); // ignores 'method': 'BogusValues'
     });
     it('should allow analytics search with multiple collections policy', async () => {
       await AccessCredential.deleteMany({});
@@ -189,7 +189,7 @@ describe('/1/analytics', () => {
 
       const response = await request('POST', '/1/analytics/search', { collection: collectionId }, { headers });
       expect(response.status).toBe(200);
-      expect(response.body.hits.hits.length).toBe(5); // ignores 'method': 'BogusValues'
+      expect(response.body.data.hits.hits.length).toBe(5); // ignores 'method': 'BogusValues'
     });
     it('should work with fields.excludes', async () => {
       const collectionId = testCollection.id;
@@ -215,8 +215,8 @@ describe('/1/analytics', () => {
         { headers }
       );
       expect(response.status).toBe(200);
-      expect(response.body.hits.hits.length).toBe(1);
-      const hit = response.body.hits.hits[0]._source;
+      expect(response.body.data.hits.hits.length).toBe(1);
+      const hit = response.body.data.hits.hits[0]._source;
       // defined
       expect(hit.event).toBeDefined();
       expect(hit.event.destination).toBeDefined();
@@ -251,8 +251,8 @@ describe('/1/analytics', () => {
         { headers }
       );
       expect(response.status).toBe(200);
-      expect(response.body.hits.hits.length).toBe(1);
-      const hit = response.body.hits.hits[0]._source;
+      expect(response.body.data.hits.hits.length).toBe(1);
+      const hit = response.body.data.hits.hits[0]._source;
       // undefined
       expect(hit.event.destination).toBeUndefined();
       expect(hit.doesNotExist).toBeUndefined();

@@ -110,7 +110,7 @@ router
       const index = getCollectionIndex(collectionId);
       filter.scope = scope; // Each scope key-value pair is added as ES bool.must.term
       try {
-        ctx.body = await terms(index, aggField, {
+        const data = await terms(index, aggField, {
           ...filter,
           field,
           aggFieldOrder,
@@ -119,6 +119,7 @@ router
           referenceFetch,
           termsSize,
         });
+        ctx.body = { data };
       } catch (err) {
         interpretError(err);
       }
@@ -144,12 +145,13 @@ router
       const index = getCollectionIndex(collectionId);
       filter.scope = scope; // Each scope key-value pair is added as ES bool.must.term
       try {
-        ctx.body = await timeSeries(index, operation, field, {
+        const data = await timeSeries(index, operation, field, {
           interval,
           dateField,
           timeZone,
           ...filter,
         });
+        ctx.body = { data };
       } catch (err) {
         interpretError(err);
       }
@@ -172,7 +174,8 @@ router
       filter.scope = scope; // Each scope key-value pair is added as ES bool.must.term
       try {
         // console.info(JSON.stringify(filter, null, 2));
-        ctx.body = await search(index, filter, includeFields, excludeFields);
+        const data = await search(index, filter, includeFields, excludeFields);
+        ctx.body = { data };
       } catch (err) {
         interpretError(err);
       }
@@ -194,7 +197,8 @@ router
       const index = getCollectionIndex(collectionId);
       filter.scope = scope; // Each scope key-value pair is added as ES bool.must.term
       try {
-        ctx.body = await stats(index, fields, filter);
+        const data = await stats(index, fields, filter);
+        ctx.body = { data };
       } catch (err) {
         interpretError(err);
       }
@@ -216,7 +220,8 @@ router
       const index = getCollectionIndex(collectionId);
       filter.scope = scope; // Each scope key-value pair is added as ES bool.must.term
       try {
-        ctx.body = await cardinality(index, fields, filter);
+        const data = await cardinality(index, fields, filter);
+        ctx.body = { data };
       } catch (err) {
         interpretError(err);
       }
