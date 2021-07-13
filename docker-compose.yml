@@ -46,7 +46,7 @@ services:
       - api-elasticsearch-worker
 
   api-cli:
-    command: bash -c "./scripts/wait-for-it.sh mongo:27017 && ./scripts/wait-for-it.sh elasticsearch:9200 && ./scripts/wait-for-it.sh pubsub:8200 && sleep 30 && node ./scripts/publish-fixture-events.js"
+    command: bash -c "./scripts/wait-for-it.sh mongo:27017 && ./scripts/wait-for-it.sh elasticsearch:9200 && ./scripts/wait-for-it.sh pubsub:8200 && sleep 20 && node ./scripts/publish-fixture-events.js"
     environment:
       - MOCK_EMAIL=true
       - MONGO_URI=mongodb://mongo/tectonic_dev
