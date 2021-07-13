@@ -15,11 +15,7 @@ export default class PortalLayout extends React.Component {
     return (
       <React.Fragment>
         <Layout className={this.getElementClass('menu')}>
-          <Layout
-            className={this.getElementClass('menu-top')}
-            horizontal
-            center
-            spread>
+          <Layout className={this.getElementClass('menu-top')} horizontal center spread>
             <NavLink className="logo" to="/">
               <img height="30" src={logo} />
             </NavLink>
@@ -29,12 +25,9 @@ export default class PortalLayout extends React.Component {
               </Button>
             </div>
           </Layout>
-          <Menu
-            className={this.getElementClass('menu-bottom')}
-            secondary
-            pointing>
+          <Menu className={this.getElementClass('menu-bottom')} secondary pointing>
             <Container>
-              <Menu.Item as={NavLink} to="/docs/getting-started">
+              <Menu.Item as={NavLink} to="/docs/guide">
                 <Icon name="terminal" /> API Docs
               </Menu.Item>
               <Menu.Item as={NavLink} to="/docs/ui">

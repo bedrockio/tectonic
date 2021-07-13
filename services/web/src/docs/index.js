@@ -1,3 +1,4 @@
+export { default as GUIDE } from './GUIDE.md';
 export { default as GETTING_STARTED } from './GETTING_STARTED.md';
 export { default as RESTFUL_JSON_API } from './RESTFUL_JSON_API.md';
 export { default as AUTHENTICATION } from './AUTHENTICATION.md';

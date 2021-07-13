@@ -44,7 +44,7 @@ export default class Header extends React.Component {
                   <Dropdown.Item as={Link} to="/settings">
                     Settings
                   </Dropdown.Item>
-                  <Dropdown.Item as={Link} to="/docs/getting-started">
+                  <Dropdown.Item as={Link} to="/docs/guide">
                     API Docs
                   </Dropdown.Item>
                   <Protected endpoint="events">

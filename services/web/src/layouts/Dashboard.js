@@ -56,7 +56,7 @@ export default class DashboardLayout extends React.Component {
                     Users
                   </Sidebar.Link>
                 </Protected>
-                <Sidebar.Link to="/docs/getting-started">
+                <Sidebar.Link to="/docs/guide">
                   <Icon name="terminal" />
                   Docs
                 </Sidebar.Link>
