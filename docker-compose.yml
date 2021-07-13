@@ -53,7 +53,7 @@ services:
       - PUBSUB_EMULATOR_HOST=pubsub:8200
       - ELASTICSEARCH_URI=http://elasticsearch:9200
       - GOOGLE_CLOUD_PROJECT=tectonic
-      - API_URL=api:3300
+      - API_URL=http://api:3300
     build:
       context: ./services/api
       dockerfile: Dockerfile.cli
