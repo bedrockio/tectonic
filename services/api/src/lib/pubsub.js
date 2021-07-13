@@ -49,18 +49,37 @@ async function createTopic(topicName) {
   return topic;
 }
 
+function topicExists(topicName, topics) {
+  return topics.filter((t) => t.name && t.name.split('/').slice(-1)[0] == topicName).length !== 0;
+}
+
+function subscriptionExists(subscriptionName, subscriptions) {
+  return subscriptions.filter((sub) => sub.name && sub.name.split('/').slice(-1)[0] == subscriptionName).length !== 0;
+}
+
 async function createSubscription(topicName, subscriptionName, ackDeadlineSeconds = 599) {
   const subscriptionOptions = {
     ackDeadlineSeconds,
     expirationPolicy: {},
   };
 
-  logger.info('PubSub getSubscriptions');
-  const [subscriptions] = await pubSubClient.getSubscriptions();
+  logger.info('PubSub Topics:');
+  const [topics] = await pubSubClient.getTopics();
+  topics.map((t) => logger.info(`- ${t.name}`));
+  logger.info('');
 
-  if (subscriptions.filter((sub) => sub.name && sub.name.split('/').slice(-1)[0] == subscriptionName).length == 0) {
-    logger.info(`Create subscription: ${subscriptionName}}`);
+  logger.info('PubSub Subscriptions:');
+  const [subscriptions] = await pubSubClient.getSubscriptions();
+  subscriptions.map((sub) => logger.info(`- ${sub.name}`));
+  logger.info('');
+
+  if (!topicExists(topicName, topics)) {
+    logger.info(`Create topic: ${topicName}`);
     await createTopic(topicName);
+  }
+
+  if (!subscriptionExists(subscriptionName, subscriptions)) {
+    logger.info(`Create subscription: ${subscriptionName}}`);
     await pubSubClient.topic(topicName).createSubscription(subscriptionName, subscriptionOptions);
     logger.info(`Subscription "${subscriptionName}" created for topic "${topicName}".`);
   }
