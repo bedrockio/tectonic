@@ -82,3 +82,33 @@ Access credentials are required to query analytics. See `Querying Analytics` dow
 
 
 ## Widgets
+
+- Aggregations
+- Components
+- Visualizations
+
+
+```html
+ <TectonicProvider
+   token=<ADMIN_TOKEN>
+   primaryColor="#247870"
+   collection="monitoring-events"
+   dateField="event.occurredAt"
+ >
+   <React.Fragment>
+     <TimeRangePicker
+       renderButton={(label, handleOnClick) => (
+         <Button icon="clock" content={label} onClick={handleOnClick} />
+       )}
+     />
+     <AggregateTimeSeries field={`event.venue.name`} interval="1m">
+       <SeriesChart
+         title="Venues"
+         chartType="area"
+         height={250}
+         valueField="value"
+       />
+     </AggregateTimeSeries>
+   </React.Fragment>
+ </TectonicProvider>
+```
