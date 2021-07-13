@@ -74,8 +74,12 @@ async function createSubscription(topicName, subscriptionName, ackDeadlineSecond
   logger.info('');
 
   if (!topicExists(topicName, topics)) {
-    logger.info(`Create topic: ${topicName}`);
-    await createTopic(topicName);
+    try {
+      logger.info(`Create topic: ${topicName}`);
+      await createTopic(topicName);
+    } catch (e) {
+      console.error(e.message);
+    }
   }
 
   if (!subscriptionExists(subscriptionName, subscriptions)) {
