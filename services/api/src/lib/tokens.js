@@ -4,8 +4,6 @@ const { secrets } = require('./secrets');
 const expiresIn = {
   temporary: '1d',
   regular: '30d',
-  access: '1w',
-  application: '1y',
 };
 
 function createUserToken(user) {
@@ -22,7 +20,7 @@ function createUserToken(user) {
 function createCredentialToken(credential) {
   const type = credential.accessPolicy ? 'access' : 'application';
   const { _id: credentialId } = credential;
-  return jwt.sign({ credentialId, type }, secrets[type], { expiresIn: expiresIn[type] });
+  return jwt.sign({ credentialId, type }, secrets[type], {});
 }
 
 module.exports = {
