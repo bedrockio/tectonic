@@ -1,7 +1,16 @@
 #!/bin/bash
 echo "" > /service/crontab.log
+
+echo "=> Waiting for mongo:27017"
+./scripts/wait-for-it.sh 'mongo:27017' -t 60
+echo "=> Waiting for elasticsearch:9200"
+./scripts/wait-for-it.sh 'elasticsearch:9200' -t 60
+
 ./scripts/fixtures/load
 ./scripts/initialize-pubsub
+
+node ./scripts/publish-fixture-events.js
+
 echo "" > /service/.motd
 echo "Welcome to the API CLI pod. All API code is available here." >> /service/.motd
 echo "" >> /service/.motd
