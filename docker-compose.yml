@@ -10,7 +10,7 @@ services:
         "elasticsearch:9200",
         "--",
         "./scripts/wait-for-it.sh",
-        "pubsub:9200",
+        "pubsub:8200",
         "--",
         "yarn",
         "start:production", # producion required to overwrite PUBSUB_EMULATOR_HOST
@@ -45,6 +45,39 @@ services:
       - elasticsearch
       - api-elasticsearch-worker
 
+  api-cli:
+    command: bash -c "./scripts/wait-for-it.sh mongo:27017 && ./scripts/wait-for-it.sh elasticsearch:9200 && ./scripts/wait-for-it.sh pubsub:8200 && sleep 20 && node ./scripts/publish-fixture-events.js"
+    environment:
+      - MOCK_EMAIL=true
+      - MONGO_URI=mongodb://mongo/tectonic_dev
+      - PUBSUB_EMULATOR_HOST=pubsub:8200
+      - ELASTICSEARCH_URI=http://elasticsearch:9200
+      - GOOGLE_CLOUD_PROJECT=tectonic
+      - API_URL=http://api:3300
+    build:
+      context: ./services/api
+      dockerfile: Dockerfile.cli
+      args:
+        ENV_NAME: development
+    volumes:
+      - ./services/api/src:/service/src
+      - ./services/api/fixtures:/service/fixtures
+      - ./services/api/scripts:/service/scripts
+      - ./services/api/.env:/service/.env
+      - ./services/api/openapi:/service/openapi
+    links:
+      - api
+      - mongo
+      - pubsub
+      - elasticsearch
+      - api-elasticsearch-worker
+    depends_on:
+      - api
+      - mongo
+      - pubsub
+      - elasticsearch
+      - api-elasticsearch-worker
+
   api-elasticsearch-worker:
     command: [
         "./scripts/wait-for-it.sh",
@@ -54,7 +87,7 @@ services:
         "elasticsearch:9200",
         "--",
         "./scripts/wait-for-it.sh",
-        "pubsub:9200",
+        "pubsub:8200",
         "--",
         "yarn",
         "elasticsearch-sink:start:production", # producion required to overwrite PUBSUB_EMULATOR_HOST
@@ -116,7 +149,6 @@ services:
 
   elasticsearch:
     image: elasticsearch:7.9.3
-    container_name: elasticsearch
     ports:
       - 9200
       - 9300

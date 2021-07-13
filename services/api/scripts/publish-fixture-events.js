@@ -3,7 +3,7 @@ const { logger } = require('@bedrockio/instrumentation');
 
 const { initialize } = require('../src/utils/database');
 const { createFixtures } = require('../src/fixtures');
-const { Collection, ApplicationCredential } = require('../src/models');
+const { Collection, ApplicationCredential, Batch } = require('../src/models');
 const { createCredentialToken } = require('../src/lib/tokens');
 const { loadJsonStreamFile } = require('../src/lib/analytics');
 const { publishEventsBatched } = require('../src/lib/events');
@@ -43,12 +43,23 @@ const { publishEventsBatched } = require('../src/lib/events');
 //   await publishEventsBatched(collectionId, events, token);
 // }
 
-async function publishBarPurchases(token) {
-  const jsonEvents = loadJsonStreamFile(__dirname + '/../src/lib/__tests__/fixtures/analytics/bar-purchases.ndjson');
-  logger.info(`Loaded ${jsonEvents.length} Bar Purchases`);
+async function publishBarPurchases(token, republish = false) {
   const collection = await Collection.findOne({ name: 'bar-purchases' });
   if (!collection) throw new Error('Could not find collection');
-  const collectionId = collection._id.toString();
+  const collectionId = collection.id;
+
+  if (!republish) {
+    const numBatches = await Batch.countDocuments({ collectionId });
+    if (numBatches > 0) {
+      logger.info('Not republishing Bar Purchases');
+      logger.info(`To republish run: 'node ./scripts/publish-fixture-events.js republish'`);
+      return;
+    }
+  }
+
+  const jsonEvents = loadJsonStreamFile(__dirname + '/../src/lib/__tests__/fixtures/analytics/bar-purchases.ndjson');
+  logger.info(`Loaded ${jsonEvents.length} Bar Purchases`);
+
   const events = jsonEvents.map((event) => {
     return {
       ...event,
@@ -59,7 +70,8 @@ async function publishBarPurchases(token) {
   await publishEventsBatched(collectionId, events, token);
 }
 
-async function run() {
+async function run(args) {
+  const republish = (args || []).includes('republish');
   await initialize();
   let applicationCredential = await ApplicationCredential.findOne();
   if (!applicationCredential) {
@@ -75,10 +87,10 @@ async function run() {
   const token = createCredentialToken(applicationCredential);
   // await publishEvseMeterValues();
   // await publishEvseControllers();
-  await publishBarPurchases(token);
+  await publishBarPurchases(token, republish);
 }
 
-run()
+run(process.argv.slice(2))
   .then(() => {
     process.exit(0);
   })
