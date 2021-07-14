@@ -33,12 +33,12 @@ describe('/1/access-credentials', () => {
       });
 
       const name = 'access-credential-test';
-      const scopeArgs = {};
+      const scopeValues = [];
       const headers = await getHeaders();
       const response = await request(
         'POST',
         '/1/access-credentials',
-        { name, accessPolicy: accessPolicy.id, scopeArgs },
+        { name, accessPolicy: accessPolicy.id, scopeValues },
         { headers }
       );
       const data = response.body.data;
@@ -56,20 +56,22 @@ describe('/1/access-credentials', () => {
       });
 
       const name = 'access-credential-test';
-      const scopeArgs = {};
+      const scopeValues = [];
       await AccessCredential.create({ name, accessPolicy });
 
       const headers = await getHeaders();
       const response = await request(
         'POST',
         '/1/access-credentials',
-        { name, accessPolicy: accessPolicy.id, scopeArgs },
+        { name, accessPolicy: accessPolicy.id, scopeValues },
         { headers }
       );
       // if (response.error) console.error(response.error);
       expect(response.status).toBe(401);
     });
+  });
 
+  describe('PUT /', () => {
     it('should be able to create access-credential with existing name on put', async () => {
       const collection = await Collection.create({ name: 'collection-test' });
       const accessPolicy = await AccessPolicy.create({
@@ -78,7 +80,7 @@ describe('/1/access-credentials', () => {
       });
 
       const name = 'access-credential-test';
-      const scopeArgs = {};
+      const scopeValues = [];
       await AccessCredential.create({ name, accessPolicy });
 
       const headers = await getHeaders();
@@ -86,7 +88,7 @@ describe('/1/access-credentials', () => {
       const response = await request(
         'PUT',
         '/1/access-credentials',
-        { name, accessPolicy: accessPolicy.id, scopeArgs },
+        { name, accessPolicy: accessPolicy.id, scopeValues },
         { headers }
       );
       if (response.error) console.error(response.error);
@@ -98,7 +100,7 @@ describe('/1/access-credentials', () => {
       const response2 = await request(
         'PUT',
         '/1/access-credentials',
-        { name: name2, accessPolicy: accessPolicy.id, scopeArgs },
+        { name: name2, accessPolicy: accessPolicy.id, scopeValues },
         { headers }
       );
       expect(response2.error).toBe(false);

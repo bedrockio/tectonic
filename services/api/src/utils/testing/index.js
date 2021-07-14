@@ -53,6 +53,10 @@ async function teardownDb() {
   await mongoose.disconnect();
 }
 
+function getParsedErrorMessage(response) {
+  return JSON.parse(response?.error?.text)?.error?.message;
+}
+
 module.exports = {
   context,
   request,
@@ -60,4 +64,5 @@ module.exports = {
   createUser,
   createUserWithRole,
   teardownDb,
+  getParsedErrorMessage,
 };

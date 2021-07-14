@@ -46,7 +46,7 @@ async function checkCollectionAccess(ctx, next) {
   }
 
   // Check Access credential
-  const { accessPolicy, scopeArgs } = ctx.state.authAccessCredential;
+  const { accessPolicy, scopeValues } = ctx.state.authAccessCredential;
   if (!accessPolicy || !accessPolicy.collections || !Array.isArray(accessPolicy.collections)) {
     ctx.throw(401, `AccessCredential is missing valid accessPolicy`);
   }
@@ -60,15 +60,20 @@ async function checkCollectionAccess(ctx, next) {
     accessPolicyCollection.scope = JSON.parse(accessPolicyCollection.scopeString);
   }
 
-  // check scopeParams
-  if (accessPolicyCollection.scopeParams && accessPolicyCollection.scopeParams.length != 0) {
-    for (const param of accessPolicyCollection.scopeParams) {
-      if (!Object.keys(scopeArgs).includes(param)) {
-        ctx.throw(401, `Missing scopeArgs for policy scopeParams`);
+  // check scopeFields
+  if (accessPolicyCollection.scopeFields && accessPolicyCollection.scopeFields.length != 0) {
+    if (!scopeValues || !scopeValues.length) {
+      ctx.throw(401, `Missing scopeValues on access credential`);
+    }
+    for (const scopeField of accessPolicyCollection.scopeFields) {
+      const scopeValue = scopeValues.find(({ field }) => scopeField == field);
+      if (!scopeValue || !scopeValue.value) {
+        ctx.throw(401, `Missing scopeValues for field '${scopeField}'`);
       }
+
       // Add to scope
       if (!accessPolicyCollection.scope) accessPolicyCollection.scope = {};
-      accessPolicyCollection.scope[param] = scopeArgs[param];
+      accessPolicyCollection.scope[scopeField] = scopeValue.value;
     }
   }
 

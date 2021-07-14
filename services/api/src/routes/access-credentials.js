@@ -9,6 +9,19 @@ const { createCredentialToken } = require('../lib/tokens');
 
 const router = new Router();
 
+const accessCredentialSchema = Joi.object({
+  name: Joi.string().required(),
+  accessPolicy: Joi.string().required(), // name or id
+  scopeValues: Joi.array()
+    .items(
+      Joi.object({
+        field: Joi.string().required(),
+        value: Joi.string().required(),
+      })
+    )
+    .optional(),
+});
+
 router
   .use(authenticate({ types: ['user', 'application'] }))
   .param('credential', async (idOrName, ctx, next) => {
@@ -22,11 +35,7 @@ router
   .post(
     '/',
     validate({
-      body: Joi.object({
-        name: Joi.string().required(),
-        accessPolicy: Joi.string().required(), // name or id
-        scopeArgs: Joi.object().optional(), // TODO: add validator for this field
-      }),
+      body: accessCredentialSchema,
     }),
     async (ctx) => {
       const { name } = ctx.request.body;
@@ -46,11 +55,7 @@ router
   .put(
     '/',
     validate({
-      body: Joi.object({
-        name: Joi.string().required(),
-        accessPolicy: Joi.string().required(), // name or id
-        scopeArgs: Joi.object().optional(), // TODO: add validator for this field
-      }),
+      body: accessCredentialSchema,
     }),
     async (ctx) => {
       // TODO add logic to check accessCredential validity
