@@ -1,8 +1,7 @@
 import React from 'react';
-import { Header, Table, Segment } from 'semantic';
+import { Header, Table } from 'semantic';
 import { screen } from 'helpers';
 import Menu from './Menu';
-import ReactJson from 'react-json-view';
 
 import CodeBlockJson from 'components/CodeBlockJson';
 import { formatDateTime } from 'utils/date';

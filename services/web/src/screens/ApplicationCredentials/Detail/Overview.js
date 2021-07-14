@@ -1,5 +1,5 @@
 import React from 'react';
-import { Header, Table, Segment } from 'semantic-ui-react';
+import { Header, Table } from 'semantic-ui-react';
 import { screen } from 'helpers';
 import Menu from './Menu';
 import CodeBlockJson from 'components/CodeBlockJson';

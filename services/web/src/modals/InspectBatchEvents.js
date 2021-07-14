@@ -1,5 +1,5 @@
 import React from 'react';
-import { Progress, Modal, Message, Button } from 'semantic';
+import { Progress, Modal, Message } from 'semantic';
 import { request } from 'utils/api';
 import { modal } from 'helpers';
 import CodeBlockJson from 'components/CodeBlockJson';

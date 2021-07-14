@@ -3,7 +3,7 @@ import { Table, Message, Loader, Button, Header } from 'semantic';
 import { formatDateTime } from 'utils/date';
 import { request } from 'utils/api';
 import { screen } from 'helpers';
-import { Layout, Confirm, HelpTip, SearchProvider } from 'components';
+import { Layout, HelpTip, SearchProvider } from 'components';
 
 import Filters from 'modals/Filters';
 import InspectObject from 'modals/InspectObject';
@@ -32,7 +32,7 @@ export default class CollectionBatches extends React.Component {
         <Menu {...this.props} />
         {collection ? (
           <SearchProvider sort={{ order: 'desc', field: 'ingestedAt' }} onDataNeeded={this.onDataNeeded}>
-            {({ items: batches, filters, setFilters, getSorted, setSort, reload }) => {
+            {({ items: batches, filters, setFilters, getSorted, setSort }) => {
               return (
                 <React.Fragment>
                   <Header as="h2">
