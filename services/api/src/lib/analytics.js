@@ -11,7 +11,7 @@ const elasticsearchClient = new elasticsearch.Client({
   log: 'error',
 });
 
-async function terms(index, aggField, options = undefined) {
+async function terms(index, aggField, options = undefined, returnSearchOptions = false) {
   const body = parseFilterOptions(options, true);
   if (!options) options = {};
   body.from = 0;
@@ -39,11 +39,9 @@ async function terms(index, aggField, options = undefined) {
       aggs: additionalAggs,
     },
   };
-  // console.log(JSON.stringify(body, null, 2));
-  const result = await elasticsearchClient.search({
-    index,
-    body,
-  });
+  const searchOptions = { index, body };
+  if (returnSearchOptions) return returnSearchOptions;
+  const result = await elasticsearchClient.search(searchOptions);
   const hits = result.body.aggregations.aggField.buckets.map((bucket) => {
     return {
       key: bucket.key,
@@ -68,7 +66,7 @@ async function terms(index, aggField, options = undefined) {
   return hits;
 }
 
-async function timeSeries(index, operation, field, options = undefined) {
+async function timeSeries(index, operation, field, options = undefined, returnSearchOptions = false) {
   const body = parseFilterOptions(options, true);
   body.from = 0;
   body.size = 0;
@@ -115,12 +113,10 @@ async function timeSeries(index, operation, field, options = undefined) {
       },
     },
   };
-  if (ENV_NAME != 'test') logger.info(JSON.stringify(body, null, 2));
-  const result = await elasticsearchClient.search({
-    index,
-    body,
-  });
-  // console.log(JSON.stringify(result, null, 2));
+  const searchOptions = { index, body };
+  if (returnSearchOptions) return returnSearchOptions;
+  const result = await elasticsearchClient.search(searchOptions);
+
   return result.body.aggregations.timeSeries.buckets.map(({ key_as_string, key, doc_count, fieldOperation }) => {
     return {
       dateStr: key_as_string,
@@ -131,7 +127,7 @@ async function timeSeries(index, operation, field, options = undefined) {
   });
 }
 
-async function stats(index, fields, options = undefined) {
+async function stats(index, fields, options = undefined, returnSearchOptions = false) {
   const body = parseFilterOptions(options, true);
   body.from = 0;
   body.size = 0;
@@ -143,10 +139,9 @@ async function stats(index, fields, options = undefined) {
       },
     };
   });
-  const result = await elasticsearchClient.search({
-    index,
-    body,
-  });
+  const searchOptions = { index, body };
+  if (returnSearchOptions) return returnSearchOptions;
+  const result = await elasticsearchClient.search(searchOptions);
   const stats = {};
   fields.forEach((field, i) => {
     stats[field] = result.body.aggregations[`${i}Stats`];
@@ -170,7 +165,7 @@ async function listIndices() {
     });
 }
 
-async function cardinality(index, fields, options = undefined) {
+async function cardinality(index, fields, options = undefined, returnSearchOptions = false) {
   const body = parseFilterOptions(options, true);
   body.from = 0;
   body.size = 0;
@@ -182,10 +177,9 @@ async function cardinality(index, fields, options = undefined) {
       },
     };
   });
-  const result = await elasticsearchClient.search({
-    index,
-    body,
-  });
+  const searchOptions = { index, body };
+  if (returnSearchOptions) return returnSearchOptions;
+  const result = await elasticsearchClient.search(searchOptions);
   const stats = {};
   fields.forEach((field, i) => {
     stats[field] = result.body.aggregations[`${i}Stats`].value;
@@ -193,7 +187,7 @@ async function cardinality(index, fields, options = undefined) {
   return stats;
 }
 
-async function search(index, options = undefined, includefields, excludeFields) {
+async function search(index, options = undefined, includefields, excludeFields, returnSearchOptions = false) {
   const body = parseFilterOptions(options);
   if ((includefields || excludeFields) && !body._source) {
     body._source = {};
@@ -204,11 +198,9 @@ async function search(index, options = undefined, includefields, excludeFields) 
   if (excludeFields) {
     body._source.excludes = excludeFields;
   }
-
-  const result = await elasticsearchClient.search({
-    index,
-    body,
-  });
+  const searchOptions = { index, body };
+  if (returnSearchOptions) return returnSearchOptions;
+  const result = await elasticsearchClient.search(searchOptions);
   return result.body;
 }
 
