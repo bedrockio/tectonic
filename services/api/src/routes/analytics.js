@@ -132,7 +132,8 @@ router
         termsSize,
       };
       try {
-        ctx.body = await terms(index, aggField, options);
+        const data = await terms(index, aggField, options);
+        ctx.body = { data };
       } catch (err) {
         const searchQuery = await terms(index, aggField, options, true);
         interpretError(ctx, err, searchQuery);
@@ -165,7 +166,8 @@ router
         ...filter,
       };
       try {
-        ctx.body = await timeSeries(index, operation, field, options);
+        const data = await timeSeries(index, operation, field, options);
+        ctx.body = { data };
       } catch (err) {
         const searchQuery = await timeSeries(index, operation, field, options, true);
         interpretError(ctx, err, searchQuery);
@@ -189,7 +191,8 @@ router
       filter.scope = scope; // Each scope key-value pair is added as ES bool.must.term
       try {
         // console.info(JSON.stringify(filter, null, 2));
-        ctx.body = await search(index, filter, includeFields, excludeFields);
+        const data = await search(index, filter, includeFields, excludeFields);
+        ctx.body = { data };
       } catch (err) {
         const searchQuery = await search(index, filter, includeFields, excludeFields, true);
         interpretError(ctx, err, searchQuery);
@@ -212,7 +215,8 @@ router
       const index = getCollectionIndex(collectionId);
       filter.scope = scope; // Each scope key-value pair is added as ES bool.must.term
       try {
-        ctx.body = await stats(index, fields, filter);
+        const data = await stats(index, fields, filter);
+        ctx.body = { data };
       } catch (err) {
         const searchQuery = await stats(index, fields, filter, true);
         interpretError(ctx, err, searchQuery);
@@ -235,7 +239,8 @@ router
       const index = getCollectionIndex(collectionId);
       filter.scope = scope; // Each scope key-value pair is added as ES bool.must.term
       try {
-        ctx.body = await cardinality(index, fields, filter);
+        const data = await cardinality(index, fields, filter);
+        ctx.body = { data };
       } catch (err) {
         const searchQuery = await cardinality(index, fields, filter, true);
         interpretError(ctx, err, searchQuery);
