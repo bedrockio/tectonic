@@ -20,18 +20,11 @@ const filterOptions = {
 
 function interpretError(ctx, error, searchQuery) {
   const { meta } = error;
+  const indexNotFound = error.message.match(/index_not_found_exception/i);
 
   if (meta && meta.body && meta.body.error.reason) {
-    const message = `Elasticsearch error: ${meta.body.error.reason}`;
-    const status = 400;
-    ctx.type = 'json';
-    ctx.status = status;
-    ctx.body = {
-      error: { message, status, searchQuery },
-    };
-  } else if (error.message.match(/index_not_found_exception/i)) {
-    const message = `Elasticsearch index not found`;
-    const status = 404;
+    const message = indexNotFound ? `Elasticsearch index not found` : `Elasticsearch error: ${meta.body.error.reason}`;
+    const status = indexNotFound ? 404 : 400;
     ctx.type = 'json';
     ctx.status = status;
     ctx.body = {
@@ -105,6 +98,7 @@ router
         includeTopHit: Joi.boolean().default(false).optional(),
         referenceFetch: Joi.object().optional(),
         termsSize: Joi.number().optional(),
+        debug: Joi.boolean().default(false).optional(),
       }),
     }),
     checkCollectionAccess,
@@ -118,6 +112,7 @@ router
         includeTopHit,
         referenceFetch,
         termsSize,
+        debug,
       } = ctx.request.body;
       const { collectionId, scope } = ctx.state.accessPolicyCollection;
       const index = getCollectionIndex(collectionId);
@@ -132,7 +127,7 @@ router
         termsSize,
       };
       try {
-        const data = await terms(index, aggField, options);
+        const data = await terms(index, aggField, options, debug);
         ctx.body = { data };
       } catch (err) {
         const searchQuery = await terms(index, aggField, options, true);
@@ -151,11 +146,12 @@ router
         interval: Joi.string().optional(),
         dateField: Joi.string().optional(),
         timeZone: Joi.string().optional(),
+        debug: Joi.boolean().default(false).optional(),
       }),
     }),
     checkCollectionAccess,
     async (ctx) => {
-      const { filter = {}, operation, field, interval, dateField, timeZone } = ctx.request.body;
+      const { filter = {}, operation, field, interval, dateField, timeZone, debug } = ctx.request.body;
       const { collectionId, scope } = ctx.state.accessPolicyCollection;
       const index = getCollectionIndex(collectionId);
       filter.scope = scope; // Each scope key-value pair is added as ES bool.must.term
@@ -166,7 +162,7 @@ router
         ...filter,
       };
       try {
-        const data = await timeSeries(index, operation, field, options);
+        const data = await timeSeries(index, operation, field, options, debug);
         ctx.body = { data };
       } catch (err) {
         const searchQuery = await timeSeries(index, operation, field, options, true);
@@ -180,18 +176,19 @@ router
       body: Joi.object({
         collection: Joi.string().required(),
         filter: Joi.object(filterOptions),
+        debug: Joi.boolean().default(false).optional(),
       }),
     }),
     checkCollectionAccess,
     async (ctx) => {
-      const { filter = {} } = ctx.request.body;
+      const { filter = {}, debug } = ctx.request.body;
       // console.info('filter', filter);
       const { collectionId, scope, includeFields, excludeFields } = ctx.state.accessPolicyCollection;
       const index = getCollectionIndex(collectionId);
       filter.scope = scope; // Each scope key-value pair is added as ES bool.must.term
       try {
         // console.info(JSON.stringify(filter, null, 2));
-        const data = await search(index, filter, includeFields, excludeFields);
+        const data = await search(index, filter, includeFields, excludeFields, debug);
         ctx.body = { data };
       } catch (err) {
         const searchQuery = await search(index, filter, includeFields, excludeFields, true);
@@ -206,16 +203,17 @@ router
         collection: Joi.string().required(),
         filter: Joi.object(filterOptions),
         fields: Joi.array().items(Joi.string()),
+        debug: Joi.boolean().default(false).optional(),
       }),
     }),
     checkCollectionAccess,
     async (ctx) => {
-      const { filter = {}, fields = [] } = ctx.request.body;
+      const { filter = {}, fields = [], debug } = ctx.request.body;
       const { collectionId, scope } = ctx.state.accessPolicyCollection;
       const index = getCollectionIndex(collectionId);
       filter.scope = scope; // Each scope key-value pair is added as ES bool.must.term
       try {
-        const data = await stats(index, fields, filter);
+        const data = await stats(index, fields, filter, debug);
         ctx.body = { data };
       } catch (err) {
         const searchQuery = await stats(index, fields, filter, true);
@@ -230,16 +228,17 @@ router
         collection: Joi.string().required(),
         filter: Joi.object(filterOptions),
         fields: Joi.array().items(Joi.string()),
+        debug: Joi.boolean().default(false).optional(),
       }),
     }),
     checkCollectionAccess,
     async (ctx) => {
-      const { filter = {}, fields } = ctx.request.body;
+      const { filter = {}, fields, debug } = ctx.request.body;
       const { collectionId, scope } = ctx.state.accessPolicyCollection;
       const index = getCollectionIndex(collectionId);
       filter.scope = scope; // Each scope key-value pair is added as ES bool.must.term
       try {
-        const data = await cardinality(index, fields, filter);
+        const data = await cardinality(index, fields, filter, debug);
         ctx.body = { data };
       } catch (err) {
         const searchQuery = await cardinality(index, fields, filter, true);

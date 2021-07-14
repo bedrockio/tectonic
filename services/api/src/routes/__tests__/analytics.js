@@ -13,10 +13,11 @@ const { createCredentialToken } = require('../../lib/tokens');
 const mongoose = require('mongoose');
 
 jest.setTimeout(40 * 1000);
+let index;
 
 const indexEvents = async (collectionId) => {
   const events = loadJsonStreamFile(__dirname + '/fixtures/evse-metervalues-10.ndjson');
-  const index = getCollectionIndex(collectionId);
+  index = getCollectionIndex(collectionId);
   // console.info(collectionId, index);
   await deleteIndex(index);
   await ensureCollectionIndex(collectionId);
@@ -262,6 +263,74 @@ describe('/1/analytics', () => {
       expect(hit.batchId).toBeDefined();
       expect(hit.event.messageId).toBeDefined();
       expect(hit.event.params).toBeDefined();
+
+      const responseDebug = await request(
+        'POST',
+        '/1/analytics/search',
+        { collection: collectionId, filter: { size: 1 }, debug: true },
+        { headers }
+      );
+      expect(responseDebug.body.data.body).toStrictEqual({
+        sort: [{ ingestedAt: { order: 'desc' } }],
+        from: 0,
+        size: 1,
+        _source: {
+          includes: ['event.messageId', 'event.params', 'batchId', 'doesNotExist', 'event.doesNotExist'],
+        },
+      });
+    });
+
+    it('should allow analytics search in debug mode', async () => {
+      const collectionId = testCollection.id;
+      const accessPolicy = await AccessPolicy.create({
+        name: 'access-test-policy',
+        collections: [{ collectionId }],
+      });
+      const accessCredential = await AccessCredential.create({
+        name: 'access-cred',
+        accessPolicy,
+      });
+      const headers = { Authorization: `Bearer ${createCredentialToken(accessCredential)}` };
+
+      const response = await request(
+        'POST',
+        '/1/analytics/search',
+        { collection: collectionId, debug: true },
+        { headers }
+      );
+      expect(response.status).toBe(200);
+      const data = response.body.data;
+      expect(data.index).toBe(index);
+      expect(data.body).toStrictEqual({
+        sort: [{ ingestedAt: { order: 'desc' } }],
+        from: 0,
+        size: 100,
+      });
+      //console.info(JSON.stringify(data, null, 2));
+    });
+
+    it('should fail analytics search with missing index', async () => {
+      const collection = await Collection.create({
+        name: 'test-collection-2',
+        description: 'none',
+      });
+      const collectionId = collection.id;
+      // Has no ES index
+      await AccessPolicy.create({
+        name: 'access-test-policy',
+        collections: [{ collectionId }],
+      });
+      const user = await createUser();
+
+      const response = await request('POST', '/1/analytics/search', { collection: collectionId }, { user });
+      const error = response.body.error;
+      expect(response.status).toBe(404);
+      expect(error.searchQuery.index).not.toBe(index);
+      expect(error.searchQuery.body).toStrictEqual({
+        sort: [{ ingestedAt: { order: 'desc' } }],
+        from: 0,
+        size: 100,
+      });
     });
   });
 });

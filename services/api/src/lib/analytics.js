@@ -40,7 +40,7 @@ async function terms(index, aggField, options = undefined, returnSearchOptions =
     },
   };
   const searchOptions = { index, body };
-  if (returnSearchOptions) return returnSearchOptions;
+  if (returnSearchOptions) return searchOptions;
   const result = await elasticsearchClient.search(searchOptions);
   const hits = result.body.aggregations.aggField.buckets.map((bucket) => {
     return {
@@ -114,7 +114,7 @@ async function timeSeries(index, operation, field, options = undefined, returnSe
     },
   };
   const searchOptions = { index, body };
-  if (returnSearchOptions) return returnSearchOptions;
+  if (returnSearchOptions) return searchOptions;
   const result = await elasticsearchClient.search(searchOptions);
 
   return result.body.aggregations.timeSeries.buckets.map(({ key_as_string, key, doc_count, fieldOperation }) => {
@@ -140,7 +140,7 @@ async function stats(index, fields, options = undefined, returnSearchOptions = f
     };
   });
   const searchOptions = { index, body };
-  if (returnSearchOptions) return returnSearchOptions;
+  if (returnSearchOptions) return searchOptions;
   const result = await elasticsearchClient.search(searchOptions);
   const stats = {};
   fields.forEach((field, i) => {
@@ -178,7 +178,7 @@ async function cardinality(index, fields, options = undefined, returnSearchOptio
     };
   });
   const searchOptions = { index, body };
-  if (returnSearchOptions) return returnSearchOptions;
+  if (returnSearchOptions) return searchOptions;
   const result = await elasticsearchClient.search(searchOptions);
   const stats = {};
   fields.forEach((field, i) => {
@@ -187,19 +187,19 @@ async function cardinality(index, fields, options = undefined, returnSearchOptio
   return stats;
 }
 
-async function search(index, options = undefined, includefields, excludeFields, returnSearchOptions = false) {
+async function search(index, options = undefined, includeFields, excludeFields, returnSearchOptions = false) {
   const body = parseFilterOptions(options);
-  if ((includefields || excludeFields) && !body._source) {
+  if (((includeFields && includeFields.length) || (excludeFields && excludeFields.length)) && !body._source) {
     body._source = {};
   }
-  if (includefields) {
-    body._source.includes = includefields;
+  if (includeFields && includeFields.length) {
+    body._source.includes = includeFields;
   }
-  if (excludeFields) {
+  if (excludeFields && excludeFields.length) {
     body._source.excludes = excludeFields;
   }
   const searchOptions = { index, body };
-  if (returnSearchOptions) return returnSearchOptions;
+  if (returnSearchOptions) return searchOptions;
   const result = await elasticsearchClient.search(searchOptions);
   return result.body;
 }
