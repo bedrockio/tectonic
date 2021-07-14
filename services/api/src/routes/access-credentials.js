@@ -4,7 +4,7 @@ const validate = require('../utils/middleware/validate');
 const mongoose = require('mongoose');
 const { authenticate } = require('../lib/middleware/authenticate');
 const { NotFoundError } = require('../utils/errors');
-const { AccessCredential } = require('../models');
+const { AccessCredential, AccessPolicy } = require('../models');
 const { createCredentialToken } = require('../lib/tokens');
 
 const router = new Router();
@@ -22,6 +22,33 @@ const accessCredentialSchema = Joi.object({
     .optional(),
 });
 
+function checkScopeValues(ctx, accessPolicy, scopeValues) {
+  const missingFields = getMissingFields(accessPolicy, scopeValues);
+  if (missingFields && missingFields.length) {
+    ctx.throw(401, `scopeValues missing fields: '${missingFields.join(', ')}'`);
+  }
+}
+
+function getMissingFields(accessPolicy, scopeValues) {
+  const scopeFields = new Set();
+  for (let collection of accessPolicy.collections) {
+    for (let field of collection.scopeFields) {
+      scopeFields.add(field);
+    }
+  }
+
+  if (scopeFields.size == 0) return false;
+  if (!scopeValues || scopeValues.length == 0) return Array.from(scopeFields);
+
+  const scopeValuesFields = scopeValues.map(({ field }) => field);
+  const missingFields = [];
+  for (let field of scopeFields) {
+    if (!scopeValuesFields.includes(field)) missingFields.push(field);
+  }
+  if (missingFields.length) return missingFields;
+  return false;
+}
+
 router
   .use(authenticate({ types: ['user', 'application'] }))
   .param('credential', async (idOrName, ctx, next) => {
@@ -38,13 +65,16 @@ router
       body: accessCredentialSchema,
     }),
     async (ctx) => {
-      const { name } = ctx.request.body;
+      const { name, accessPolicy, scopeValues } = ctx.request.body;
       const existingAccessCredential = await AccessCredential.findOne({ name });
       if (existingAccessCredential) {
         ctx.throw(401, `Access Credential with name '${name}' already exists. You could use PUT endpoint instead.`);
       }
-      // TODO add logic to check accessCredential validity
-      // Check if accessPolicy is a name or id
+      const dbAccessPolicy = await AccessPolicy.findByIdOrName(accessPolicy);
+      if (!dbAccessPolicy) {
+        ctx.throw(401, `AccessPolicy '${accessPolicy}' could not be found`);
+      }
+      checkScopeValues(ctx, dbAccessPolicy, scopeValues);
       const accessCredential = await AccessCredential.create(ctx.request.body);
       const token = createCredentialToken(accessCredential);
       ctx.body = {
@@ -58,14 +88,17 @@ router
       body: accessCredentialSchema,
     }),
     async (ctx) => {
-      // TODO add logic to check accessCredential validity
-      // Check if accessPolicy is a name or id
-      const { name, accessPolicy, scopeArgs = {} } = ctx.request.body;
+      const { name, accessPolicy, scopeValues } = ctx.request.body;
+      const dbAccessPolicy = await AccessPolicy.findByIdOrName(accessPolicy);
+      if (!dbAccessPolicy) {
+        ctx.throw(401, `AccessPolicy '${accessPolicy}' could not be found`);
+      }
+      checkScopeValues(ctx, dbAccessPolicy, scopeValues);
       const existingAccessCredential = await AccessCredential.findOne({ name });
       let accessCredential;
       if (existingAccessCredential) {
         existingAccessCredential.accessPolicy = accessPolicy;
-        existingAccessCredential.scopeArgs = scopeArgs;
+        existingAccessCredential.scopeValues = scopeValues;
         await existingAccessCredential.save();
         accessCredential = existingAccessCredential;
       } else {
@@ -168,7 +201,12 @@ router
       body: AccessCredential.getPatchValidator(),
     }),
     async (ctx) => {
-      const { name } = ctx.request.body;
+      const { name, accessPolicy, scopeValues } = ctx.request.body;
+      const dbAccessPolicy = await AccessPolicy.findByIdOrName(accessPolicy);
+      if (!dbAccessPolicy) {
+        ctx.throw(401, `AccessPolicy '${accessPolicy}' could not be found`);
+      }
+      checkScopeValues(ctx, dbAccessPolicy, scopeValues);
       const existingAccessCredential = await AccessCredential.findOne({ name });
       if (existingAccessCredential) {
         ctx.throw(401, `Access Credential with name '${name}' already exists.`);
