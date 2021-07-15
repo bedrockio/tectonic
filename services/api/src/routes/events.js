@@ -93,17 +93,10 @@ router
         collectionId,
         ingestedAt,
         numEvents: events.length,
-        minOccurredAt: events[0].occurredAt,
-        maxOccurredAt: events[0].occurredAt,
         memorySize: memorySizeOf(events),
         hash,
         author,
       };
-
-      for (const { occurredAt } of events.slice(1)) {
-        if (occurredAt < batch.minOccurredAt) batch.minOccurredAt = occurredAt;
-        if (occurredAt > batch.maxOccurredAt) batch.maxOccurredAt = occurredAt;
-      }
 
       const dbBatch = await Batch.create(batch);
 
@@ -122,7 +115,7 @@ router
       await chunkedAsyncMap(events, publish, EVENTS_CHUNK_SIZE);
 
       ctx.body = {
-        batch: dbBatch,
+        data: dbBatch,
       };
     }
   );
