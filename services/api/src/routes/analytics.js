@@ -209,8 +209,7 @@ router
         }
         const data = await search(index, filter, includeFields, excludeFields, false);
         const hits = data?.hits?.hits.map(({ _id, _source }) => {
-          _source._id = _id;
-          return _source;
+          return { _id, _source };
         });
         body.data = hits || [];
         if (data?.hits?.total?.value) body.meta.total = data.hits.total.value;

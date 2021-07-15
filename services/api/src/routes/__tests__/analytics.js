@@ -147,9 +147,9 @@ describe('/1/analytics', () => {
       );
       expect(response.status).toBe(200);
       expect(response.body.data.length).toBe(1);
-      const hit = response.body.data[0];
+      const hit = response.body.data[0]._source;
       // defined
-      expect(hit._id).toBeDefined();
+      expect(response.body.data[0]._id).toBeDefined();
       expect(hit.event).toBeDefined();
       expect(hit.event.destination).toBeDefined();
       // undefined
@@ -185,13 +185,13 @@ describe('/1/analytics', () => {
       );
       expect(response.status).toBe(200);
       expect(response.body.data.length).toBe(1);
-      const hit = response.body.data[0];
+      const hit = response.body.data[0]._source;
       // undefined
       expect(hit.event.destination).toBeUndefined();
       expect(hit.doesNotExist).toBeUndefined();
       expect(hit.event.doesNotExist).toBeUndefined();
       // defined
-      expect(hit._id).toBeDefined();
+      expect(response.body.data[0]._id).toBeDefined();
       expect(hit.event).toBeDefined();
       expect(hit.batchId).toBeDefined();
       expect(hit.event.messageId).toBeDefined();
