@@ -7,7 +7,7 @@ const {
   bulkErrorLog,
   getCollectionIndex,
 } = require('../../lib/analytics');
-const { setupDb, teardownDb, request, createUser } = require('../../utils/testing');
+const { setupDb, teardownDb, request, createUser, getParsedErrorMessage } = require('../../utils/testing');
 const { AccessPolicy, AccessCredential, Collection } = require('../../models');
 const { createCredentialToken } = require('../../lib/tokens');
 const mongoose = require('mongoose');
@@ -77,6 +77,7 @@ describe('/1/analytics', () => {
       expect(response.status).toBe(200);
       expect(response.body.data.hits.hits.length).toBe(10);
     });
+
     it('should allow analytics search for correct policy with collection name', async () => {
       await AccessPolicy.deleteMany({});
       await AccessCredential.deleteMany({});
@@ -95,6 +96,7 @@ describe('/1/analytics', () => {
       expect(response.status).toBe(200);
       expect(response.body.data.hits.hits.length).toBe(10);
     });
+
     it('should allow analytics search for admin user', async () => {
       const user = await createUser();
       const collectionId = testCollection.id;
@@ -102,6 +104,7 @@ describe('/1/analytics', () => {
       expect(response.status).toBe(200);
       expect(response.body.data.hits.hits.length).toBe(10);
     });
+
     it('should deny analytics for incorrect policy', async () => {
       const accessPolicy = await AccessPolicy.create({
         name: 'access-test-policy1',
@@ -117,81 +120,7 @@ describe('/1/analytics', () => {
       const response = await request('POST', '/1/analytics/search', { collection: collectionId }, { headers });
       expect(response.status).toBe(401);
     });
-    it('should allow scoped analytics search', async () => {
-      const collectionId = testCollection.id;
-      const accessPolicy = await AccessPolicy.create({
-        name: 'access-test-policy2',
-        collections: [
-          {
-            collectionId,
-            scopeString: JSON.stringify({
-              evseControllerId: '5fd6036fccd06f4d6b1d8bd2',
-            }),
-          },
-        ],
-      });
-      const accessCredential = await AccessCredential.create({
-        name: 'access-cred3',
-        accessPolicy,
-      });
-      const headers = { Authorization: `Bearer ${createCredentialToken(accessCredential)}` };
 
-      const response = await request('POST', '/1/analytics/search', { collection: collectionId }, { headers });
-      expect(response.status).toBe(200);
-      expect(response.body.data.hits.hits.length).toBe(6); // ignores 4 out of 10
-    });
-    it('should allow multiple scoped fields analytics search', async () => {
-      const collectionId = testCollection.id;
-      const accessPolicy = await AccessPolicy.create({
-        name: 'access-test-policy3',
-        collections: [
-          {
-            collectionId,
-            scopeString: JSON.stringify({
-              evseControllerId: '5fd6036fccd06f4d6b1d8bd2',
-              method: 'MeterValues',
-            }),
-          },
-        ],
-      });
-      const accessCredential = await AccessCredential.create({
-        name: 'access-cred4',
-        accessPolicy,
-      });
-      const headers = { Authorization: `Bearer ${createCredentialToken(accessCredential)}` };
-
-      const response = await request('POST', '/1/analytics/search', { collection: collectionId }, { headers });
-      expect(response.status).toBe(200);
-      expect(response.body.data.hits.hits.length).toBe(5); // ignores 'method': 'BogusValues'
-    });
-    it('should allow analytics search with multiple collections policy', async () => {
-      await AccessCredential.deleteMany({});
-      const collectionId = testCollection.id;
-      const accessPolicy = await AccessPolicy.create({
-        name: 'access-test-policy4',
-        collections: [
-          {
-            collectionId: new mongoose.Types.ObjectId(),
-          },
-          {
-            collectionId,
-            scopeString: JSON.stringify({
-              evseControllerId: '5fd6036fccd06f4d6b1d8bd2',
-              method: 'MeterValues',
-            }),
-          },
-        ],
-      });
-      const accessCredential = await AccessCredential.create({
-        name: 'access-cred',
-        accessPolicy,
-      });
-      const headers = { Authorization: `Bearer ${createCredentialToken(accessCredential)}` };
-
-      const response = await request('POST', '/1/analytics/search', { collection: collectionId }, { headers });
-      expect(response.status).toBe(200);
-      expect(response.body.data.hits.hits.length).toBe(5); // ignores 'method': 'BogusValues'
-    });
     it('should work with fields.excludes', async () => {
       const collectionId = testCollection.id;
       const accessPolicy = await AccessPolicy.create({
@@ -228,6 +157,7 @@ describe('/1/analytics', () => {
       expect(hit.doesNotExist).toBeUndefined();
       expect(hit.event.doesNotExist).toBeUndefined();
     });
+
     it('should work with fields.includes', async () => {
       const collectionId = testCollection.id;
       const accessPolicy = await AccessPolicy.create({
@@ -331,6 +261,154 @@ describe('/1/analytics', () => {
         from: 0,
         size: 100,
       });
+    });
+  });
+
+  describe('POST /search with scopes', () => {
+    it('should allow scoped analytics search', async () => {
+      const collectionId = testCollection.id;
+      const accessPolicy = await AccessPolicy.create({
+        name: 'access-test-policy2',
+        collections: [
+          {
+            collectionId,
+            scopeString: JSON.stringify({
+              evseControllerId: '5fd6036fccd06f4d6b1d8bd2',
+            }),
+          },
+        ],
+      });
+      const accessCredential = await AccessCredential.create({
+        name: 'access-cred3',
+        accessPolicy,
+      });
+      const headers = { Authorization: `Bearer ${createCredentialToken(accessCredential)}` };
+
+      const response = await request('POST', '/1/analytics/search', { collection: collectionId }, { headers });
+      expect(response.status).toBe(200);
+      expect(response.body.data.hits.hits.length).toBe(6); // ignores 4 out of 10
+    });
+
+    it('should allow multiple scoped fields analytics search', async () => {
+      const collectionId = testCollection.id;
+      const accessPolicy = await AccessPolicy.create({
+        name: 'access-test-policy3',
+        collections: [
+          {
+            collectionId,
+            scopeString: JSON.stringify({
+              evseControllerId: '5fd6036fccd06f4d6b1d8bd2',
+              method: 'MeterValues',
+            }),
+          },
+        ],
+      });
+      const accessCredential = await AccessCredential.create({
+        name: 'access-cred4',
+        accessPolicy,
+      });
+      const headers = { Authorization: `Bearer ${createCredentialToken(accessCredential)}` };
+
+      const response = await request('POST', '/1/analytics/search', { collection: collectionId }, { headers });
+      expect(response.status).toBe(200);
+      expect(response.body.data.hits.hits.length).toBe(5); // ignores 'method': 'BogusValues'
+    });
+
+    it('should allow analytics search with multiple collections policy', async () => {
+      await AccessCredential.deleteMany({});
+      const collectionId = testCollection.id;
+      const accessPolicy = await AccessPolicy.create({
+        name: 'access-test-policy4',
+        collections: [
+          {
+            collectionId: new mongoose.Types.ObjectId(),
+          },
+          {
+            collectionId,
+            scopeString: JSON.stringify({
+              evseControllerId: '5fd6036fccd06f4d6b1d8bd2',
+              method: 'MeterValues',
+            }),
+          },
+        ],
+      });
+      const accessCredential = await AccessCredential.create({
+        name: 'access-cred',
+        accessPolicy,
+      });
+      const headers = { Authorization: `Bearer ${createCredentialToken(accessCredential)}` };
+
+      const response = await request('POST', '/1/analytics/search', { collection: collectionId }, { headers });
+      expect(response.status).toBe(200);
+      expect(response.body.data.hits.hits.length).toBe(5); // ignores 'method': 'BogusValues'
+    });
+
+    it('should allow scopeFields analytics search', async () => {
+      const collectionId = testCollection.id;
+      const accessPolicy = await AccessPolicy.create({
+        name: 'access-test-policy',
+        collections: [
+          {
+            collectionId,
+            scopeFields: ['evseControllerId'],
+          },
+        ],
+      });
+      const accessCredential = await AccessCredential.create({
+        name: 'access-cred',
+        accessPolicy,
+        scopeValues: [{ field: 'evseControllerId', value: '5fd6036fccd06f4d6b1d8bd2' }],
+      });
+      const headers = { Authorization: `Bearer ${createCredentialToken(accessCredential)}` };
+
+      const response = await request('POST', '/1/analytics/search', { collection: collectionId }, { headers });
+      expect(response.status).toBe(200);
+      expect(response.body.data.hits.hits.length).toBe(6); // ignores 4 out of 10
+    });
+
+    it('should not allow missing scopeFields', async () => {
+      const collectionId = testCollection.id;
+      const accessPolicy = await AccessPolicy.create({
+        name: 'access-test-policy',
+        collections: [
+          {
+            collectionId,
+            scopeFields: ['evseControllerId'],
+          },
+        ],
+      });
+      const accessCredential = await AccessCredential.create({
+        name: 'access-cred',
+        accessPolicy,
+      });
+      const headers = { Authorization: `Bearer ${createCredentialToken(accessCredential)}` };
+
+      const response = await request('POST', '/1/analytics/search', { collection: collectionId }, { headers });
+      expect(response.status).toBe(401);
+      expect(getParsedErrorMessage(response)).toBe('Missing scopeValues on access credential');
+    });
+
+    it('should not allow missing scopeFields field', async () => {
+      const collectionId = testCollection.id;
+      const accessPolicy = await AccessPolicy.create({
+        name: 'access-test-policy',
+        collections: [
+          {
+            collectionId,
+            scopeFields: ['evseControllerId'],
+          },
+        ],
+      });
+      const accessCredential = await AccessCredential.create({
+        name: 'access-cred',
+        accessPolicy,
+        scopeValues: [{ field: 'wrongOne', value: '5fd6036fccd06f4d6b1d8bd2' }],
+      });
+      const headers = { Authorization: `Bearer ${createCredentialToken(accessCredential)}` };
+
+      const response = await request('POST', '/1/analytics/search', { collection: collectionId }, { headers });
+      expect(response.status).toBe(401);
+      expect(getParsedErrorMessage(response)).toBe("Missing scopeValues for field 'evseControllerId'");
     });
   });
 });

@@ -1,7 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Menu, Divider, Button } from 'semantic-ui-react';
-import { NavLink } from 'react-router-dom';
+import { Divider, Button } from 'semantic-ui-react';
 import { Breadcrumbs, Layout } from 'components';
 
 import EditAccessCredential from 'modals/EditAccessCredential';

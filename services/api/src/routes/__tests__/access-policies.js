@@ -1,4 +1,4 @@
-const { setupDb, teardownDb, request } = require('../../utils/testing');
+const { setupDb, teardownDb, request, getParsedErrorMessage } = require('../../utils/testing');
 const { ApplicationCredential, AccessCredential, Collection, AccessPolicy } = require('../../models');
 const { createCredentialToken } = require('../../lib/tokens');
 const { uniqueId } = require('lodash');
@@ -153,9 +153,7 @@ describe('/1/access-policies', () => {
       );
       // if (response.error) console.error(response.error);
       expect(response.status).toBe(401);
-      expect(JSON.parse(response?.error?.text)?.error?.message).toBe(
-        'scope should be an object max 1 level deep and with string keys'
-      );
+      expect(getParsedErrorMessage(response)).toBe('scope should be an object max 1 level deep and with string keys');
     });
 
     it('should be able to create access-policy with dot in scope field name', async () => {
@@ -220,7 +218,7 @@ describe('/1/access-policies', () => {
       const headers = { Authorization: `Bearer ${createCredentialToken(accessCredential)}` };
 
       const response = await request('GET', `/1/access-policies/${accessPolicy.id}`, {}, { headers });
-      expect(JSON.parse(response?.error?.text)?.error?.message).toBe("jwt token type 'access' is not allowed");
+      expect(getParsedErrorMessage(response)).toBe("jwt token type 'access' is not allowed");
       expect(response.status).toBe(401);
     });
   });

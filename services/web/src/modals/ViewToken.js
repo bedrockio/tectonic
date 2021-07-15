@@ -1,5 +1,5 @@
 import React from 'react';
-import { Loader, Modal, Message, Button } from 'semantic';
+import { Loader, Modal, Message } from 'semantic';
 import { request } from 'utils/api';
 import { modal } from 'helpers';
 import CodeBlockText from 'components/CodeBlockText';

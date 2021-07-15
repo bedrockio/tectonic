@@ -19,7 +19,7 @@ describe('Access', () => {
         collections: {
           type: 'read',
           scopeString: JSON.stringify(defaultQuery),
-          scopeParams: ['organizationId'],
+          scopeFields: ['organizationId'],
           collectionId: collection.id,
           excludeFields: ['secret'],
         },
@@ -27,6 +27,7 @@ describe('Access', () => {
       // console.info(policy);
       expect(policy.collections[0].collectionId.toString()).toBe(collection.id);
       expect(policy.collections[0].scopeString).toBe('{"userId":"id42"}');
+      expect(policy.collections[0].scopeFields[0]).toBe('organizationId');
     });
 
     it('should rename collectionId', () => {
@@ -40,7 +41,7 @@ describe('Access', () => {
         collections: {
           type: 'read',
           scopeString: JSON.stringify(defaultQuery),
-          scopeParams: ['organizationId'],
+          scopeFields: ['organizationId'],
           collectionId: collection.id,
           excludeFields: ['secret'],
         },
@@ -50,6 +51,7 @@ describe('Access', () => {
 
       expect(policyJSON.collections[0].collection.toString()).toStrictEqual(collection.id);
       expect(policy.collections[0].scopeString).toBe('{"userId":"id42"}');
+      expect(policy.collections[0].scopeFields[0]).toBe('organizationId');
     });
   });
 });

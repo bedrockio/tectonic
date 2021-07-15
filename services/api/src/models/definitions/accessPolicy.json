@@ -6,7 +6,7 @@
         "collectionId": { "type": "ObjectId", "required": true, "autopopulate": false },
         "permission": { "type": "String", "enum": ["read", "read-write"], "default": "read" },
         "scopeString": { "type": "String" },
-        "scopeParams": ["String"],
+        "scopeFields": ["String"],
         "includeFields": [{ "type": "String" }],
         "excludeFields": [{ "type": "String" }]
       }

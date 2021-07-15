@@ -10,7 +10,7 @@ const router = new Router();
 const collectionSchema = Joi.object({
   collection: Joi.string().required(),
   scope: Joi.object().optional(),
-  scopeParams: Joi.array().items(Joi.string()).optional(),
+  scopeFields: Joi.array().items(Joi.string()).optional(),
   includeFields: Joi.array().items(Joi.string()).optional(),
   excludeFields: Joi.array().items(Joi.string()).optional(),
 });
