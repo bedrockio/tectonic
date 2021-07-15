@@ -95,6 +95,7 @@ describe('/1/analytics', () => {
       const response = await request('POST', '/1/analytics/search', { collection: testCollection.name }, { headers });
       expect(response.status).toBe(200);
       expect(response.body.data.length).toBe(10);
+      // console.info(JSON.stringify(response.body.data[0], null, 2));
     });
 
     it('should allow analytics search for admin user', async () => {
@@ -146,8 +147,9 @@ describe('/1/analytics', () => {
       );
       expect(response.status).toBe(200);
       expect(response.body.data.length).toBe(1);
-      const hit = response.body.data[0]._source;
+      const hit = response.body.data[0];
       // defined
+      expect(hit._id).toBeDefined();
       expect(hit.event).toBeDefined();
       expect(hit.event.destination).toBeDefined();
       // undefined
@@ -183,12 +185,13 @@ describe('/1/analytics', () => {
       );
       expect(response.status).toBe(200);
       expect(response.body.data.length).toBe(1);
-      const hit = response.body.data[0]._source;
+      const hit = response.body.data[0];
       // undefined
       expect(hit.event.destination).toBeUndefined();
       expect(hit.doesNotExist).toBeUndefined();
       expect(hit.event.doesNotExist).toBeUndefined();
       // defined
+      expect(hit._id).toBeDefined();
       expect(hit.event).toBeDefined();
       expect(hit.batchId).toBeDefined();
       expect(hit.event.messageId).toBeDefined();
@@ -288,6 +291,7 @@ describe('/1/analytics', () => {
       const response = await request('POST', '/1/analytics/search', { collection: collectionId }, { headers });
       expect(response.status).toBe(200);
       expect(response.body.data.length).toBe(6); // ignores 4 out of 10
+      expect(response.body.meta.total).toBe(6);
     });
 
     it('should allow multiple scoped fields analytics search', async () => {

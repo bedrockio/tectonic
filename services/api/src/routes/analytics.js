@@ -202,13 +202,19 @@ router
       const index = getCollectionIndex(collectionId);
       filter.scope = scope; // Each scope key-value pair is added as ES bool.must.term
       try {
-        const body = {};
+        const body = { meta: {} };
         if (debug) {
           const searchQuery = await search(index, filter, includeFields, excludeFields, true);
-          body.meta = { searchQuery };
+          body.meta.searchQuery = searchQuery;
         }
         const data = await search(index, filter, includeFields, excludeFields, false);
-        body.data = data?.hits?.hits || [];
+        const hits = data?.hits?.hits.map(({ _id, _source }) => {
+          _source._id = _id;
+          return _source;
+        });
+        body.data = hits || [];
+        if (data?.hits?.total?.value) body.meta.total = data.hits.total.value;
+        if (data?.took) body.meta.took = data.took;
         ctx.body = body;
       } catch (err) {
         const searchQuery = await search(index, filter, includeFields, excludeFields, true);
