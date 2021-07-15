@@ -14,9 +14,7 @@ const EVENTS_CHUNK_SIZE = 10;
 
 const router = new Router();
 
-const eventSchema = Joi.object({
-  occurredAt: Joi.string().required(),
-}).unknown(); // unknown: to allow any aother field
+const eventSchema = Joi.object({}).unknown(); // unknown: to allow any aother field
 
 async function checkCollectionAccess(ctx, next) {
   const { collection } = ctx.request.body;
