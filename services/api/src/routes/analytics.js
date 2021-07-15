@@ -207,7 +207,8 @@ router
           const searchQuery = await search(index, filter, includeFields, excludeFields, true);
           body.meta = { searchQuery };
         }
-        body.data = await search(index, filter, includeFields, excludeFields, false);
+        const data = await search(index, filter, includeFields, excludeFields, false);
+        body.data = data?.hits?.hits || [];
         ctx.body = body;
       } catch (err) {
         const searchQuery = await search(index, filter, includeFields, excludeFields, true);
