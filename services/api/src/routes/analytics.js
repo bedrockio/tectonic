@@ -132,8 +132,13 @@ router
         termsSize,
       };
       try {
-        const data = await terms(index, aggField, options, debug);
-        ctx.body = { data };
+        const body = {};
+        if (debug) {
+          const searchQuery = await terms(index, aggField, options, true);
+          body.meta = { searchQuery };
+        }
+        body.data = await terms(index, aggField, options, false);
+        ctx.body = body;
       } catch (err) {
         const searchQuery = await terms(index, aggField, options, true);
         interpretError(ctx, err, searchQuery);
@@ -167,8 +172,13 @@ router
         ...filter,
       };
       try {
-        const data = await timeSeries(index, operation, field, options, debug);
-        ctx.body = { data };
+        const body = {};
+        if (debug) {
+          const searchQuery = await timeSeries(index, operation, field, options, true);
+          body.meta = { searchQuery };
+        }
+        body.data = await timeSeries(index, operation, field, options, false);
+        ctx.body = body;
       } catch (err) {
         const searchQuery = await timeSeries(index, operation, field, options, true);
         interpretError(ctx, err, searchQuery);
@@ -192,9 +202,13 @@ router
       const index = getCollectionIndex(collectionId);
       filter.scope = scope; // Each scope key-value pair is added as ES bool.must.term
       try {
-        // console.info(JSON.stringify(filter, null, 2));
-        const data = await search(index, filter, includeFields, excludeFields, debug);
-        ctx.body = { data };
+        const body = {};
+        if (debug) {
+          const searchQuery = await search(index, filter, includeFields, excludeFields, true);
+          body.meta = { searchQuery };
+        }
+        body.data = await search(index, filter, includeFields, excludeFields, false);
+        ctx.body = body;
       } catch (err) {
         const searchQuery = await search(index, filter, includeFields, excludeFields, true);
         interpretError(ctx, err, searchQuery);
@@ -218,8 +232,13 @@ router
       const index = getCollectionIndex(collectionId);
       filter.scope = scope; // Each scope key-value pair is added as ES bool.must.term
       try {
-        const data = await stats(index, fields, filter, debug);
-        ctx.body = { data };
+        const body = {};
+        if (debug) {
+          const searchQuery = await stats(index, fields, filter, true);
+          body.meta = { searchQuery };
+        }
+        body.data = await stats(index, fields, filter, false);
+        ctx.body = body;
       } catch (err) {
         const searchQuery = await stats(index, fields, filter, true);
         interpretError(ctx, err, searchQuery);
@@ -243,8 +262,13 @@ router
       const index = getCollectionIndex(collectionId);
       filter.scope = scope; // Each scope key-value pair is added as ES bool.must.term
       try {
-        const data = await cardinality(index, fields, filter, debug);
-        ctx.body = { data };
+        const body = {};
+        if (debug) {
+          const searchQuery = await cardinality(index, fields, filter, true);
+          body.meta = { searchQuery };
+        }
+        body.data = await cardinality(index, fields, filter, false);
+        ctx.body = body;
       } catch (err) {
         const searchQuery = await cardinality(index, fields, filter, true);
         interpretError(ctx, err, searchQuery);

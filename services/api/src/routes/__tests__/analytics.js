@@ -200,7 +200,8 @@ describe('/1/analytics', () => {
         { collection: collectionId, filter: { size: 1 }, debug: true },
         { headers }
       );
-      expect(responseDebug.body.data.body).toStrictEqual({
+      expect(responseDebug.body.meta).toBeDefined();
+      expect(responseDebug.body.meta.searchQuery.body).toStrictEqual({
         sort: [{ ingestedAt: { order: 'desc' } }],
         from: 0,
         size: 1,
@@ -229,9 +230,9 @@ describe('/1/analytics', () => {
         { headers }
       );
       expect(response.status).toBe(200);
-      const data = response.body.data;
-      expect(data.index).toBe(index);
-      expect(data.body).toStrictEqual({
+      const meta = response.body.meta;
+      expect(meta.searchQuery.index).toBe(index);
+      expect(meta.searchQuery.body).toStrictEqual({
         sort: [{ ingestedAt: { order: 'desc' } }],
         from: 0,
         size: 100,
