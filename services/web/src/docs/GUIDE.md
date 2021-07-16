@@ -42,7 +42,7 @@ Before you can ingest batches of events, you first need to create a collection. 
 
 You can create new collections with a `POST` or `PUT` to `<API_URL>/1/collections`, where the `name` needs to be unique and not alredy exist on a `POST`. `PUT` will update the existing collection or create a new one. (The [authorization token](#credentials) is covered later on.)
 
-**Create Collection:**
+**> Create Collection:**
 ```bash
 curl -s -XPUT -d '{"name": "bar-purchases","description": "UPDATED Example data from a cocktail bar\'s point-of-sale system"}' <API_URL>/1/collections -H "Authorization: Bearer <ADMIN_TOKEN>" -H "Content-Type: application/json"
 ```
@@ -154,18 +154,18 @@ An `access policy` has a `name` and a list of `collections` with per collection 
   "collections": [
     {
       "collection": "bar-purchases", // Alternatively pass the collectionId here
-      "permission": "read",
-      "scope": {
+      "permission": "read", // optional. Defaults to 'read'
+      "scope": { // optional
         "event.venue.name": "Pirate Boozy Bar"
       },
-      "scopeFields": ["event.server.name"],
-      "excludeFields": ["event.id", "customer"]
+      "scopeFields": ["event.server.name"], // optional
+      "excludeFields": ["event.id", "customer"] // optional
     }
   ]
 }
 ```
 
-**Create Access Policy:**
+**> Create Access Policy:**
 
 ```bash
 curl -s -XPUT -d '{"name": "bar-purchases-collection-access-example","collections":[{"collection": "bar-purchases","permission":"read","scope": {"event.venue.name":"Pirate Boozy Bar"},        "scopeFields":["event.server.name"],"excludeFields":["event.id","customer"]}]}' <API_URL>/1/access-policies -H "Authorization: Bearer <ADMIN_TOKEN>" -H "Content-Type: application/json"
@@ -193,6 +193,42 @@ curl -s -XPUT -d '{"name": "bar-purchases-collection-access-example","collection
 }
 ```
 
+
+**Access Credential:**
+```json
+{
+  "name": "bar-purchases-restricted-access",
+  "accessPolicy": "bar-purchases-collection-access-example", // Alternatively pass the accessPolicyId here
+  "scopeValues": [
+    {
+      "field": "event.server.name", // required if defined in accessPolicy scopeFields
+      "value": "Kathryn Bernier"
+    }
+  ]
+}
+```
+
+**> Create Access Credential:**
+
+```bash
+curl -s -XPUT -d '{"name": "bar-purchases-restricted-access","accessPolicy":"bar-purchases-collection-access-example","scopeValues":[{"field": "event.server.name","value":"Kathryn Bernier"}]}' <API_URL>/1/access-credentials -H "Authorization: Bearer <ADMIN_TOKEN>" -H "Content-Type: application/json"
+```
+
+*Response:*
+
+```json
+{
+  "data": {
+    "name":"bar-purchases-restricted-access",
+    "accessPolicy":"bar-purchases-collection-access-example",
+    "scopeValues":[{"field":"event.server.name","value":"Kathryn Bernier"}],
+    "createdAt":"2021-07-16T21:11:53.149Z",
+    "updatedAt":"2021-07-16T21:19:57.154Z",
+    "id":"60f1f61973bc06b62eac32e6",
+    "token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjcmVkZW50aWFsSWQiOiI2MGYxZjYxOTczYmMwNmI2MmVhYzMyZTYiLCJ0eXBlIjoiYWNjZXNzIiwiaWF0IjoxNjI2NDcwMzk3fQ.HpYepOqcBtAOElv769os50NExT1CORy-uStVELADDLw"
+  }
+}
+```
 
 ## Analytics
 

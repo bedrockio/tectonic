@@ -75,11 +75,16 @@ router
         ctx.throw(401, `AccessPolicy '${accessPolicy}' could not be found`);
       }
       checkScopeValues(ctx, dbAccessPolicy, scopeValues);
-      const accessCredential = await AccessCredential.create(ctx.request.body);
-      const token = createCredentialToken(accessCredential);
-      ctx.body = {
-        data: { ...accessCredential.toObject(), token },
+      const accessCredentialObject = {
+        name,
+        accessPolicy: dbAccessPolicy,
       };
+      if (scopeValues) accessCredentialObject.scopeValues = scopeValues;
+      const accessCredential = await AccessCredential.create(accessCredentialObject);
+      const token = createCredentialToken(accessCredential);
+      const data = { ...accessCredential.toObject(), token };
+      data.accessPolicy = data.accessPolicy.name;
+      ctx.body = { data };
     }
   )
   .put(
@@ -97,17 +102,22 @@ router
       const existingAccessCredential = await AccessCredential.findOne({ name });
       let accessCredential;
       if (existingAccessCredential) {
-        existingAccessCredential.accessPolicy = accessPolicy;
-        existingAccessCredential.scopeValues = scopeValues;
+        existingAccessCredential.accessPolicy = dbAccessPolicy;
+        existingAccessCredential.scopeValues = scopeValues || [];
         await existingAccessCredential.save();
         accessCredential = existingAccessCredential;
       } else {
-        accessCredential = await AccessCredential.create(ctx.request.body);
+        const accessCredentialObject = {
+          name,
+          accessPolicy: dbAccessPolicy,
+        };
+        if (scopeValues) accessCredentialObject.scopeValues = scopeValues;
+        accessCredential = await AccessCredential.create(accessCredentialObject);
       }
       const token = createCredentialToken(accessCredential);
-      ctx.body = {
-        data: { ...accessCredential.toObject(), token },
-      };
+      const data = { ...accessCredential.toObject(), token };
+      data.accessPolicy = data.accessPolicy.name;
+      ctx.body = { data };
     }
   )
   .get('/:credential', async (ctx) => {
@@ -198,7 +208,7 @@ router
   .patch(
     '/:credential',
     validate({
-      body: AccessCredential.getPatchValidator(),
+      body: accessCredentialSchema,
     }),
     async (ctx) => {
       const { name, accessPolicy, scopeValues } = ctx.request.body;
@@ -212,10 +222,14 @@ router
         ctx.throw(401, `Access Credential with name '${name}' already exists.`);
       }
       const accessCredential = ctx.state.accessCredential;
-      accessCredential.assign(ctx.request.body);
+      accessCredential.name = name;
+      accessCredential.accessPolicy = dbAccessPolicy;
+      if (scopeValues) accessCredential.scopeValues = scopeValues;
       await accessCredential.save();
+      const accessCredentialObject = accessCredential.toObject();
+      accessCredentialObject.accessPolicy = accessCredentialObject.accessPolicy.name;
       ctx.body = {
-        data: accessCredential,
+        data: accessCredentialObject,
       };
     }
   )
