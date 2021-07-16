@@ -11,6 +11,7 @@ const collectionSchema = Joi.object({
   collection: Joi.string().required(),
   scope: Joi.object().optional(),
   scopeFields: Joi.array().items(Joi.string()).optional(),
+  permission: Joi.string().valid('read', 'read-write').optional(),
   includeFields: Joi.array().items(Joi.string()).optional(),
   excludeFields: Joi.array().items(Joi.string()).optional(),
 });
