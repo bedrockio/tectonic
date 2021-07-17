@@ -243,7 +243,7 @@ curl -s -XPUT -d '{"name": "bar-purchases-restricted-access","accessPolicy":"bar
 
 When you create an `access credential` you will receive a token in the response.
 
-<br>*Check the [credentials](/docs/credentials) and [access-policy](/docs/access_policy) API docs for the full specification*
+<br>*Check the [credentials](/docs/credentials) and [access-policies](/docs/access_policies) API docs for the full specification*
 
 ## Analytics
 

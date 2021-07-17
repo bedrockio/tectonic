@@ -1,6 +1,9 @@
 export { default as GUIDE } from './GUIDE.md';
-export { default as GETTING_STARTED } from './GETTING_STARTED.md';
 export { default as RESTFUL_JSON_API } from './RESTFUL_JSON_API.md';
-export { default as AUTHENTICATION } from './AUTHENTICATION.md';
-export { default as USERS } from './USERS.md';
+export { default as DASHBOARD_AUTHENTICATION } from './DASHBOARD_AUTHENTICATION.md';
+export { default as DASHBOARD_USERS } from './DASHBOARD_USERS.md';
 export { default as COLLECTIONS } from './COLLECTIONS.md';
+export { default as BATCHES } from './BATCHES.md';
+export { default as CREDENTIALS } from './CREDENTIALS.md';
+export { default as ACCESS_POLICIES } from './ACCESS_POLICIES.md';
+export { default as ANALYTICS } from './ANALYTICS.md';
