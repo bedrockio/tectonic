@@ -59,6 +59,8 @@ curl -s -XPUT -d '{"name": "bar-purchases","description": "UPDATED Example data 
 }
 ```
 
+<br>*Check the [collections](/docs/collections) API docs for the full specification.*
+
 ## Batches
 
 Events are ingested into a collection in batches. Each batch requires a `collection` field with the `id` or `name` of the collection, and an `events` array holding one or more event objects.
@@ -66,7 +68,7 @@ Events are ingested into a collection in batches. Each batch requires a `collect
 **Batch:**
 ```json
 {
-  "collection": "bar-purchases", // Alternatively you can pass the collectionId here
+  "collection": "bar-purchases", // Alternatively the collectionId
   "events": [
     {
       "id":"606efb3dee05960772e6cddb",
@@ -125,6 +127,8 @@ curl -s -XPOST -d '{"collection": "bar-purchases", "events": [{"id":"606efb3dee0
 }
 ```
 
+<br>*Check the [batches](/docs/batches) API docs for the full specification.*
+
 ## Credentials
 
 JSON Web Tokens (JWT) are used for authentication. You provide your token in a standard bearer token request (`Authorization: Bearer <token>`) as follows, where the `token` is replaced with your current logged-in admin user token (and is used in all other curl examples in this guide):
@@ -140,11 +144,17 @@ Your token is associated with one of three types of credentials:
 
 User (admin) and application credentials give full access to all API endpoints.
 
-The `access credentials` are used to give [react-tectonic](https://www.npmjs.com/package/react-tectonic) widgets access to collections for querying event analytics. An `access credential` is linked to an `access policy`, and together define the access rules and scopes for collections. Before we can create an `access credential`, we first need to create an `access policy`.
+The `access credentials` are used to give [react-tectonic](https://www.npmjs.com/package/react-tectonic) widgets access to collections for querying event analytics. An `access credential` is linked to an `access policy`, and together define the access rules and scope for collections. Before we can create an `access credential`, we first need to create an `access policy`.
 
 ## Access Policies
 
 An `access policy` has a `name` and a list of `collections` with per collection defined `permission`, `scope`, `scopeFields`, `includeFields` and/or `excludeFields`.
+
+- `permission`: Can be `read` or `read-write`, where the second option allows posting new event batches for ingestion. Permission is optional and defaults to `read`.
+- `scope`: Is a static default query that is always added to all analytics queries. In the example below it means you will only query data for events with the venue name "Pirate Boozy bar". Scope is optional.
+- `scopeFields`: Is a list of fields for which a value has to be supplied by the `access credential` (see `scopeValues` down below) that is using the `access policy`. In the example below, the `access credential` needs to supply a value for the server's name. This field and value are also added to the scope, i.e. default query, for every analytics query made using an `access credential` with this `access policy`.
+- `includeFields`: Defines the fields included in the result queries. Default is all fields.
+- `excludeFields`: Defines the fields excluded in the query results. In the example below, the `event.id` and `customer` are excluded from search queries.
 
 **Access Policy:**
 
@@ -153,8 +163,8 @@ An `access policy` has a `name` and a list of `collections` with per collection 
   "name": "bar-purchases-collection-access-example",
   "collections": [
     {
-      "collection": "bar-purchases", // Alternatively pass the collectionId here
-      "permission": "read", // optional. Defaults to 'read'
+      "collection": "bar-purchases", // Alternatively the collectionId
+      "permission": "read", // optional. Defaults to 'read', other option is read-write
       "scope": { // optional
         "event.venue.name": "Pirate Boozy Bar"
       },
@@ -193,15 +203,16 @@ curl -s -XPUT -d '{"name": "bar-purchases-collection-access-example","collection
 }
 ```
 
+In order to create an `access credential` for the above `access policy`, it requires `scopeValues` for the field `event.server.name`, as defined by the `scopeFields` in the `access policy`. In the example below, the value for the server's name is "Kathryn Bernier". You can create other access credentials with different values, e.g., "Katie Smith". The query results and analytics will only include events that belong to the provided server name.
 
 **Access Credential:**
 ```json
 {
   "name": "bar-purchases-restricted-access",
-  "accessPolicy": "bar-purchases-collection-access-example", // Alternatively pass the accessPolicyId here
+  "accessPolicy": "bar-purchases-collection-access-example", // Alternatively the accessPolicyId
   "scopeValues": [
     {
-      "field": "event.server.name", // required if defined in accessPolicy scopeFields
+      "field": "event.server.name", // required as defined by accessPolicy scopeFields
       "value": "Kathryn Bernier"
     }
   ]
@@ -230,8 +241,92 @@ curl -s -XPUT -d '{"name": "bar-purchases-restricted-access","accessPolicy":"bar
 }
 ```
 
+When you create an `access credential` you will receive a token in the response.
+
+<br>*Check the [credentials](/docs/credentials) and [access-policy](/docs/access_policy) API docs for the full specification*
+
 ## Analytics
 
+You can query analytics with a `user credential` or `application credential`, which gives full access. Or you use an `access credential` with optional collection and scope restrictions as explained in the previous section.
+
+There are five analytics query options:
+- Terms
+- Timeseries
+- Stats
+- Cardinality
+- Search
+
+Each analytics POST endpoint requires a `collection`, which can be either the collection's name or ID.
+
+**> Analytics Search:**
+```bash
+curl -s -XPOST -d '{"collection":"bar-purchases","filter":{"size": 1},"debug":true}' <API_URL>/1/analytics/search -H "Authorization: Bearer <ADMIN_TOKEN>" -H "Content-Type: application/json"
+```
+
+*Response:*
+
+```json
+{
+  "meta": {
+    "searchQuery": {
+      "index": "tectonic-collection-60d30be6f499a3e117542ebb",
+      "body": {
+        "sort": [
+          {
+            "ingestedAt": {
+              "order": "desc"
+            }
+          }
+        ],
+        "from": 0,
+        "size": 1
+      }
+    },
+    "total": 5257,
+    "took": 3
+  },
+  "data": [
+    {
+      "_id": "606efb40ee05960772e6d03f",
+      "_source": {
+        "collectionId": "60d30be6f499a3e117542ebb",
+        "batchId": "60ed611921b0b5746956764f",
+        "ingestedAt": "2021-07-13T09:47:05.573Z",
+        "event": {
+          "id": "606efb40ee05960772e6d03f",
+          "sourceSystem": "upserve",
+          "venue": {
+            "name": "Pirate Boozy Bar",
+            "address": "650 Gough St, San Francisco, CA 94102"
+          },
+          "customer": {
+            "name": "Rosario Jacobi"
+          },
+          "server": {
+            "name": "Kathryn Bernier"
+          },
+          "consumption": {
+            "id": "606efb3cee05960772e6cd98",
+            "name": "House shot",
+            "price": 800,
+            "category": "Cocktail",
+            "createdAt": "2019-10-08T12:58:52.000Z"
+          },
+          "amountPaid": 4000,
+          "orderedAt": "2018-12-04T02:25:42.000Z",
+          "_id": "606efb40ee05960772e6d03f",
+          "occurredAt": "2018-12-04T02:25:42.000Z"
+        }
+      }
+    }
+  ]
+}
+```
+
+The `debug:true` parameter will return the `searchQuery` in the `meta` field of the JSON response. In the meta fields you can also find the `total` and time it `took`. The `data` field is an array that holds all document hits ({_id, _source}).
+
+
+<br>*Check the [analytics](/docs/analytics) API docs for the full specification.*
 
 ## Widgets
 
