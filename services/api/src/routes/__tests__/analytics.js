@@ -13,10 +13,11 @@ const { createCredentialToken } = require('../../lib/tokens');
 const mongoose = require('mongoose');
 
 jest.setTimeout(40 * 1000);
+let index;
 
 const indexEvents = async (collectionId) => {
   const events = loadJsonStreamFile(__dirname + '/fixtures/evse-metervalues-10.ndjson');
-  const index = getCollectionIndex(collectionId);
+  index = getCollectionIndex(collectionId);
   // console.info(collectionId, index);
   await deleteIndex(index);
   await ensureCollectionIndex(collectionId);
@@ -74,7 +75,7 @@ describe('/1/analytics', () => {
 
       const response = await request('POST', '/1/analytics/search', { collection: collectionId }, { headers });
       expect(response.status).toBe(200);
-      expect(response.body.hits.hits.length).toBe(10);
+      expect(response.body.data.length).toBe(10);
     });
 
     it('should allow analytics search for correct policy with collection name', async () => {
@@ -93,7 +94,8 @@ describe('/1/analytics', () => {
 
       const response = await request('POST', '/1/analytics/search', { collection: testCollection.name }, { headers });
       expect(response.status).toBe(200);
-      expect(response.body.hits.hits.length).toBe(10);
+      expect(response.body.data.length).toBe(10);
+      // console.info(JSON.stringify(response.body.data[0], null, 2));
     });
 
     it('should allow analytics search for admin user', async () => {
@@ -101,7 +103,7 @@ describe('/1/analytics', () => {
       const collectionId = testCollection.id;
       const response = await request('POST', '/1/analytics/search', { collection: collectionId }, { user });
       expect(response.status).toBe(200);
-      expect(response.body.hits.hits.length).toBe(10);
+      expect(response.body.data.length).toBe(10);
     });
 
     it('should deny analytics for incorrect policy', async () => {
@@ -144,9 +146,10 @@ describe('/1/analytics', () => {
         { headers }
       );
       expect(response.status).toBe(200);
-      expect(response.body.hits.hits.length).toBe(1);
-      const hit = response.body.hits.hits[0]._source;
+      expect(response.body.data.length).toBe(1);
+      const hit = response.body.data[0]._source;
       // defined
+      expect(response.body.data[0]._id).toBeDefined();
       expect(hit.event).toBeDefined();
       expect(hit.event.destination).toBeDefined();
       // undefined
@@ -181,17 +184,87 @@ describe('/1/analytics', () => {
         { headers }
       );
       expect(response.status).toBe(200);
-      expect(response.body.hits.hits.length).toBe(1);
-      const hit = response.body.hits.hits[0]._source;
+      expect(response.body.data.length).toBe(1);
+      const hit = response.body.data[0]._source;
       // undefined
       expect(hit.event.destination).toBeUndefined();
       expect(hit.doesNotExist).toBeUndefined();
       expect(hit.event.doesNotExist).toBeUndefined();
       // defined
+      expect(response.body.data[0]._id).toBeDefined();
       expect(hit.event).toBeDefined();
       expect(hit.batchId).toBeDefined();
       expect(hit.event.messageId).toBeDefined();
       expect(hit.event.params).toBeDefined();
+
+      const responseDebug = await request(
+        'POST',
+        '/1/analytics/search',
+        { collection: collectionId, filter: { size: 1 }, debug: true },
+        { headers }
+      );
+      expect(responseDebug.body.meta).toBeDefined();
+      expect(responseDebug.body.meta.searchQuery.body).toStrictEqual({
+        sort: [{ ingestedAt: { order: 'desc' } }],
+        from: 0,
+        size: 1,
+        _source: {
+          includes: ['event.messageId', 'event.params', 'batchId', 'doesNotExist', 'event.doesNotExist'],
+        },
+      });
+    });
+
+    it('should allow analytics search in debug mode', async () => {
+      const collectionId = testCollection.id;
+      const accessPolicy = await AccessPolicy.create({
+        name: 'access-test-policy',
+        collections: [{ collectionId }],
+      });
+      const accessCredential = await AccessCredential.create({
+        name: 'access-cred',
+        accessPolicy,
+      });
+      const headers = { Authorization: `Bearer ${createCredentialToken(accessCredential)}` };
+
+      const response = await request(
+        'POST',
+        '/1/analytics/search',
+        { collection: collectionId, debug: true },
+        { headers }
+      );
+      expect(response.status).toBe(200);
+      const meta = response.body.meta;
+      expect(meta.searchQuery.index).toBe(index);
+      expect(meta.searchQuery.body).toStrictEqual({
+        sort: [{ ingestedAt: { order: 'desc' } }],
+        from: 0,
+        size: 100,
+      });
+      //console.info(JSON.stringify(data, null, 2));
+    });
+
+    it('should fail analytics search with missing index', async () => {
+      const collection = await Collection.create({
+        name: 'test-collection-2',
+        description: 'none',
+      });
+      const collectionId = collection.id;
+      // Has no ES index
+      await AccessPolicy.create({
+        name: 'access-test-policy',
+        collections: [{ collectionId }],
+      });
+      const user = await createUser();
+
+      const response = await request('POST', '/1/analytics/search', { collection: collectionId }, { user });
+      const error = response.body.error;
+      expect(response.status).toBe(404);
+      expect(error.searchQuery.index).not.toBe(index);
+      expect(error.searchQuery.body).toStrictEqual({
+        sort: [{ ingestedAt: { order: 'desc' } }],
+        from: 0,
+        size: 100,
+      });
     });
   });
 
@@ -217,7 +290,8 @@ describe('/1/analytics', () => {
 
       const response = await request('POST', '/1/analytics/search', { collection: collectionId }, { headers });
       expect(response.status).toBe(200);
-      expect(response.body.hits.hits.length).toBe(6); // ignores 4 out of 10
+      expect(response.body.data.length).toBe(6); // ignores 4 out of 10
+      expect(response.body.meta.total).toBe(6);
     });
 
     it('should allow multiple scoped fields analytics search', async () => {
@@ -242,7 +316,7 @@ describe('/1/analytics', () => {
 
       const response = await request('POST', '/1/analytics/search', { collection: collectionId }, { headers });
       expect(response.status).toBe(200);
-      expect(response.body.hits.hits.length).toBe(5); // ignores 'method': 'BogusValues'
+      expect(response.body.data.length).toBe(5); // ignores 'method': 'BogusValues'
     });
 
     it('should allow analytics search with multiple collections policy', async () => {
@@ -271,7 +345,7 @@ describe('/1/analytics', () => {
 
       const response = await request('POST', '/1/analytics/search', { collection: collectionId }, { headers });
       expect(response.status).toBe(200);
-      expect(response.body.hits.hits.length).toBe(5); // ignores 'method': 'BogusValues'
+      expect(response.body.data.length).toBe(5); // ignores 'method': 'BogusValues'
     });
 
     it('should allow scopeFields analytics search', async () => {
@@ -294,7 +368,7 @@ describe('/1/analytics', () => {
 
       const response = await request('POST', '/1/analytics/search', { collection: collectionId }, { headers });
       expect(response.status).toBe(200);
-      expect(response.body.hits.hits.length).toBe(6); // ignores 4 out of 10
+      expect(response.body.data.length).toBe(6); // ignores 4 out of 10
     });
 
     it('should not allow missing scopeFields', async () => {

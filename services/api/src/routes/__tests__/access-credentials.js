@@ -45,7 +45,7 @@ describe('/1/access-credentials', () => {
       if (response.error) console.error(response.error);
       expect(response.status).toBe(200);
       expect(data.name).toBe(name);
-      expect(data.accessPolicy.id).toBe(accessPolicy.id);
+      expect(data.accessPolicy).toBe(accessPolicy.name);
     });
 
     it('should not be able to create access-credential with existing name', async () => {
@@ -92,7 +92,7 @@ describe('/1/access-credentials', () => {
       if (response.error) console.error(response.error);
       expect(response.status).toBe(200);
       expect(data.name).toBe(name);
-      expect(data.accessPolicy.id).toBe(accessPolicy.id);
+      expect(data.accessPolicy).toBe(accessPolicy.name);
       expect(data.scopeValues).toStrictEqual(scopeValues);
       // PUT should be the same as POST
       const responsePUT = await request(
@@ -267,7 +267,6 @@ describe('/1/access-credentials', () => {
 
       const name = 'access-credential-test';
       const accessCredential = await AccessCredential.create({ name, accessPolicy });
-
       const headers = await getHeaders();
       const response = await request(
         'PATCH',
@@ -277,7 +276,7 @@ describe('/1/access-credentials', () => {
       );
       if (response.error) console.error(response.error);
       expect(response.status).toBe(200);
-      expect(response.body.data.accessPolicy.id).toBe(accessPolicy2.id);
+      expect(response.body.data.accessPolicy).toBe(accessPolicy2.name);
 
       // pre-existing name
       await AccessCredential.create({ name, accessPolicy });

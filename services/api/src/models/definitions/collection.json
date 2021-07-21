@@ -1,7 +1,6 @@
 {
   "attributes": {
     "name": { "type": "String", "unique": true, "required": true, "lowercase": true, "trim": true },
-    "description": { "type": "String", "trim": true, "required": false },
-    "secondaryIndex": { "type": "String", "required": false }
+    "description": { "type": "String", "trim": true, "required": false }
   }
 }
