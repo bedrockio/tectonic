@@ -12,7 +12,7 @@ const router = new Router();
 router
   .use(authenticate({ types: ['user', 'application'] }))
   .param('collectionId', async (id, ctx, next) => {
-    const collection = await Collection.findById(id);
+    const collection = await Collection.findByIdOrName(id);
     ctx.state.collection = collection;
     if (!collection) {
       throw new NotFoundError();

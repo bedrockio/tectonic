@@ -1,8 +1,5 @@
 const { connect, disconnect } = require('./../mongodb');
-const {
-  indexMongodbCollection,
-  sanitizeDocuments,
-} = require('./../indexer');
+const { indexMongodbCollection, sanitizeDocuments } = require('./../indexer');
 
 let db;
 

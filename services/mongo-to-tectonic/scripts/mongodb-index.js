@@ -1,7 +1,7 @@
 const process = require('process');
 const config = require('@bedrockio/config');
 const yargs = require('yargs');
-const { logger } = require('./../src/lib/logging');
+const { logger } = require('@bedrockio/instrumentation');
 const { connect } = require('./../src/lib/mongodb');
 const { indexMongodbCollection } = require('./../src/lib/indexer');
 const { ensureCollection, getTectonicCollectionName } = require('./../src/lib/tectonic');

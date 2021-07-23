@@ -1,11 +1,11 @@
 const config = require('@bedrockio/config');
-const { logger } = require('./logging');
+const { logger } = require('@bedrockio/instrumentation');
 const { unset } = require('lodash');
 const { collectEvents, getLastEntryAt, getTectonicCollectionName } = require('./tectonic');
 
 const MONGO_UPDATED_AT_FIELD = config.get('MONGO_UPDATED_AT_FIELD');
-const MONGO_EXCLUDE_ATTRIBUTES = config.get('MONGO_EXCLUDE_ATTRIBUTES')
-const MONGO_VERSION_FIELD = config.get('MONGO_VERSION_FIELD')
+const MONGO_EXCLUDE_ATTRIBUTES = config.get('MONGO_EXCLUDE_ATTRIBUTES');
+const MONGO_VERSION_FIELD = config.get('MONGO_VERSION_FIELD');
 
 async function readCursor(cursor, limit) {
   const docs = [];
@@ -87,7 +87,7 @@ async function syncMongodbCollection(
   if (total > 0) {
     logger.info(`Collecting ${collectionName}`);
     const batchSize = 1000;
-    const cursor = collection.find(query, { timeout: false }).sort({ [updatedAtField]: -1 });
+    const cursor = collection.find(query, { timeout: false }).sort({ [MONGO_UPDATED_AT_FIELD]: -1 });
 
     const numBatches = Math.ceil(total / batchSize);
     const batches = new Array(numBatches);
@@ -115,7 +115,7 @@ async function indexMongodbCollection(db, collectionName, options = { enableHist
   let query = {};
   if (lastEntryAt) {
     query[MONGO_UPDATED_AT_FIELD] = {
-      $gt: new Date(lastEntryAt)
+      $gt: new Date(lastEntryAt),
     };
   }
   const stats = await syncMongodbCollection(db, collectionName, query, options);
@@ -128,7 +128,7 @@ function autoIndexMongodbCollections(db, collectionNames, collectionNamesHistori
     function run() {
       const jobs = collectionNames.map((collectionName) => {
         return indexMongodbCollection(db, collectionName, {
-          enableHistorical: collectionNamesHistorical.includes(collectionName)
+          enableHistorical: collectionNamesHistorical.includes(collectionName),
         });
       });
       Promise.all(jobs)
@@ -157,5 +157,4 @@ module.exports = {
   indexMongodbCollection,
   autoIndexMongodbCollections,
   sanitizeDocuments,
-  indexDocumentsHistorical,
 };

@@ -18,9 +18,9 @@ async function ensureCollection(tectonicCollectionName, description, timeField) 
     body: JSON.stringify({
       name: tectonicCollectionName,
       description,
-      timeField
+      timeField,
     }),
-    headers
+    headers,
   });
   return await response.json();
 }
@@ -32,11 +32,11 @@ async function collectEvents(tectonicCollectionName, events) {
       collection: tectonicCollectionName,
       events,
     }),
-    headers
+    headers,
   });
   const { error } = await response.json();
   if (error) {
-    throw new Error(error.message);
+    throw new Error('[collectEvents] ' + error.message);
   }
 }
 
@@ -47,32 +47,32 @@ async function ensureCollectionsAccessPolicy(tectonicCollectionNames) {
       name: 'mongodb-indexed-collections',
       collections: tectonicCollectionNames.map((name) => {
         return {
-          collection: name
-        }
+          collection: name,
+        };
       }),
     }),
-    headers
+    headers,
   });
   const { data, error } = await response.json();
   if (error) {
-    throw new Error(error.message);
+    throw new Error('[ensureCollectionsAccessPolicy] ' + error.message);
   }
   return data;
 }
 
 async function ensureCollectionAccessCredential(tectonicCollectionNames) {
-  const { data: accessPolicy } = await ensureCollectionsAccessPolicy(tectonicCollectionNames);
+  const accessPolicy = await ensureCollectionsAccessPolicy(tectonicCollectionNames);
   const response = await fetch(TECTONIC_URL + '/1/access-credentials', {
     method: 'PUT',
     body: JSON.stringify({
       name: 'mongodb-indexed-collections',
-      accessPolicy,
+      accessPolicy: accessPolicy.id,
     }),
-    headers
+    headers,
   });
   const { data, error } = await response.json();
   if (error) {
-    throw new Error(error.message);
+    throw new Error('[ensureCollectionAccessCredential] ' + error.message);
   }
   return data;
 }
@@ -80,11 +80,11 @@ async function ensureCollectionAccessCredential(tectonicCollectionNames) {
 async function getLastEntryAt(tectonicCollectionName) {
   const response = await fetch(TECTONIC_URL + '/1/collections/' + tectonicCollectionName + '/last-entry-at', {
     method: 'GET',
-    headers
+    headers,
   });
   const { data, error } = await response.json();
   if (error) {
-    throw new Error(error.message);
+    throw new Error('[getLastEntryAt] ' + error.message);
   }
   return data;
 }
@@ -104,5 +104,5 @@ module.exports = {
   ensureCollectionAccessCredential,
   getLastEntryAt,
   getTectonicCollectionName,
-  getTectonicHistoricalCollectionName
+  getTectonicHistoricalCollectionName,
 };

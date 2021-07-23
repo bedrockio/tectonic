@@ -76,6 +76,19 @@ describe('/1/collections', () => {
       expect(response.status).toBe(200);
       expect(response.body.data.name).toBe(collection.name);
     });
+
+    it('should be able to access collection by name', async () => {
+      const user = await createUser();
+      const collection = await Collection.create({
+        name: 'test 1',
+        description: 'Some description',
+      });
+      await ensureCollectionIndex(collection);
+      const response = await request('GET', `/1/collections/${collection.name}`, {}, { user });
+      await deleteIndex(getCollectionIndex(collection.id));
+      expect(response.status).toBe(200);
+      expect(response.body.data.name).toBe(collection.name);
+    });
   });
 
   describe('POST /search', () => {

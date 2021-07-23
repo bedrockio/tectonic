@@ -18,21 +18,21 @@ spec:
           name: mongo-to-tectonic
           env:
             - name: NODE_ENV
-              value: "production"
+              value: 'production'
             - name: ENV_NAME
-              value: "staging"
+              value: 'staging'
             - name: MONGO_URI
-              value: "mongodb://mongo:27017/tectonic_dev"
+              value: 'mongodb://mongo:27017/tectonic_dev'
             - name: MONGO_COLLECTIONS_TO_INDEX
-              value: "users,collections"
+              value: 'users,collections'
             - name: MONGO_COLLECTIONS_TO_INDEX_HISTORICAL
-              value: ""
+              value: 'users'
             - name: MONGO_EXCLUDE_ATTRIBUTES
-              value: "users.email,users.hashedPassword"
+              value: 'users.email,users.hashedPassword'
             - name: TECTONIC_APPLICATION_TOKEN
-              value: ""
+              value: ''
             - name: TECTONIC_URL
-              value: "http://localhost:3300"
+              value: 'http://localhost:3300'
           ports:
             - name: http-server
               containerPort: 2455
