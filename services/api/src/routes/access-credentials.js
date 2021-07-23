@@ -123,19 +123,12 @@ router
   .get('/:credential', async (ctx) => {
     const { accessCredential } = await ctx.state;
     const accessCredentialObject = accessCredential.toObject();
-    const newCollections = [];
     for (const collection of accessCredentialObject.accessPolicy.collections) {
-      console.log('id:', collection.collectionId);
-      const dbCollection = await Collection.findById(collection.collectionId);
-      console.log(dbCollection);
+      const dbCollection = await Collection.findById(collection.collectionId.toString());
       if (dbCollection) {
         collection.collectionName = dbCollection.name;
-        console.log(dbCollection.name);
       }
-      console.log(collection);
-      newCollections.push(collection);
     }
-    accessCredentialObject.accessPolicy.collections = newCollections;
 
     ctx.body = {
       data: { ...accessCredentialObject },
