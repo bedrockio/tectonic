@@ -107,6 +107,22 @@ router
       dbBatch.rawUrl = filePath;
       await dbBatch.save();
 
+      // Update collection.lastEntryAt if timeField is set
+      const { timeField, lastEntryAt } = collection;
+      if (timeField) {
+        let maxTimeFieldValue = lastEntryAt;
+        for (const event of events) {
+          if (event[timeField] && event[timeField] > maxTimeFieldValue) maxTimeFieldValue = event[timeField];
+        }
+        if (maxTimeFieldValue > lastEntryAt) {
+          // Update collection lastEntryAt atomically
+          await Collection.findOneAndUpdate(
+            { _id: collection.id, lastEntryAt: { $lt: maxTimeFieldValue } },
+            { lastEntryAt: maxTimeFieldValue }
+          );
+        }
+      }
+
       // 3: push events to PUBSUB topic (in chunks)
       const publish = async (event) => {
         await publishRawEvent(dbBatch, event);

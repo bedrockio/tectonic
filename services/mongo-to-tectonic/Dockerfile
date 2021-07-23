@@ -12,10 +12,9 @@ COPY yarn.lock /service/yarn.lock
 RUN cd /service; yarn install --frozen-lockfile;
 
 # Copy app source
-COPY . /service
+COPY . /service/
 
 # Set work directory to /api
-WORKDIR /service
+WORKDIR /service/
 
-# start command as per package.json
-CMD ["./scripts/cli-entrypoint.sh"]
+CMD ["./scripts/entrypoint.sh"]

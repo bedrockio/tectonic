@@ -31,7 +31,7 @@ router
         ctx.throw(401, `Collection with name "${name}" already exists. You could use PUT endpoint instead.`);
       }
       const collection = await Collection.create(ctx.request.body);
-      await ensureCollectionIndex(collection.id);
+      await ensureCollectionIndex(collection);
       ctx.body = {
         data: collection,
       };
@@ -52,7 +52,7 @@ router
         collection = existingCollection;
       } else {
         collection = await Collection.create(ctx.request.body);
-        await ensureCollectionIndex(collection.id);
+        await ensureCollectionIndex(collection);
       }
 
       ctx.body = {
@@ -71,6 +71,12 @@ router
 
     ctx.body = {
       data: { ...collection.toObject(), mapping },
+    };
+  })
+  .get('/:collectionId/last-entry-at', async (ctx) => {
+    const { collection } = await ctx.state;
+    ctx.body = {
+      data: collection.lastEntryAt,
     };
   })
   .get('/', async (ctx) => {
