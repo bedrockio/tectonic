@@ -11,12 +11,6 @@ if [ "$TAG" == "" ]; then
   TAG="latest"
 fi
 
-if [ "$SERVICE" == "pubsub-emulator" ]; then
-  echo "Tag and Push: pubsub-emulator"
-  docker tag tectonic-services-pubsub-emulator:latest bedrockio/tectonic-pubsub-emulator:$TAG
-  docker push bedrockio/tectonic-pubsub-emulator:$TAG
-fi
-
 if [[ "$SERVICE" == "all" || "$SERVICE" == "api" ]]; then
   echo "Tag and Push: api"
   docker tag tectonic-services-api:latest bedrockio/tectonic-api:$TAG
@@ -39,4 +33,16 @@ if [[ "$SERVICE" == "all" || "$SERVICE" == "web" ]]; then
   echo "Tag and Push: web"
   docker tag tectonic-services-web:latest bedrockio/tectonic-web:$TAG
   docker push bedrockio/tectonic-web:$TAG
+fi
+
+if [ "$SERVICE" == "pubsub-emulator" ]; then
+  echo "Tag and Push: pubsub-emulator"
+  docker tag tectonic-services-pubsub-emulator:latest bedrockio/tectonic-pubsub-emulator:$TAG
+  docker push bedrockio/tectonic-pubsub-emulator:$TAG
+fi
+
+if [ "$SERVICE" == "mongo-to-tectonic" ]; then
+  echo "Tag and Push: mongo-to-tectonic"
+  docker tag tectonic-services-mongo-to-tectonic:latest bedrockio/mong-to-tectonic:$TAG
+  docker push bedrockio/mongo-to-tectonic:$TAG
 fi

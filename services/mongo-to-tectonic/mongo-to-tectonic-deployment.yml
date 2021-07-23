@@ -23,8 +23,16 @@ spec:
               value: "staging"
             - name: MONGO_URI
               value: "mongodb://mongo:27017/tectonic_dev"
+            - name: MONGO_COLLECTIONS_TO_INDEX
+              value: "users,collections"
             - name: MONGO_COLLECTIONS_TO_INDEX_HISTORICAL
               value: ""
+            - name: MONGO_EXCLUDE_ATTRIBUTES
+              value: "users.email,users.hashedPassword"
+            - name: TECTONIC_APPLICATION_TOKEN
+              value: ""
+            - name: TECTONIC_URL
+              value: "http://localhost:3300"
           ports:
             - name: http-server
               containerPort: 2455
