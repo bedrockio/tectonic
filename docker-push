@@ -43,6 +43,6 @@ fi
 
 if [ "$SERVICE" == "mongo-to-tectonic" ]; then
   echo "Tag and Push: mongo-to-tectonic"
-  docker tag tectonic-services-mongo-to-tectonic:latest bedrockio/mong-to-tectonic:$TAG
+  docker tag tectonic-services-mongo-to-tectonic:latest bedrockio/mongo-to-tectonic:$TAG
   docker push bedrockio/mongo-to-tectonic:$TAG
 fi
