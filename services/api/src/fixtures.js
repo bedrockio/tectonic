@@ -40,12 +40,12 @@ const createFixtures = async () => {
     name: 'bar-purchases-full-access',
     accessPolicy,
   });
-  console.info(`Created accessCredential ${accessCredential.id}`);
+  logger.info(`Created accessCredential ${accessCredential.id}`);
 
   const applicationCredential = await ApplicationCredential.create({
     name: 'default-application',
   });
-  console.info(`Created applicationCredential ${applicationCredential.id}`);
+  logger.info(`Created applicationCredential ${applicationCredential.id}`);
 
   // const collection2 = await Collection.create({
   //   name: `evse-controllers`,

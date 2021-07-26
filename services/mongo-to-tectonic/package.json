@@ -17,7 +17,7 @@
     "lint:upgrade": "yarn upgrade eslint eslint-config-prettier eslint-plugin-jest prettier prettier-eslint --latest"
   },
   "dependencies": {
-    "@bedrockio/config": "^2.0.3",
+    "@bedrockio/config": "^2.1.1",
     "@bedrockio/instrumentation": "^1.4.9",
     "mongodb": "^3.6.10"
   },
