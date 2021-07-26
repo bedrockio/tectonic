@@ -309,7 +309,7 @@
   resolved "https://registry.yarnpkg.com/@bcoe/v8-coverage/-/v8-coverage-0.2.3.tgz#75a2e8b51cb758a7553d6804a5932d7aace75c39"
   integrity sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==
 
-"@bedrockio/config@^2.0.3":
+"@bedrockio/config@^2.1.1":
   version "2.1.1"
   resolved "https://registry.yarnpkg.com/@bedrockio/config/-/config-2.1.1.tgz#5e95c06a9026d32231ab8f82f3426390ca8b98e3"
   integrity sha512-Q2CmNE58RGfQEaaOYSA4RLXDNloWhIQr8NxqW1p7YqHmng8RmWBt1dQVekQzAejQu6EhZXvPNKqsFCGZHK9adw==
