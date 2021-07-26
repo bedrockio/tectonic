@@ -46,8 +46,8 @@ sudo mkdir /root/esdata
 chmod 777 -R /root/esdata
 
 # run docker containers for mongo and ES
-docker run --name mongo -d -p 27017:27017 -v /root/data:/data/db mongo:4.4.4
-docker run --name elasticsearch -d -p 9200:9200 -p 9300:9300 -e "discovery.type=single-node" -v /root/esdata:/usr/share/elasticsearch/data elasticsearch:7.9.3
+docker run --name mongo -d -p 27017:27017 -v /root/data:/data/db mongo:5.0.1
+docker run --name elasticsearch -d -p 9200:9200 -p 9300:9300 -e "discovery.type=single-node" -v /root/esdata:/usr/share/elasticsearch/data elasticsearch:7.12.0
 ```
 
 #### 3) Start API service
