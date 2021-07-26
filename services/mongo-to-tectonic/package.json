@@ -1,0 +1,52 @@
+{
+  "name": "mongo-to-tectonic",
+  "version": "1.0.0",
+  "description": "Ensures ES Goodness",
+  "license": "MIT",
+  "engines": {
+    "node": ">=14"
+  },
+  "pre-commit": [
+    "lint"
+  ],
+  "scripts": {
+    "start": "NODE_ENV=development node --icu-data-dir=node_modules/full-icu scripts/mongodb-autoindex.js",
+    "lint": "eslint src",
+    "test": "jest src",
+    "test:watch": "jest --watch -i src",
+    "lint:upgrade": "yarn upgrade eslint eslint-config-prettier eslint-plugin-jest prettier prettier-eslint --latest"
+  },
+  "dependencies": {
+    "@bedrockio/config": "^2.1.1",
+    "@bedrockio/instrumentation": "^1.4.9",
+    "mongodb": "^3.6.10"
+  },
+  "devDependencies": {
+    "@shelf/jest-mongodb": "^2.0.0",
+    "eslint": "^7.13.0",
+    "eslint-config-prettier": "^6.15.0",
+    "eslint-plugin-jest": "^24.1.2",
+    "jest": "^26.1.0",
+    "joi-to-json-schema": "^3.4.0",
+    "juice": "^7.0.0",
+    "mongodb-memory-server": "2.9.1",
+    "pre-commit": "1.2.2",
+    "prettier": "^2.1.2",
+    "prettier-eslint": "^11.0.0",
+    "supertest": "3.0.0"
+  },
+  "jest": {
+    "setupFiles": [
+      "<rootDir>/src/test-helpers/setup-tests.js"
+    ]
+  },
+  "prettier": {
+    "singleQuote": true,
+    "arrowParens": "always",
+    "printWidth": 120
+  },
+  "volta": {
+    "node": "14.16.0",
+    "yarn": "1.22.5"
+  }
+}

@@ -466,7 +466,16 @@ const getCollectionIndex = (collectionId) => {
   }
 };
 
-const ensureCollectionIndex = async (collectionId, collectionIndexName) => {
+const ensureCollectionIndex = async (collection, collectionIndexName) => {
+  const collectionId = collection.id;
+  const properties = {
+    ingestedAt: {
+      type: 'date',
+    },
+  };
+  if (collection.timeField) {
+    properties[collection.timeField] = { type: 'date' };
+  }
   let index = getCollectionIndex(collectionId);
   if (collectionIndexName) index += `-${collectionIndexName}`;
   const exists = await indexExists(index);
@@ -478,11 +487,7 @@ const ensureCollectionIndex = async (collectionId, collectionIndexName) => {
         body: {
           mappings: {
             dynamic_templates,
-            properties: {
-              ingestedAt: {
-                type: 'date',
-              },
-            },
+            properties,
           },
         },
       });

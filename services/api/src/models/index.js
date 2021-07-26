@@ -1,7 +1,9 @@
 const { loadModelDir } = require('../utils/schema');
 
 module.exports = {
-  User: require('./user'),
   AccessPolicy: require('./accessPolicy'),
+  Batch: require('./batch'),
+  Collection: require('./collection'),
+  User: require('./user'),
   ...loadModelDir(__dirname + '/definitions'),
 };

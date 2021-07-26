@@ -48,7 +48,7 @@ Code reload using nodemon:
 yarn start
 ```
 
-This command will automatically populate MongoDB fixtures when and empty DB is found.
+This command will automatically populate MongoDB fixtures when an empty DB is found.
 
 ## Configuration
 

@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mongo-to-tectonic-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mongo-to-tectonic
+  template:
+    metadata:
+      labels:
+        name: mongo-to-tectonic
+    spec:
+      containers:
+        - image: bedrockio/mongo-to-tectonic
+          imagePullPolicy: Always
+          name: mongo-to-tectonic
+          env:
+            - name: NODE_ENV
+              value: 'production'
+            - name: ENV_NAME
+              value: 'staging'
+            - name: MONGO_URI
+              value: 'mongodb://mongo:27017/tectonic_dev'
+            - name: MONGO_COLLECTIONS_TO_INDEX
+              value: 'users,collections'
+            - name: MONGO_COLLECTIONS_TO_INDEX_HISTORICAL
+              value: 'users'
+            - name: MONGO_EXCLUDE_ATTRIBUTES
+              value: 'users.email,users.hashedPassword'
+            - name: TECTONIC_APPLICATION_TOKEN
+              value: ''
+            - name: TECTONIC_URL
+              value: 'http://localhost:3300'
+          ports:
+            - name: http-server
+              containerPort: 2455
+          volumeMounts:
+            - name: mongo-to-tectonic-cache
+              mountPath: /service/data
+      volumes:
+        - name: mongo-to-tectonic-cache
+          emptyDir: {}

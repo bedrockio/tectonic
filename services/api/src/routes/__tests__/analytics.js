@@ -15,12 +15,13 @@ const mongoose = require('mongoose');
 jest.setTimeout(40 * 1000);
 let index;
 
-const indexEvents = async (collectionId) => {
+const indexEvents = async (collection) => {
+  const collectionId = collection.id;
   const events = loadJsonStreamFile(__dirname + '/fixtures/evse-metervalues-10.ndjson');
   index = getCollectionIndex(collectionId);
   // console.info(collectionId, index);
   await deleteIndex(index);
-  await ensureCollectionIndex(collectionId);
+  await ensureCollectionIndex(collection);
   const batch = {
     collectionId,
     id: 'batchId1',
@@ -47,7 +48,7 @@ beforeAll(async () => {
     name: 'test-collection',
     description: 'none',
   });
-  await indexEvents(testCollection.id.toString());
+  await indexEvents(testCollection);
 });
 
 afterAll(async () => {

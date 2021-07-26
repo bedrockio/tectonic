@@ -4,7 +4,7 @@ const validate = require('../utils/middleware/validate');
 const mongoose = require('mongoose');
 const { authenticate } = require('../lib/middleware/authenticate');
 const { NotFoundError } = require('../utils/errors');
-const { AccessCredential, AccessPolicy } = require('../models');
+const { AccessCredential, AccessPolicy, Collection } = require('../models');
 const { createCredentialToken } = require('../lib/tokens');
 
 const router = new Router();
@@ -122,8 +122,16 @@ router
   )
   .get('/:credential', async (ctx) => {
     const { accessCredential } = await ctx.state;
+    const accessCredentialObject = accessCredential.toObject();
+    for (const collection of accessCredentialObject.accessPolicy.collections) {
+      const dbCollection = await Collection.findById(collection.collectionId.toString());
+      if (dbCollection) {
+        collection.collectionName = dbCollection.name;
+      }
+    }
+
     ctx.body = {
-      data: { ...accessCredential.toObject() },
+      data: { ...accessCredentialObject },
     };
   })
   .get('/:credential/token', async (ctx) => {

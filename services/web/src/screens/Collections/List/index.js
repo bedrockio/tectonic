@@ -63,6 +63,10 @@ export default class CollectionList extends React.Component {
                       </Table.HeaderCell>
                       <Table.HeaderCell width={6}>Description</Table.HeaderCell>
                       {/* --- Generator: end */}
+                      <Table.HeaderCell>Time Field</Table.HeaderCell>
+                      <Table.HeaderCell onClick={() => setSort('lastEntryAt')} sorted={getSorted('lastEntryAt')}>
+                        Last Entry
+                      </Table.HeaderCell>
                       <Table.HeaderCell onClick={() => setSort('createdAt')} sorted={getSorted('createdAt')}>
                         Created
                       </Table.HeaderCell>
@@ -79,6 +83,8 @@ export default class CollectionList extends React.Component {
                           </Table.Cell>
                           <Table.Cell>{collection.description}</Table.Cell>
                           {/* --- Generator: end */}
+                          <Table.Cell>{collection.timeField}</Table.Cell>
+                          <Table.Cell>{collection.lastEntryAt && formatDateTime(collection.lastEntryAt)}</Table.Cell>
                           <Table.Cell>{formatDateTime(collection.createdAt)}</Table.Cell>
                           <Table.Cell textAlign="center">
                             <EditCollection

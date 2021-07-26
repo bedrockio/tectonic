@@ -8,6 +8,7 @@ const { memorySizeOf, chunkedAsyncMap } = require('../lib/events');
 const { storeBatchEvents } = require('../lib/batch');
 const { createHash } = require('crypto');
 const { authenticate, fetchCredential } = require('../lib/middleware/authenticate');
+const { logger } = require('@bedrockio/instrumentation');
 
 const PUBSUB_RAW_EVENTS_TOPIC = config.get('PUBSUB_RAW_EVENTS_TOPIC');
 const EVENTS_CHUNK_SIZE = 10;
@@ -106,6 +107,25 @@ router
       // logger.info(`filePath: ${filePath}`);
       dbBatch.rawUrl = filePath;
       await dbBatch.save();
+
+      // Update collection.lastEntryAt if timeField is set
+      const { timeField, lastEntryAt } = collection;
+      if (timeField) {
+        let maxTimeFieldValue = '';
+        for (const event of events) {
+          if (event[timeField] && event[timeField] > maxTimeFieldValue) maxTimeFieldValue = event[timeField];
+        }
+        if (!lastEntryAt && maxTimeFieldValue) {
+          logger.info(`Setting lastEntryAt for collection ${collection.name} to: ${maxTimeFieldValue}`);
+          await Collection.findOneAndUpdate({ _id: collection.id }, { lastEntryAt: maxTimeFieldValue });
+        } else if (maxTimeFieldValue > lastEntryAt.toISOString()) {
+          logger.info(`Updating lastEntryAt for collection ${collection.name} to: ${maxTimeFieldValue}`);
+          await Collection.findOneAndUpdate(
+            { _id: collection.id, lastEntryAt: { $lt: maxTimeFieldValue } },
+            { lastEntryAt: maxTimeFieldValue }
+          );
+        }
+      }
 
       // 3: push events to PUBSUB topic (in chunks)
       const publish = async (event) => {

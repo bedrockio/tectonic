@@ -23,7 +23,7 @@ export default class InspectBatchEvents extends React.Component {
       loading: true,
     });
     try {
-      const { hits } = await request({
+      const { data } = await request({
         method: 'POST',
         path: `/1/analytics/search`,
         body: {
@@ -33,7 +33,7 @@ export default class InspectBatchEvents extends React.Component {
           },
         },
       });
-      const events = hits.hits.map((item) => {
+      const events = data.map((item) => {
         return item._source;
       });
       this.setState({

@@ -25,9 +25,10 @@ const createFixtures = async () => {
   const collection = await Collection.create({
     name: `bar-purchases`,
     description: "Example data from a cocktail bar's point-of-sale system",
+    timeField: 'orderedAt',
   });
 
-  await ensureCollectionIndex(collection.id);
+  await ensureCollectionIndex(collection);
   //const events = loadJsonStreamFile(__dirname + './routes/policy/__tests__/fixtures/bar-purchases.ndjson');
 
   const accessPolicy = await AccessPolicy.create({
@@ -39,19 +40,19 @@ const createFixtures = async () => {
     name: 'bar-purchases-full-access',
     accessPolicy,
   });
-  console.info(`Created accessCredential ${accessCredential.id}`);
+  logger.info(`Created accessCredential ${accessCredential.id}`);
 
   const applicationCredential = await ApplicationCredential.create({
     name: 'default-application',
   });
-  console.info(`Created applicationCredential ${applicationCredential.id}`);
+  logger.info(`Created applicationCredential ${applicationCredential.id}`);
 
   // const collection2 = await Collection.create({
   //   name: `evse-controllers`,
   //   description: 'MongoDB EVSE controller data',
   // });
 
-  // await ensureCollectionIndex(collection2.id);
+  // await ensureCollectionIndex(collection2);
 
   // // const policy2 = await Policy.create({
   // //   name: 'Access for Maintenance Account 5f15901ef8909f9ea57425b9',
@@ -71,7 +72,7 @@ const createFixtures = async () => {
   //   description: 'MongoDB EVSE meter value event data',
   // });
 
-  // await ensureCollectionIndex(collection3.id);
+  // await ensureCollectionIndex(collection3);
 
   // // const policy3 = await Policy.create({
   // //   name: 'MeterValues for EVSE Controller 5fd6036fccd06f4d6b1d8bd2',
