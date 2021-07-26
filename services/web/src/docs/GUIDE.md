@@ -32,11 +32,14 @@ Events belong to a `collection` and are ingested in `batches`. You can view a co
 
 Before you can ingest batches of events, you first need to create a collection. An example collection called `bar-purchases` is available as a fixture and loaded with sample events when a new Tectonic instance is created.
 
+We recommend setting the collection `timeField`, which is the name of the field which contains the date in each time series event.
+
 **Collection:**
 ```json
 {
   "name": "bar-purchases", // Needs to be unique
-  "description": "Example data from a cocktail bar's point-of-sale system"
+  "description": "Example data from a cocktail bar's point-of-sale system",
+  "timeField": "orderedAt"
 }
 ```
 
@@ -44,7 +47,7 @@ You can create new collections with a `POST` or `PUT` to `<API_URL>/1/collection
 
 **> Create Collection:**
 ```bash
-curl -s -XPUT -d '{"name": "bar-purchases","description": "UPDATED Example data from a cocktail bar\'s point-of-sale system"}' <API_URL>/1/collections -H "Authorization: Bearer <ADMIN_TOKEN>" -H "Content-Type: application/json"
+curl -s -XPUT -d '{"name": "bar-purchases","description": "UPDATED Example data from a cocktail bar\'s point-of-sale system","timeField":"orderedAt"}' <API_URL>/1/collections -H "Authorization: Bearer <ADMIN_TOKEN>" -H "Content-Type: application/json"
 ```
 *Response:*
 ```json
@@ -52,6 +55,7 @@ curl -s -XPUT -d '{"name": "bar-purchases","description": "UPDATED Example data 
   "data": {
     "name":"bar-purchases",
     "description":"UPDATED Example data from a cocktail bar's point-of-sale system",
+    "timeField": "orderedAt",
     "createdAt":"2021-06-23T10:24:38.805Z",
     "updatedAt":"2021-06-23T10:24:38.805Z",
     "id":"60d30be6f499a3e117542ebb"
