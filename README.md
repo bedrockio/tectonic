@@ -100,3 +100,19 @@ Code documentation:
 ### Web Documentation
 
 [services/web](services/web)
+
+## Releases
+
+In order to release a new Tectonic version, you need to create a `release` on github with an incremented version tag, e.g., `v1.0.1`, `v1.2.4`, `v2.0.0`, and release notes. Next you can checkout the release branch locally:
+
+```bash
+git pull origin master
+git checkout v1.0.1
+```
+
+On this branch you can build the images and push the images to Docker Hub as follows:
+
+```bash
+bedrock cloud build # select all services
+./docker-push all 1.0.1 # pass the branch/release version, with the `v` prefix
+```
