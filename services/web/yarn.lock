@@ -8703,7 +8703,7 @@ react-syntax-highlighter@^15.4.3:
     prismjs "^1.22.0"
     refractor "^3.2.0"
 
-react-tectonic@^0.1.1:
+react-tectonic@^0.1.8:
   version "0.1.8"
   resolved "https://registry.yarnpkg.com/react-tectonic/-/react-tectonic-0.1.8.tgz#4afb08c97e7972958d2e3e441d3e8e5d023933ec"
   integrity sha512-6umoytFlJ6vx1YAViILmwM6AbNBuHrZ7+erePGKUbAyD35zTb/p8wLNtO4flb+WdA4/Qd3baCje/O9oAVlQWhg==

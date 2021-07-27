@@ -6401,7 +6401,7 @@ mongoose-legacy-pluralize@1.0.2:
   resolved "https://registry.yarnpkg.com/mongoose-legacy-pluralize/-/mongoose-legacy-pluralize-1.0.2.tgz#3ba9f91fa507b5186d399fb40854bff18fb563e4"
   integrity sha512-Yo/7qQU4/EyIS8YDFSeenIvXxZN+ld7YdV9LqFVQJzTLye8unujAWPZ4NWKfFA+RNjh+wvTWKY9Z3E5XM6ZZiQ==
 
-mongoose@^5.12.2:
+mongoose@^5.13.3:
   version "5.13.3"
   resolved "https://registry.yarnpkg.com/mongoose/-/mongoose-5.13.3.tgz#42cb40207bbcaca9c6fa94b0a8c0a38181c1965e"
   integrity sha512-q+zX6kqHAvwxf5speMWhq6qF4vdj+x6/kfD5RSKdZKNm52yGmaUygN+zgrtQjBZPFEzG0B3vF6GP0PoAGadE+w==
