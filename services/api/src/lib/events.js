@@ -3,6 +3,14 @@ const config = require('@bedrockio/config');
 const fetch = require('node-fetch');
 const { chunk } = require('lodash');
 
+let EVENTS_URI;
+
+if (process.env.NODE_ENV === 'production') {
+  EVENTS_URI = 'http://api-nodeport/1/events';
+} else {
+  EVENTS_URI = `${config.get('API_URL')}/1/events`;
+}
+
 function memorySizeOf(obj) {
   var bytes = 0;
 
@@ -63,16 +71,15 @@ async function publishEvents(collectionId, events, token, retryCount = 0) {
     'Content-Type': 'application/json',
     Authorization: `Bearer ${token}`,
   };
-  const uri = `${config.get('API_URL')}/1/events`;
   try {
-    const response = await fetch(uri, {
+    const response = await fetch(EVENTS_URI, {
       method: 'post',
       body: JSON.stringify(body),
       headers,
     });
     if (!response.ok) {
       // logger.info(await response.text());
-      // throw new Error(`Bad response from API: ${response.status} (${uri})`);
+      // throw new Error(`Bad response from API: ${response.status} (${EVENTS_URI})`);
       if (response.status == 413) {
         logger.warn(`Warning, jsonLimit is only 2mb. Events are skipped.`);
         return;
@@ -92,7 +99,7 @@ async function publishEvents(collectionId, events, token, retryCount = 0) {
       await publishEvents(collectionId, events, retryCount + 1);
     }
   }
-  logger.info(`Published ${events.length} events to ${uri}`);
+  logger.info(`Published ${events.length} events to ${EVENTS_URI}`);
 }
 
 async function publishEventsBatched(collectionId, events, token, batchSize = 100) {

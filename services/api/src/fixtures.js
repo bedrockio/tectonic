@@ -47,47 +47,6 @@ const createFixtures = async () => {
   });
   logger.info(`Created applicationCredential ${applicationCredential.id}`);
 
-  // const collection2 = await Collection.create({
-  //   name: `evse-controllers`,
-  //   description: 'MongoDB EVSE controller data',
-  // });
-
-  // await ensureCollectionIndex(collection2);
-
-  // // const policy2 = await Policy.create({
-  // //   name: 'Access for Maintenance Account 5f15901ef8909f9ea57425b9',
-  // //   collections: [
-  // //     {
-  // //       collectionId: collection2.id,
-  // //       scope: {
-  // //         maintenanceAccountId: '5f15901ef8909f9ea57425b9',
-  // //       },
-  // //     },
-  // //   ],
-  // // });
-  // // logger.info(`Created policy: '${policy2.name}'`);
-
-  // const collection3 = await Collection.create({
-  //   name: `evse-metervalues`,
-  //   description: 'MongoDB EVSE meter value event data',
-  // });
-
-  // await ensureCollectionIndex(collection3);
-
-  // // const policy3 = await Policy.create({
-  // //   name: 'MeterValues for EVSE Controller 5fd6036fccd06f4d6b1d8bd2',
-  // //   collections: [
-  // //     {
-  // //       collectionId: collection3.id,
-  // //       scope: {
-  // //         evseControllerId: '5fd6036fccd06f4d6b1d8bd2',
-  // //         method: 'MeterValues',
-  // //       },
-  // //     },
-  // //   ],
-  // // });
-  // // logger.info(`Created policy: '${policy3.name}'`);
-
   return true;
 };
 
