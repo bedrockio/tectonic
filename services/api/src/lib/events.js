@@ -84,6 +84,7 @@ async function publishEvents(collectionId, events, token, retryCount = 0) {
         logger.warn(`Warning, jsonLimit is only 2mb. Events are skipped.`);
         return;
       }
+      logger.warn(response.error);
       logger.warn(`Warning, bad response from API: ${response.status}`);
       if (retryCount < 3) {
         logger.warn(`Retrying in 3 seconds (retry count: ${retryCount + 1})`);
