@@ -94,7 +94,7 @@ async function publishEvents(collectionId, events, token, retryCount = 0) {
   } catch (e) {
     logger.error(e);
     if (retryCount < 3) {
-      logger.warn(`Tetrying in 3 seconds (retry count: ${retryCount + 1})`);
+      logger.warn(`Retrying in 3 seconds (retry count: ${retryCount + 1})`);
       await sleep(3000);
       await publishEvents(collectionId, events, retryCount + 1);
     }
