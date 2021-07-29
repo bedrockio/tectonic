@@ -4,7 +4,7 @@ const { logger } = require('@bedrockio/instrumentation');
 
 const TECTONIC_URL = config.get('TECTONIC_URL');
 const TECTONIC_APPLICATION_TOKEN = config.get('TECTONIC_APPLICATION_TOKEN');
-const TECTONIC_COLLECTION_PREFIX = config.get('TECTONIC_COLLECTION_PREFIX');
+const TECTONIC_COLLECTION_PREFIX = config.get('TECTONIC_COLLECTION_PREFIX') || '';
 
 const headers = {
   'Content-Type': 'application/json',
@@ -90,11 +90,11 @@ async function getLastEntryAt(tectonicCollectionName) {
 }
 
 function getTectonicCollectionName(mongoCollectionName) {
-  return TECTONIC_COLLECTION_PREFIX + '-' + mongoCollectionName;
+  return TECTONIC_COLLECTION_PREFIX + mongoCollectionName;
 }
 
 function getTectonicHistoricalCollectionName(mongoCollectionName) {
-  return TECTONIC_COLLECTION_PREFIX + '-history-' + mongoCollectionName;
+  return TECTONIC_COLLECTION_PREFIX + 'history-' + mongoCollectionName;
 }
 
 module.exports = {
