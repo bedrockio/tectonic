@@ -10,7 +10,7 @@ spec:
   template:
     metadata:
       labels:
-        name: mongo-to-tectonic
+        app: mongo-to-tectonic
     spec:
       containers:
         - image: bedrockio/mongo-to-tectonic
