@@ -33,9 +33,6 @@ spec:
               value: ''
             - name: TECTONIC_URL
               value: 'http://localhost:3300'
-          ports:
-            - name: http-server
-              containerPort: 2455
           volumeMounts:
             - name: mongo-to-tectonic-cache
               mountPath: /service/data

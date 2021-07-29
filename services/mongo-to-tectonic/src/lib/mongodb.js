@@ -1,7 +1,7 @@
 const config = require('@bedrockio/config');
 const { MongoClient } = require('mongodb');
 const { logger } = require('@bedrockio/instrumentation');
-const MONGGO_URI = config.get('MONGO_URI');
+const MONGO_URI = config.get('MONGO_URI');
 
 let client;
 
@@ -15,11 +15,11 @@ const flags = {
 exports.flags = flags;
 
 async function connect(options = {}) {
-  client = new MongoClient(MONGGO_URI, flags);
+  client = new MongoClient(MONGO_URI, flags);
   return new Promise((accept, reject) => {
     client.connect(function (err) {
       if (err) return reject(err);
-      logger.info(`Connected successfully to MongoDB server: ${MONGGO_URI}`);
+      logger.info(`Connected successfully to MongoDB server: ${MONGO_URI}`);
       const db = client.db(options.database);
       accept(db);
     });
