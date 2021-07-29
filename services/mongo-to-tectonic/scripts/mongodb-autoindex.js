@@ -29,22 +29,9 @@ async function run() {
     getTectonicHistoricalCollectionName(name)
   );
 
-  logger.info('Collections:');
-  for (const name of collectionNames) {
-    logger.info(`- ${name}`);
-  }
-
-  if (collectionNamesHistorical.length) {
-    logger.info('Collections Historical:');
-    for (const name of collectionNamesHistorical) {
-      logger.info(`- ${name}`);
-    }
-  }
-
-  logger.info('Exluded Mongo Attributes:');
-  for (const name of MONGO_EXCLUDE_ATTRIBUTES) {
-    logger.info(`- ${name}`);
-  }
+  logger.info('Collections:', collectionNames);
+  logger.info('Collections Historical:', collectionNamesHistorical);
+  logger.info('Exluded Mongo Attributes:', MONGO_EXCLUDE_ATTRIBUTES.split(/\,\s*/).filter(Boolean));
 
   logger.info('Ensure Tectonic collections');
   for (const tectonicCollectionName of tectonicCollectionNames.concat(tectonicHistoricalCollectionNames)) {
