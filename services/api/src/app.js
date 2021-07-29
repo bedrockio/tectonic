@@ -24,7 +24,7 @@ app
   )
   .use(errorHandler)
   .use(loggingMiddleware())
-  .use(bodyParser({ multipart: true }));
+  .use(bodyParser({ multipart: true, jsonLimit: '10mb' }));
 
 app.on('error', (err, ctx) => {
   if (err.code === 'EPIPE' || err.code === 'ECONNRESET') {
