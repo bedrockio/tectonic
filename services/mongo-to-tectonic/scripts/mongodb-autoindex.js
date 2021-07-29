@@ -29,10 +29,6 @@ async function run() {
     getTectonicHistoricalCollectionName(name)
   );
 
-  logger.info('Collections:', collectionNames);
-  logger.info('Collections Historical:', collectionNamesHistorical);
-  logger.info('Exluded Mongo Attributes:', MONGO_EXCLUDE_ATTRIBUTES.split(/\,\s*/).filter(Boolean));
-
   logger.info('Ensure Tectonic collections');
   for (const tectonicCollectionName of tectonicCollectionNames.concat(tectonicHistoricalCollectionNames)) {
     let description = 'MongoDB indexed collection';
