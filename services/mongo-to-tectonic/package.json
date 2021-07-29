@@ -19,6 +19,7 @@
   "dependencies": {
     "@bedrockio/config": "^2.1.1",
     "@bedrockio/instrumentation": "^1.4.9",
+    "lodash": "^4.17.21",
     "mongodb": "^3.6.10"
   },
   "devDependencies": {
