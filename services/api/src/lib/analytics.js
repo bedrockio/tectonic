@@ -474,7 +474,8 @@ const ensureCollectionIndex = async (collection, collectionIndexName) => {
     },
   };
   if (collection.timeField) {
-    properties[collection.timeField] = { type: 'date' };
+    properties.event = { properties: {} };
+    properties.event.properties[collection.timeField] = { type: 'date' };
   }
   let index = getCollectionIndex(collectionId);
   if (collectionIndexName) index += `-${collectionIndexName}`;

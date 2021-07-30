@@ -6,6 +6,7 @@ const {
   bulkIndexBatchEvents,
   bulkErrorLog,
   getCollectionIndex,
+  getMapping,
 } = require('../../lib/analytics');
 const { setupDb, teardownDb, request, createUser, getParsedErrorMessage } = require('../../utils/testing');
 const { AccessPolicy, AccessCredential, Collection } = require('../../models');
@@ -22,6 +23,8 @@ const indexEvents = async (collection) => {
   // console.info(collectionId, index);
   await deleteIndex(index);
   await ensureCollectionIndex(collection);
+  // const mapping = await getMapping(index);
+  // console.info(JSON.stringify(mapping, null, 2));
   const batch = {
     collectionId,
     id: 'batchId1',
@@ -47,6 +50,7 @@ beforeAll(async () => {
     _id: testCollectionId,
     name: 'test-collection',
     description: 'none',
+    timeField: 'updatedAt',
   });
   await indexEvents(testCollection);
 });
@@ -61,6 +65,16 @@ beforeEach(async () => {
 });
 
 describe('/1/analytics', () => {
+  describe('Mapping', () => {
+    it('should create correct mapping', async () => {
+      const mapping = await getMapping(index);
+      //console.info(JSON.stringify(mapping, null, 2));
+      expect(mapping[index].mappings.properties.ingestedAt.type).toBe('date');
+      expect(mapping[index].mappings.properties.event.properties.updatedAt.type).toBe('date');
+      expect(mapping[index].mappings.properties.event.properties.messageId.type).toBe('keyword');
+    });
+  });
+
   describe('POST /search', () => {
     it('should allow analytics search for correct policy', async () => {
       const collectionId = testCollection.id;
