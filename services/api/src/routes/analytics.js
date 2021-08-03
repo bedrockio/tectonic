@@ -151,7 +151,7 @@ router
       body: Joi.object({
         collection: Joi.string().required(),
         filter: Joi.object(filterOptions),
-        operation: Joi.string().required(),
+        operation: Joi.string().optional(),
         field: Joi.string().optional(),
         interval: Joi.string().optional(),
         dateField: Joi.string().optional(),

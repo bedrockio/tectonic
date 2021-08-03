@@ -103,13 +103,14 @@ async function timeSeries(index, operation, field, options = undefined, returnSe
     timeSeries: {
       date_histogram,
       aggs: {
-        fieldOperation: field
-          ? {
-              [operation]: {
-                field,
-              },
-            }
-          : undefined,
+        fieldOperation:
+          field && operation
+            ? {
+                [operation]: {
+                  field,
+                },
+              }
+            : undefined,
       },
     },
   };
