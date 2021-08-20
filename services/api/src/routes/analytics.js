@@ -2,7 +2,7 @@ const Router = require('@koa/router');
 const Joi = require('@hapi/joi');
 const validate = require('../utils/middleware/validate');
 const { authenticate, fetchCredential } = require('../lib/middleware/authenticate');
-const { terms, timeSeries, search, stats, cardinality, getCollectionIndex } = require('../lib/analytics');
+const { terms, timeSeries, timeMap, search, stats, cardinality, getCollectionIndex } = require('../lib/analytics');
 const { Collection } = require('../models');
 
 const router = new Router();
@@ -181,6 +181,44 @@ router
         ctx.body = body;
       } catch (err) {
         const searchQuery = await timeSeries(index, operation, field, options, true);
+        interpretError(ctx, err, searchQuery);
+      }
+    }
+  )
+  .post(
+    '/time-map',
+    validate({
+      body: Joi.object({
+        collection: Joi.string().required(),
+        filter: Joi.object(filterOptions),
+        interval: Joi.string().optional(),
+        dateField: Joi.string().optional(),
+        timeZone: Joi.string().optional(),
+        debug: Joi.boolean().default(false).optional(),
+      }),
+    }),
+    checkCollectionAccess,
+    async (ctx) => {
+      const { filter = {}, interval, dateField, timeZone, debug } = ctx.request.body;
+      const { collectionId, scope } = ctx.state.accessPolicyCollection;
+      const index = getCollectionIndex(collectionId);
+      filter.scope = scope; // Each scope key-value pair is added as ES bool.must.term
+      const options = {
+        interval,
+        dateField,
+        timeZone,
+        ...filter,
+      };
+      try {
+        const body = {};
+        if (debug) {
+          const searchQuery = await timeMap(index, options, true);
+          body.meta = { searchQuery };
+        }
+        body.data = await timeMap(index, options, false);
+        ctx.body = body;
+      } catch (err) {
+        const searchQuery = await timeMap(index, options, true);
         interpretError(ctx, err, searchQuery);
       }
     }

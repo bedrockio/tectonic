@@ -127,6 +127,60 @@ async function timeSeries(index, operation, field, options = undefined, returnSe
   });
 }
 
+async function timeMap(index, options = undefined, returnSearchOptions = false) {
+  const body = parseFilterOptions(options, true);
+  body.from = 0;
+  body.size = 0;
+  const { dateField, interval, timeZone } = options;
+  const date_histogram = {
+    field: dateField || 'ingestedAt',
+    interval: interval || '1d',
+    min_doc_count: 0,
+  };
+
+  if (timeZone) {
+    date_histogram.time_zone = timeZone;
+  }
+
+  const safeDateField = dateField.replace(/[^a-zA-Z0-9.]/g, '');
+  body.aggs = {
+    dayOfWeekDistribution: {
+      terms: {
+        script: {
+          lang: 'painless',
+          source: `doc['${safeDateField}'].value.getDayOfWeekEnum().getValue()`,
+        },
+      },
+      aggs: {
+        hourDistribution: {
+          terms: {
+            script: {
+              lang: 'painless',
+              source: `doc['${safeDateField}'].value.getHour()`,
+            },
+            size: 25,
+          },
+        },
+      },
+    },
+  };
+  const searchOptions = { index, body };
+  if (returnSearchOptions) return searchOptions;
+  const result = await elasticsearchClient.search(searchOptions);
+  return result.body.aggregations.dayOfWeekDistribution.buckets.map(({ key, doc_count, hourDistribution }) => {
+    return {
+      dayOfWeek: parseInt(key, 10),
+      count: doc_count || 0,
+      hours: hourDistribution.buckets.map(({ key, doc_count }) => {
+        return {
+          hour: parseInt(key, 10),
+          count: doc_count || 0,
+        };
+      }),
+    };
+  });
+}
+
 async function stats(index, fields, options = undefined, returnSearchOptions = false) {
   const body = parseFilterOptions(options, true);
   body.from = 0;
@@ -177,6 +231,7 @@ async function cardinality(index, fields, options = undefined, returnSearchOptio
       },
     };
   });
+  console.log(index, JSON.stringify(body, null, 2));
   const searchOptions = { index, body };
   if (returnSearchOptions) return searchOptions;
   const result = await elasticsearchClient.search(searchOptions);
@@ -557,6 +612,7 @@ async function getMapping(index) {
 module.exports = {
   terms,
   timeSeries,
+  timeMap,
   stats,
   cardinality,
   search,
