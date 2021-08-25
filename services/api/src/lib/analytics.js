@@ -232,7 +232,7 @@ async function cardinality(index, fields, options = undefined, returnSearchOptio
       },
     };
   });
-  console.log(index, JSON.stringify(body, null, 2));
+  // console.log(index, JSON.stringify(body, null, 2));
   const searchOptions = { index, body };
   if (returnSearchOptions) return searchOptions;
   const result = await elasticsearchClient.search(searchOptions);
