@@ -78,7 +78,7 @@ async function timeSeries(index, operation, field, options = undefined, returnSe
   };
   if (options.range && options.range[dateField]) {
     date_histogram.extended_bounds = {};
-    const { from, to, gte, gt, lte, lt } = options.range[dateField];
+    const { from, to, gte, gt, lte, lt, time_zone } = options.range[dateField];
     if (from) {
       date_histogram.extended_bounds.min = from;
     } else if (gte) {
@@ -92,6 +92,10 @@ async function timeSeries(index, operation, field, options = undefined, returnSe
       date_histogram.extended_bounds.max = lte;
     } else if (lt) {
       date_histogram.extended_bounds.max = lt;
+    }
+
+    if (time_zone) {
+      date_histogram.time_zone = timeZone;
     }
   }
 
