@@ -83,7 +83,7 @@ async function createSubscription(topicName, subscriptionName, ackDeadlineSecond
   }
 
   if (!subscriptionExists(subscriptionName, subscriptions)) {
-    logger.info(`Create subscription: ${subscriptionName}}`);
+    logger.info(`Create subscription: ${subscriptionName}`);
     await pubSubClient.topic(topicName).createSubscription(subscriptionName, subscriptionOptions);
     logger.info(`Subscription "${subscriptionName}" created for topic "${topicName}".`);
   }
