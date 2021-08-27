@@ -34,6 +34,7 @@ async function run() {
       const collection = db.collection(collectionName);
       const index = {};
       index[MONGO_UPDATED_AT_FIELD] = -1;
+      index['_id'] = 1;
       await collection.createIndex(index);
     } catch (e) {
       logger.error(e);
