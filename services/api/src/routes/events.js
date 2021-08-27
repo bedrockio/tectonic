@@ -46,10 +46,10 @@ async function checkCollectionAccess(ctx, next) {
     ({ collectionId: cid }) => collectionId == cid.toString()
   );
   if (!accessPolicyCollection) {
-    ctx.throw(401, `AccessPolicy has no access to collectionId: ${collectionId}`);
+    ctx.throw(401, `AccessPolicy has no access to collection: ${dbCollection.name} (${collectionId})`);
   }
   if (accessPolicyCollection.permission != 'read-write') {
-    ctx.throw(401, `AccessPolicy has no read-write permission to collectionId: ${collectionId}`);
+    ctx.throw(401, `AccessPolicy has no read-write permission to collection: ${dbCollection.name} (${collectionId})`);
   }
   return next();
 }
