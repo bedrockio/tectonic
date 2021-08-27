@@ -14,7 +14,6 @@ const MONGO_UPDATED_AT_FIELD = config.get('MONGO_UPDATED_AT_FIELD');
 const MONGO_COLLECTIONS_TO_INDEX = config.get('MONGO_COLLECTIONS_TO_INDEX');
 const MONGO_COLLECTIONS_TO_INDEX_HISTORICAL = config.get('MONGO_COLLECTIONS_TO_INDEX_HISTORICAL');
 const MONGO_INDEXER_INTERVAL_SECONDS = config.get('MONGO_INDEXER_INTERVAL_SECONDS');
-const MONGO_EXCLUDE_ATTRIBUTES = config.get('MONGO_EXCLUDE_ATTRIBUTES');
 
 async function run() {
   const db = await connect();
@@ -28,6 +27,18 @@ async function run() {
   const tectonicHistoricalCollectionNames = collectionNamesHistorical.map((name) =>
     getTectonicHistoricalCollectionName(name)
   );
+
+  logger.info('Ensure MongoDB UPDATED_AT_FIELD indexes');
+  for (const collectionName of collectionNames) {
+    try {
+      const collection = db.collection(collectionName);
+      const index = {};
+      index[MONGO_UPDATED_AT_FIELD] = -1;
+      await collection.createIndex(index);
+    } catch (e) {
+      logger.error(e);
+    }
+  }
 
   logger.info('Ensure Tectonic collections');
   for (const tectonicCollectionName of tectonicCollectionNames.concat(tectonicHistoricalCollectionNames)) {
