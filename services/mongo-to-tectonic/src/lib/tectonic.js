@@ -6,6 +6,8 @@ const TECTONIC_URL = config.get('TECTONIC_URL');
 const TECTONIC_APPLICATION_TOKEN = config.get('TECTONIC_APPLICATION_TOKEN');
 const TECTONIC_COLLECTION_PREFIX = config.get('TECTONIC_COLLECTION_PREFIX') || '';
 
+const MONGO_UPDATED_AT_FIELD = config.get('MONGO_UPDATED_AT_FIELD');
+
 const headers = {
   'Content-Type': 'application/json',
   Authorization: `Bearer ${TECTONIC_APPLICATION_TOKEN}`,
@@ -78,14 +80,20 @@ async function ensureCollectionAccessCredential(tectonicCollectionNames) {
   return data;
 }
 
-async function getLastEntryAt(tectonicCollectionName) {
+async function getLastEntryAt(tectonicCollectionName, ensure = true) {
   const response = await fetch(TECTONIC_URL + '/1/collections/' + tectonicCollectionName + '/last-entry-at', {
     method: 'GET',
     headers,
   });
   const { data, error } = await response.json();
   if (error) {
-    throw new Error('[getLastEntryAt] ' + error.message);
+    if (ensure && error.status == 404) {
+      logger.info(`[getLastEntryAt] ${tectonicCollectionName} 404`);
+      await ensureCollection(tectonicCollectionName, 'MongoDB indexed collection', MONGO_UPDATED_AT_FIELD);
+      await getLastEntryAt(tectonicCollectionName, false);
+    } else {
+      throw new Error('[getLastEntryAt] ' + error.message);
+    }
   }
   return data;
 }
