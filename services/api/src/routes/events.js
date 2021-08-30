@@ -5,12 +5,14 @@ const validate = require('../utils/middleware/validate');
 const { publishMessage } = require('../lib/pubsub');
 const { Batch, Collection } = require('../models');
 const { memorySizeOf, chunkedAsyncMap } = require('../lib/events');
+const { bulkErrorLog, bulkIndexBatchEvents } = require('../lib/analytics');
 const { storeBatchEvents } = require('../lib/batch');
 const { createHash } = require('crypto');
 const { authenticate, fetchCredential } = require('../lib/middleware/authenticate');
 const { logger } = require('@bedrockio/instrumentation');
 
 const PUBSUB_RAW_EVENTS_TOPIC = config.get('PUBSUB_RAW_EVENTS_TOPIC');
+const PUBSUB_EMULATOR = config.get('PUBSUB_EMULATOR', 'boolean');
 const EVENTS_CHUNK_SIZE = 10;
 
 const router = new Router();
@@ -103,10 +105,12 @@ router
 
       // 2: store ndEvents in bucket or local storage
 
-      const filePath = await storeBatchEvents(dbBatch, events);
-      // logger.info(`filePath: ${filePath}`);
-      dbBatch.rawUrl = filePath;
-      await dbBatch.save();
+      if (!collection.skipBatchStorage) {
+        const filePath = await storeBatchEvents(dbBatch, events);
+        // logger.info(`filePath: ${filePath}`);
+        dbBatch.rawUrl = filePath;
+        await dbBatch.save();
+      }
 
       // Update collection.lastEntryAt if timeField is set
       const { timeField, lastEntryAt } = collection;
@@ -127,12 +131,27 @@ router
         }
       }
 
-      // 3: push events to PUBSUB topic (in chunks)
-      const publish = async (event) => {
-        await publishRawEvent(dbBatch, event);
-      };
+      if (process.env.ENV_NAME == 'development' && !PUBSUB_EMULATOR) {
+        // Bulk Insert directly into ES
+        const messages = events.map((event) => {
+          return { event, batch: dbBatch };
+        });
+        logger.info(`BULK INDEX ${messages.length} messages`);
+        try {
+          const bulkResult = await bulkIndexBatchEvents(messages);
+          // logger.info(bulkResult);
+          await bulkErrorLog(bulkResult, messages);
+        } catch (e) {
+          logger.error(`BulkIndex ERROR: ${e}`);
+        }
+      } else {
+        // push events to PUBSUB topic (in chunks)
+        const publish = async (event) => {
+          await publishRawEvent(dbBatch, event);
+        };
 
-      await chunkedAsyncMap(events, publish, EVENTS_CHUNK_SIZE);
+        await chunkedAsyncMap(events, publish, EVENTS_CHUNK_SIZE);
+      }
 
       ctx.body = {
         data: dbBatch,

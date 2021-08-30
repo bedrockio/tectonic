@@ -9,17 +9,15 @@ const PUBSUB_RAW_EVENTS_SUB_ELASTICSEARCH = config.get('PUBSUB_RAW_EVENTS_SUB_EL
 let noPubSub = false;
 
 if (ENV_NAME === 'development') {
-  const pubsubEmulator = config.get('PUBSUB_EMULATOR');
+  const pubsubEmulator = config.get('PUBSUB_EMULATOR', 'boolean');
   if (!pubsubEmulator) {
-    logger.warn('PUBSUB_EMULATOR is set to False. Messages will not be published to pubsub.');
+    logger.info('PUBSUB_EMULATOR is set to False. Messages will not be published to pubsub.');
     noPubSub = true;
   }
 }
 
 async function initialize() {
-  if (noPubSub) {
-    logger.warn('PUBSUB_EMULATOR is set to False. Topics are not initialized');
-  } else {
+  if (!noPubSub) {
     await createSubscription(PUBSUB_RAW_EVENTS_TOPIC, PUBSUB_RAW_EVENTS_SUB_ELASTICSEARCH);
   }
 }

@@ -11,7 +11,7 @@ const headers = {
   Authorization: `Bearer ${TECTONIC_APPLICATION_TOKEN}`,
 };
 
-async function ensureCollection(tectonicCollectionName, description, timeField) {
+async function ensureCollection(tectonicCollectionName, description, timeField, skipBatchStorage = true) {
   logger.info(`Ensuring Tectonic collection ${tectonicCollectionName}`);
   const response = await fetch(TECTONIC_URL + '/1/collections', {
     method: 'PUT',
@@ -19,6 +19,7 @@ async function ensureCollection(tectonicCollectionName, description, timeField) 
       name: tectonicCollectionName,
       description,
       timeField,
+      skipBatchStorage,
     }),
     headers,
   });

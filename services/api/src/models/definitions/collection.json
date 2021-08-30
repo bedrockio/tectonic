@@ -3,6 +3,7 @@
     "name": { "type": "String", "unique": true, "required": true, "lowercase": true, "trim": true },
     "description": { "type": "String", "trim": true, "required": false },
     "timeField": { "type": "String", "trim": true, "required": false },
-    "lastEntryAt": { "type": "Date", "required": false }
+    "lastEntryAt": { "type": "Date", "required": false },
+    "skipBatchStorage": { "type": "Boolean", "default": false }
   }
 }
