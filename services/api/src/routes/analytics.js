@@ -42,6 +42,7 @@ async function checkCollectionAccess(ctx, next) {
     ctx.throw(401, `Collection '${collection}' could not be found`);
   }
   const collectionId = dbCollection.id;
+  const collectionName = dbCollection.name;
 
   // Give admin user and application credential full access
   if (ctx.state.authUser || ctx.state.authApplicationCredential) {
@@ -56,15 +57,16 @@ async function checkCollectionAccess(ctx, next) {
   if (!accessPolicy || !accessPolicy.collections || !Array.isArray(accessPolicy.collections)) {
     ctx.throw(401, `AccessCredential is missing valid accessPolicy`);
   }
-  const accessPolicyCollection = accessPolicy.collections.find(
-    ({ collectionId: cid }) => collectionId == cid.toString()
-  );
+  const accessPolicyCollection = accessPolicy.collections.find(({ collectionName: cname }) => collectionName == cname);
   if (!accessPolicyCollection) {
-    ctx.throw(401, `AccessPolicy has no access to collection: ${dbCollection.name} (${collectionId})`);
+    ctx.throw(401, `AccessPolicy has no access to collection: ${collectionName} (${collectionId})`);
   }
   if (accessPolicyCollection.scopeString) {
     accessPolicyCollection.scope = JSON.parse(accessPolicyCollection.scopeString);
   }
+
+  // Add collectionId field, because only colletionName is stored in the AccessPolicy model collections
+  accessPolicyCollection.collectionId = collectionId;
 
   // check scopeFields
   if (accessPolicyCollection.scopeFields && accessPolicyCollection.scopeFields.length != 0) {

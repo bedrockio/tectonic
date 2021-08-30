@@ -78,9 +78,10 @@ describe('/1/analytics', () => {
   describe('POST /search', () => {
     it('should allow analytics search for correct policy', async () => {
       const collectionId = testCollection.id;
+      const collectionName = testCollection.name;
       const accessPolicy = await AccessPolicy.create({
         name: 'access-test-policy',
-        collections: [{ collectionId }],
+        collections: [{ collectionName }],
       });
       const accessCredential = await AccessCredential.create({
         name: 'access-cred',
@@ -96,10 +97,10 @@ describe('/1/analytics', () => {
     it('should allow analytics search for correct policy with collection name', async () => {
       await AccessPolicy.deleteMany({});
       await AccessCredential.deleteMany({});
-      const collectionId = testCollection.id;
+      const collectionName = testCollection.name;
       const accessPolicy = await AccessPolicy.create({
         name: 'access-test-policy',
-        collections: [{ collectionId }],
+        collections: [{ collectionName }],
       });
       const accessCredential = await AccessCredential.create({
         name: 'access-cred',
@@ -107,7 +108,7 @@ describe('/1/analytics', () => {
       });
       const headers = { Authorization: `Bearer ${createCredentialToken(accessCredential)}` };
 
-      const response = await request('POST', '/1/analytics/search', { collection: testCollection.name }, { headers });
+      const response = await request('POST', '/1/analytics/search', { collection: collectionName }, { headers });
       expect(response.status).toBe(200);
       expect(response.body.data.length).toBe(10);
       // console.info(JSON.stringify(response.body.data[0], null, 2));
@@ -122,9 +123,10 @@ describe('/1/analytics', () => {
     });
 
     it('should deny analytics for incorrect policy', async () => {
+      await Collection.create({ name: 'wrong' });
       const accessPolicy = await AccessPolicy.create({
         name: 'access-test-policy1',
-        collections: [{ collectionId: new mongoose.Types.ObjectId() }],
+        collections: [{ collectionName: 'wrong' }],
       });
       const accessCredential = await AccessCredential.create({
         name: 'access-cred2',
@@ -139,11 +141,12 @@ describe('/1/analytics', () => {
 
     it('should work with fields.excludes', async () => {
       const collectionId = testCollection.id;
+      const collectionName = testCollection.name;
       const accessPolicy = await AccessPolicy.create({
         name: 'access-test-policy-excludes',
         collections: [
           {
-            collectionId,
+            collectionName,
             excludeFields: ['event.messageId', 'event.params', 'batchId', 'doesNotExist', 'event.doesNotExist'],
           },
         ],
@@ -177,11 +180,12 @@ describe('/1/analytics', () => {
 
     it('should work with fields.includes', async () => {
       const collectionId = testCollection.id;
+      const collectionName = testCollection.name;
       const accessPolicy = await AccessPolicy.create({
         name: 'access-test-policy-includes',
         collections: [
           {
-            collectionId,
+            collectionName,
             includeFields: ['event.messageId', 'event.params', 'batchId', 'doesNotExist', 'event.doesNotExist'],
           },
         ],
@@ -231,9 +235,10 @@ describe('/1/analytics', () => {
 
     it('should allow analytics search in debug mode', async () => {
       const collectionId = testCollection.id;
+      const collectionName = testCollection.name;
       const accessPolicy = await AccessPolicy.create({
         name: 'access-test-policy',
-        collections: [{ collectionId }],
+        collections: [{ collectionName }],
       });
       const accessCredential = await AccessCredential.create({
         name: 'access-cred',
@@ -264,10 +269,11 @@ describe('/1/analytics', () => {
         description: 'none',
       });
       const collectionId = collection.id;
+      const collectionName = collection.name;
       // Has no ES index
       await AccessPolicy.create({
         name: 'access-test-policy',
-        collections: [{ collectionId }],
+        collections: [{ collectionName }],
       });
       const user = await createUser();
 
@@ -286,11 +292,12 @@ describe('/1/analytics', () => {
   describe('POST /search with scopes', () => {
     it('should allow scoped analytics search', async () => {
       const collectionId = testCollection.id;
+      const collectionName = testCollection.name;
       const accessPolicy = await AccessPolicy.create({
         name: 'access-test-policy2',
         collections: [
           {
-            collectionId,
+            collectionName,
             scopeString: JSON.stringify({
               evseControllerId: '5fd6036fccd06f4d6b1d8bd2',
             }),
@@ -311,11 +318,12 @@ describe('/1/analytics', () => {
 
     it('should allow multiple scoped fields analytics search', async () => {
       const collectionId = testCollection.id;
+      const collectionName = testCollection.name;
       const accessPolicy = await AccessPolicy.create({
         name: 'access-test-policy3',
         collections: [
           {
-            collectionId,
+            collectionName,
             scopeString: JSON.stringify({
               evseControllerId: '5fd6036fccd06f4d6b1d8bd2',
               method: 'MeterValues',
@@ -335,16 +343,18 @@ describe('/1/analytics', () => {
     });
 
     it('should allow analytics search with multiple collections policy', async () => {
+      await Collection.create({ name: 'whatever' });
       await AccessCredential.deleteMany({});
       const collectionId = testCollection.id;
+      const collectionName = testCollection.name;
       const accessPolicy = await AccessPolicy.create({
         name: 'access-test-policy4',
         collections: [
           {
-            collectionId: new mongoose.Types.ObjectId(),
+            collectionName: 'whatever',
           },
           {
-            collectionId,
+            collectionName,
             scopeString: JSON.stringify({
               evseControllerId: '5fd6036fccd06f4d6b1d8bd2',
               method: 'MeterValues',
@@ -364,12 +374,12 @@ describe('/1/analytics', () => {
     });
 
     it('should allow scopeFields analytics search', async () => {
-      const collectionId = testCollection.id;
+      const collectionName = testCollection.name;
       const accessPolicy = await AccessPolicy.create({
         name: 'access-test-policy',
         collections: [
           {
-            collectionId,
+            collectionName,
             scopeFields: ['evseControllerId'],
           },
         ],
@@ -381,18 +391,19 @@ describe('/1/analytics', () => {
       });
       const headers = { Authorization: `Bearer ${createCredentialToken(accessCredential)}` };
 
-      const response = await request('POST', '/1/analytics/search', { collection: collectionId }, { headers });
+      const response = await request('POST', '/1/analytics/search', { collection: collectionName }, { headers });
       expect(response.status).toBe(200);
       expect(response.body.data.length).toBe(6); // ignores 4 out of 10
     });
 
     it('should not allow missing scopeFields', async () => {
       const collectionId = testCollection.id;
+      const collectionName = testCollection.name;
       const accessPolicy = await AccessPolicy.create({
         name: 'access-test-policy',
         collections: [
           {
-            collectionId,
+            collectionName,
             scopeFields: ['evseControllerId'],
           },
         ],
@@ -410,11 +421,12 @@ describe('/1/analytics', () => {
 
     it('should not allow missing scopeFields field', async () => {
       const collectionId = testCollection.id;
+      const collectionName = testCollection.name;
       const accessPolicy = await AccessPolicy.create({
         name: 'access-test-policy',
         collections: [
           {
-            collectionId,
+            collectionName,
             scopeFields: ['evseControllerId'],
           },
         ],

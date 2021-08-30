@@ -29,7 +29,7 @@ describe('/1/access-credentials', () => {
       const collection = await Collection.create({ name: 'collection-test' });
       const accessPolicy = await AccessPolicy.create({
         name: 'access-policy-test',
-        collections: [{ collectionId: collection.id }],
+        collections: [{ collectionName: collection.name }],
       });
 
       const name = 'access-credential-test';
@@ -52,7 +52,7 @@ describe('/1/access-credentials', () => {
       const collection = await Collection.create({ name: 'collection-test' });
       const accessPolicy = await AccessPolicy.create({
         name: 'access-policy-test',
-        collections: [{ collectionId: collection.id }],
+        collections: [{ collectionName: collection.name }],
       });
 
       const name = 'access-credential-test';
@@ -76,7 +76,7 @@ describe('/1/access-credentials', () => {
       const collection = await Collection.create({ name: 'collection-test' });
       const accessPolicy = await AccessPolicy.create({
         name: 'access-policy-test',
-        collections: [{ collectionId: collection.id, scopeFields: ['userId'] }],
+        collections: [{ collectionName: collection.name, scopeFields: ['userId'] }],
       });
 
       const name = 'access-credential-test';
@@ -108,7 +108,7 @@ describe('/1/access-credentials', () => {
       const collection = await Collection.create({ name: 'collection-test' });
       const accessPolicy = await AccessPolicy.create({
         name: 'access-policy-test',
-        collections: [{ collectionId: collection.id, scopeFields: ['userId'] }],
+        collections: [{ collectionName: collection.name, scopeFields: ['userId'] }],
       });
 
       const name = 'access-credential-test';
@@ -141,7 +141,7 @@ describe('/1/access-credentials', () => {
       const collection = await Collection.create({ name: 'collection-test' });
       const accessPolicy = await AccessPolicy.create({
         name: 'access-policy-test',
-        collections: [{ collectionId: collection.id, scopeFields: ['organizationId', 'credentialId'] }],
+        collections: [{ collectionName: collection.name, scopeFields: ['organizationId', 'credentialId'] }],
       });
 
       const name = 'access-credential-test';
@@ -172,7 +172,7 @@ describe('/1/access-credentials', () => {
       const collection = await Collection.create({ name: 'collection-test' });
       const accessPolicy = await AccessPolicy.create({
         name: 'access-policy-test',
-        collections: [{ collectionId: collection.id }],
+        collections: [{ collectionName: collection.name }],
       });
 
       const name = 'access-credential-test';
@@ -210,7 +210,7 @@ describe('/1/access-credentials', () => {
       const collection = await Collection.create({ name: 'collection-test' });
       const accessPolicy = await AccessPolicy.create({
         name: 'access-policy-test',
-        collections: [{ collectionId: collection.id }],
+        collections: [{ collectionName: collection.name }],
       });
 
       const name = 'access-credential-test';
@@ -230,7 +230,7 @@ describe('/1/access-credentials', () => {
       const collection = await Collection.create({ name: 'collection-test' });
       const accessPolicy = await AccessPolicy.create({
         name: 'access-policy-test',
-        collections: [{ collectionId: collection.id }],
+        collections: [{ collectionName: collection.name }],
       });
 
       const name = 'access-credential-test';
@@ -258,11 +258,11 @@ describe('/1/access-credentials', () => {
       const collection = await Collection.create({ name: 'collection-test' });
       const accessPolicy = await AccessPolicy.create({
         name: 'access-policy-test',
-        collections: [{ collectionId: collection.id }],
+        collections: [{ collectionName: collection.name }],
       });
       const accessPolicy2 = await AccessPolicy.create({
         name: 'access-policy-test-2',
-        collections: [{ collectionId: collection.id }],
+        collections: [{ collectionName: collection.name }],
       });
 
       const name = 'access-credential-test';
@@ -295,7 +295,7 @@ describe('/1/access-credentials', () => {
       const collection = await Collection.create({ name: 'collection-test' });
       const accessPolicy = await AccessPolicy.create({
         name: 'access-policy-test',
-        collections: [{ collectionId: collection.id }],
+        collections: [{ collectionName: collection.name }],
       });
 
       const name = 'access-credential-test';

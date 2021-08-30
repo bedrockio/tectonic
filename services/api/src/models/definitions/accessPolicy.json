@@ -3,7 +3,7 @@
     "name": { "type": "String", "unique": true, "required": true, "lowercase": true, "trim": true },
     "collections": [
       {
-        "collectionId": { "type": "ObjectId", "required": true, "autopopulate": false },
+        "collectionName": { "type": "String", "required": true },
         "permission": { "type": "String", "enum": ["read", "read-write"], "default": "read" },
         "scopeString": { "type": "String" },
         "scopeFields": ["String"],

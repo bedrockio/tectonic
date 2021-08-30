@@ -30,7 +30,7 @@ async function validateCollections(ctx, collections) {
   for (const col of collections) {
     const collection = await Collection.findByIdOrName(col.collection);
     if (!collection) ctx.throw(401, `collection '${col.collection}' doesn't exist`);
-    col.collectionId = collection.id;
+    col.collectionName = collection.name;
     delete col.collection;
     updatedCollections.push(col);
     if (col.scope) {

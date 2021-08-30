@@ -49,7 +49,7 @@ describe('/1/access-policies', () => {
       if (response.error) console.error(response.error);
       expect(response.status).toBe(200);
       expect(data.name).toBe('access-policy-test');
-      expect(data.collections[0].collection).toStrictEqual(collection.id);
+      expect(data.collections[0].collection).toStrictEqual(collection.name);
       expect(data.collections[0].scope).toBeDefined();
       expect(data.collections[0].scope.systemId).toBe(systemId);
     });
@@ -193,14 +193,14 @@ describe('/1/access-policies', () => {
 
       const accessPolicy = await AccessPolicy.create({
         name: 'access-test-1',
-        collections: [{ collectionId: collection.id }],
+        collections: [{ collectionName: collection.name }],
       });
 
       const headers = await getHeaders();
       const response = await request('GET', `/1/access-policies/${accessPolicy.id}`, {}, { headers });
       expect(response.status).toBe(200);
       expect(response.body.data.name).toBe(accessPolicy.name);
-      expect(response.body.data.collections[0].collection).toBe(collection.id);
+      expect(response.body.data.collections[0].collection).toBe(collection.name);
     });
 
     it('should not be able to access policy with access type credentials', async () => {
@@ -211,7 +211,7 @@ describe('/1/access-policies', () => {
 
       const accessPolicy = await AccessPolicy.create({
         name: 'access-test-1',
-        collections: [{ collectionId: collection.id }],
+        collections: [{ collectionName: collection.name }],
       });
 
       const accessCredential = await AccessCredential.create({ name: 'access-policy-test', accessPolicy });
@@ -231,12 +231,12 @@ describe('/1/access-policies', () => {
 
       const accessPolicy1 = await AccessPolicy.create({
         name: 'access-test-1',
-        collections: [{ collectionId: collection.id }],
+        collections: [{ collectionName: collection.name }],
       });
 
       const accessPolicy2 = await AccessPolicy.create({
         name: 'access-test-2',
-        collections: [{ collectionId: collection.id }],
+        collections: [{ collectionName: collection.name }],
       });
 
       const headers = await getHeaders();
@@ -251,7 +251,7 @@ describe('/1/access-policies', () => {
       const body = response.body;
       expect(body.data[1].name).toBe(accessPolicy1.name);
       expect(body.data[0].name).toBe(accessPolicy2.name);
-      expect(body.data[0].collections[0].collection).toBe(collection.id);
+      expect(body.data[0].collections[0].collection).toBe(collection.name);
 
       expect(body.meta.total).toBe(2);
     });
@@ -265,7 +265,7 @@ describe('/1/access-policies', () => {
       const name = 'access-test-1';
       const accessPolicy = await AccessPolicy.create({
         name,
-        collections: [{ collectionId: collection.id }],
+        collections: [{ collectionName: collection.name }],
       });
 
       const systemId = '42';
@@ -278,14 +278,14 @@ describe('/1/access-policies', () => {
       );
       if (response.error) console.error(response.error);
       expect(response.status).toBe(200);
-      expect(response.body.data.collections[0].collection).toBe(collection2.id);
+      expect(response.body.data.collections[0].collection).toBe(collection2.name);
       expect(response.body.data.collections[0].scope).toBeDefined();
       expect(response.body.data.collections[0].scope.systemId).toBe(systemId);
 
       // pre-existing name
       await AccessPolicy.create({
         name,
-        collections: [{ collectionId: collection.id }],
+        collections: [{ collectionName: collection.name }],
       });
       const response2 = await request(
         'PATCH',
@@ -305,7 +305,7 @@ describe('/1/access-policies', () => {
 
       const accessPolicy = await AccessPolicy.create({
         name: 'access-test-1',
-        collections: [{ collectionId: collection.id }],
+        collections: [{ collectionName: collection.name }],
       });
 
       const headers = await getHeaders();
