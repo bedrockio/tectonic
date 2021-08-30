@@ -61,6 +61,7 @@ async function createSubscription(topicName, subscriptionName, ackDeadlineSecond
   const subscriptionOptions = {
     ackDeadlineSeconds,
     expirationPolicy: {},
+    // enableMessageOrdering: true,
   };
 
   logger.info('PubSub Topics:');

@@ -37,17 +37,23 @@ function listenForMessages(subscriptionName, maxMilliseconds = 2000) {
     });
 
     logger.info(`BULK INDEXED ${parsedMessages.length} messages`);
-    const bulkResult = await bulkIndexBatchEvents(parsedMessages);
-    // logger.info(bulkResult);
-    await bulkErrorLog(bulkResult, parsedMessages);
-
-    messages.forEach((message) => {
-      // "Ack" (acknowledge receipt of) the message
-      // logger.info(`Acknowledged ${message.id}`);
-      message.ack();
-    });
-    counter += messages.length;
-    logger.info(`Acknowledged ${messages.length} messages (Counter: ${counter})`);
+    try {
+      const bulkResult = await bulkIndexBatchEvents(parsedMessages);
+      // logger.info(bulkResult);
+      await bulkErrorLog(bulkResult, parsedMessages);
+    } catch (e) {
+      logger.error(`BulkIndex ERROR: ${e}`);
+    } finally {
+      // Alway acknowledge messages
+      // TODO: Move to error queue
+      for (const message of messages) {
+        // "Ack" (acknowledge receipt of) the message
+        // logger.info(`Acknowledged ${message.id}`);
+        message.ack();
+      }
+      counter += messages.length;
+      logger.info(`Acknowledged ${messages.length} messages (Counter: ${counter})`);
+    }
   };
 
   // Create an event handler to handle messages

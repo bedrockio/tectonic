@@ -87,13 +87,18 @@ async function syncMongodbCollection(
   if (total > 0) {
     logger.info(`Collecting ${collectionName} (total: ${total})`);
     const batchSize = 1000;
-    const cursor = collection.find(query, { timeout: false }).sort({ [MONGO_UPDATED_AT_FIELD]: -1, _id: 1 });
+    const cursor = collection.find(query, { timeout: false }).sort([
+      [MONGO_UPDATED_AT_FIELD, -1],
+      ['_id', 1],
+    ]);
 
     const numBatches = Math.ceil(total / batchSize);
     const batches = new Array(numBatches);
+    if (process.env.NODE_ENV == 'development') process.stdout.write(`Collecting with batchSize: ${batchSize}: `);
     for (const batch of batches) {
       const result = await readCursor(cursor, batchSize);
       if (result.length) {
+        if (process.env.NODE_ENV == 'development') process.stdout.write('*');
         const sanitizedResult = sanitizeDocuments(collectionName, result);
         const tectonicCollectionName = getTectonicCollectionName(collectionName);
         await collectDocuments(tectonicCollectionName, sanitizedResult);
@@ -104,6 +109,7 @@ async function syncMongodbCollection(
       }
       numCollected += result.length;
     }
+    if (process.env.NODE_ENV == 'development') process.stdout.write('*');
   }
   return { total, numCollected, duration: Date.now() - startTs };
 }
@@ -122,7 +128,33 @@ async function indexMongodbCollection(db, collectionName, options = { enableHist
   return { ...stats, collectionName };
 }
 
-function autoIndexMongodbCollections(db, collectionNames, collectionNamesHistorical, intervalSeconds = 30) {
+async function autoIndexMongodbCollections(db, collectionNames, collectionNamesHistorical, intervalSeconds = 30) {
+  logger.info(`Starting auto indexing for MongoDB collections: ${collectionNames.join(',')}`);
+  return new Promise((resolve, reject) => {
+    async function run() {
+      for (const collectionName of collectionNames) {
+        try {
+          const result = await indexMongodbCollection(db, collectionName, {
+            enableHistorical: collectionNamesHistorical.includes(collectionName),
+          });
+          if (result.total > 0) {
+            logger.info(
+              `Detected ${result.total} new documents in collection ${result.collectionName}: numCollected=${result.numCollected}, duration=${result.duration}ms`
+            );
+          }
+        } catch (error) {
+          console.error(`Error while running auto index jobs: ${error.message}`);
+          console.error(error.stack);
+          console.error(JSON.stringify(error));
+        }
+      }
+      setTimeout(run, intervalSeconds * 1000);
+    }
+    run();
+  });
+}
+
+function autoIndexMongodbCollectionsParallel(db, collectionNames, collectionNamesHistorical, intervalSeconds = 30) {
   logger.info(`Starting auto indexing for MongoDB collections: ${collectionNames.join(',')}`);
   return new Promise((resolve, reject) => {
     function run() {
