@@ -30,7 +30,7 @@ services:
       - ./services/api/.env:/service/.env
       - ./services/api/openapi:/service/openapi
     ports:
-      - "3300:3300"
+      - 3300:3300
     links:
       - mongo
       - elasticsearch
@@ -77,7 +77,7 @@ services:
     volumes:
       - ./services/web/src:/service/src
     ports:
-      - "3200:3200"
+      - 3200:3200
     depends_on:
       - api
 
@@ -98,9 +98,8 @@ services:
 
   kibana:
     image: docker.elastic.co/kibana/kibana:7.14.0
-    container_name: kibana
     ports:
-      - 5601:5601
+      - 5602:5601
     environment:
       ELASTICSEARCH_URL: http://elasticsearch:9200
       ELASTICSEARCH_HOSTS: '["http://elasticsearch:9200"]'
