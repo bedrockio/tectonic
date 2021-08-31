@@ -4,7 +4,7 @@ const validate = require('../utils/middleware/validate');
 const mongoose = require('mongoose');
 const { authenticate } = require('../lib/middleware/authenticate');
 const { NotFoundError } = require('../utils/errors');
-const { AccessCredential, AccessPolicy, Collection } = require('../models');
+const { AccessCredential, AccessPolicy } = require('../models');
 const { createCredentialToken } = require('../lib/tokens');
 
 const router = new Router();
