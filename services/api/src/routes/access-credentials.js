@@ -124,10 +124,11 @@ router
     const { accessCredential } = await ctx.state;
     const accessCredentialObject = accessCredential.toObject();
     for (const collection of accessCredentialObject.accessPolicy.collections) {
-      const dbCollection = await Collection.findOne({ name: collection.collectionName });
-      if (dbCollection) {
-        collection.collectionName = dbCollection.name;
-      }
+      collection.collection = collection.collectionName;
+      delete collection.collectionName;
+      if (!collection.scopeFields.length) delete collection.scopeFields;
+      if (!collection.includeFields.length) delete collection.includeFields;
+      if (!collection.excludeFields.length) delete collection.excludeFields;
     }
 
     ctx.body = {
