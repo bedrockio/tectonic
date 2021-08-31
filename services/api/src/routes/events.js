@@ -13,6 +13,7 @@ const { logger } = require('@bedrockio/instrumentation');
 
 const PUBSUB_RAW_EVENTS_TOPIC = config.get('PUBSUB_RAW_EVENTS_TOPIC');
 const PUBSUB_EMULATOR = config.get('PUBSUB_EMULATOR', 'boolean');
+const ENV_NAME = config.get('ENV_NAME');
 const EVENTS_CHUNK_SIZE = 10;
 
 const router = new Router();
@@ -131,7 +132,7 @@ router
         }
       }
 
-      if (process.env.ENV_NAME == 'development' && !PUBSUB_EMULATOR) {
+      if (ENV_NAME == 'development' && !PUBSUB_EMULATOR) {
         // Bulk Insert directly into ES
         const messages = events.map((event) => {
           return { event, batch: dbBatch };
