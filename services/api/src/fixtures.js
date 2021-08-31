@@ -33,7 +33,7 @@ const createFixtures = async () => {
 
   const accessPolicy = await AccessPolicy.create({
     name: 'bar-purchases-collection-access',
-    collections: [{ collectionId: collection.id }],
+    collections: [{ collectionName: collection.name }],
   });
 
   const accessCredential = await AccessCredential.create({

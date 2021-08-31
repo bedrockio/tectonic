@@ -44,8 +44,16 @@ const { publishEventsBatched } = require('../src/lib/events');
 // }
 
 async function publishBarPurchases(token, republish = false) {
-  const collection = await Collection.findOne({ name: 'bar-purchases' });
-  if (!collection) throw new Error('Could not find collection');
+  let collection = await Collection.findOne({ name: 'bar-purchases' });
+  if (!collection) {
+    logger.info('Collection bar-purchases not found. Creating...');
+    collection = await Collection.create({
+      name: `bar-purchases`,
+      description: "Example data from a cocktail bar's point-of-sale system",
+      timeField: 'orderedAt',
+    });
+  }
+
   const collectionId = collection.id;
 
   if (!republish) {

@@ -3,7 +3,7 @@ const Joi = require('@hapi/joi');
 const validate = require('../utils/middleware/validate');
 const { authenticate } = require('../lib/middleware/authenticate');
 const { NotFoundError } = require('../utils/errors');
-const { Collection } = require('../models');
+const { Collection, Batch } = require('../models');
 const { ensureCollectionIndex, getMapping, getCollectionIndex, deleteIndex } = require('../lib/analytics');
 const { logger } = require('@bedrockio/instrumentation');
 
@@ -164,6 +164,7 @@ router
     const collection = ctx.state.collection;
     // hard delete
     await Collection.deleteOne({ _id: collection.id });
+    await Batch.deleteMany({ collectionId: collection.id });
     const index = getCollectionIndex(collection.id);
     await deleteIndex(index);
     // soft delete
