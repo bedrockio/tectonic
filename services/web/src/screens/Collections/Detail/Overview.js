@@ -29,6 +29,10 @@ export default class CollectionOverview extends React.Component {
               <Table.Cell>Updated At</Table.Cell>
               <Table.Cell>{formatDateTime(collection.updatedAt)}</Table.Cell>
             </Table.Row>
+            <Table.Row>
+              <Table.Cell>Skip Batch Storage</Table.Cell>
+              <Table.Cell>{collection.skipBatchStorage.toString()}</Table.Cell>
+            </Table.Row>
           </Table.Body>
         </Table>
         <Header as="h1">Mapping</Header>

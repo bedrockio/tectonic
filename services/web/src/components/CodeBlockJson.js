@@ -4,7 +4,7 @@ import ReactJson from 'react-json-view';
 
 class CodeBlockJson extends PureComponent {
   static propTypes = {
-    value: PropTypes.string.isRequired,
+    value: PropTypes.object.isRequired,
   };
 
   render() {
