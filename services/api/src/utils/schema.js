@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const fs = require('fs');
 const path = require('path');
 const { startCase, omitBy } = require('lodash');
-const { ObjectId } = mongoose.Schema.Types;
+
 const { getValidatorForDefinition } = require('./validator');
 const { logger } = require('@bedrockio/instrumentation');
 
@@ -165,7 +165,7 @@ function createSchema(definition, options = {}) {
   });
 
   schema.static('findByIdOrName', function (objectId) {
-    if (mongoose.isValidObjectId(objectId)) {
+    if (isObjectIdValid(objectId)) {
       return this.findById(objectId);
     } else {
       return this.findOne({ name: objectId });
@@ -175,8 +175,12 @@ function createSchema(definition, options = {}) {
   return schema;
 }
 
+function isObjectIdValid(id) {
+  return mongoose.isValidObjectId(id) && id.match(/^[a-fA-F0-9]{24}$/) ? true : false;
+}
+
 function isReferenceField(schema) {
-  return resolveSchema(schema)?.type === ObjectId;
+  return resolveSchema(schema)?.type === mongoose.Schema.Types.ObjectId;
 }
 
 function isDisallowedField(schema, allowPrivate = false) {
@@ -226,4 +230,5 @@ module.exports = {
   createSchema,
   loadModel,
   loadModelDir,
+  isObjectIdValid,
 };

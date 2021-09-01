@@ -1,4 +1,4 @@
-const { createSchema, loadModel, loadModelDir } = require('../schema');
+const { createSchema, loadModel, loadModelDir, isObjectIdValid } = require('../schema');
 const Joi = require('joi');
 const mongoose = require('mongoose');
 const { setupDb, teardownDb } = require('../testing');
@@ -679,5 +679,17 @@ describe('validation', () => {
         password: 'createdAt',
       });
     });
+  });
+});
+
+describe('isObjectIdValid', () => {
+  it('should be able to check validation of mongodb ObjectIds', async () => {
+    expect(isObjectIdValid('612f91ac78286a13c884df2a')).toBe(true);
+    expect(isObjectIdValid('542c2b97bac0595474108b48')).toBe(true);
+
+    expect(isObjectIdValid('nope')).toBe(false);
+    expect(isObjectIdValid('billingplans')).toBe(false);
+    expect(isObjectIdValid('zzzzzzzzzzzzzzzzzzzzzzzz')).toBe(false);
+    expect(isObjectIdValid('zzzzzzzzzzzz')).toBe(false);
   });
 });
