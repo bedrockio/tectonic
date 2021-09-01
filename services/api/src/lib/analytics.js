@@ -1,7 +1,6 @@
 const fs = require('fs');
 const elasticsearch = require('@elastic/elasticsearch');
 const config = require('@bedrockio/config');
-const { get: objectGet } = require('lodash');
 const { createHash } = require('crypto');
 const { logger } = require('@bedrockio/instrumentation');
 const ENV_NAME = config.get('ENV_NAME');
