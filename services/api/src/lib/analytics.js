@@ -291,6 +291,30 @@ async function get(index, id) {
   return body;
 }
 
+function ensureBodyQueryBoolMust(body) {
+  if (!body.query) {
+    body.query = {};
+  }
+  if (!body.query.bool) {
+    body.query.bool = {};
+  }
+  if (!body.query.bool.must) {
+    body.query.bool.must = [];
+  }
+}
+
+function ensureBodyQueryBoolMustNot(body) {
+  if (!body.query) {
+    body.query = {};
+  }
+  if (!body.query.bool) {
+    body.query.bool = {};
+  }
+  if (!body.query.bool.must) {
+    body.query.bool.must_not = [];
+  }
+}
+
 function parseFilterOptions(options = { from: 0, size: 100 }, skipSort = false) {
   const sort = [
     {
@@ -299,7 +323,7 @@ function parseFilterOptions(options = { from: 0, size: 100 }, skipSort = false) 
       },
     },
   ];
-  const { from = 0, size = 100, terms, excludeTerms, exists, notExists, minTimestamp, q, range, scope } = options;
+  const { from = 0, size = 100, terms, excludeTerms, exists, notExists, minTimestamp, q, range, ids, scope } = options;
   const body = {
     sort: skipSort ? undefined : sort,
     from,
@@ -328,15 +352,7 @@ function parseFilterOptions(options = { from: 0, size: 100 }, skipSort = false) 
     };
   }
   if (exists) {
-    if (!body.query) {
-      body.query = {};
-    }
-    if (!body.query.bool) {
-      body.query.bool = {};
-    }
-    if (!body.query.bool.must) {
-      body.query.bool.must = [];
-    }
+    ensureBodyQueryBoolMust(body);
     body.query.bool.must.push({
       exists: {
         field: exists,
@@ -344,15 +360,7 @@ function parseFilterOptions(options = { from: 0, size: 100 }, skipSort = false) 
     });
   }
   if (notExists) {
-    if (!body.query) {
-      body.query = {};
-    }
-    if (!body.query.bool) {
-      body.query.bool = {};
-    }
-    if (!body.query.bool.must_not) {
-      body.query.bool.must_not = [];
-    }
+    ensureBodyQueryBoolMustNot(body);
     body.query.bool.must_not.push({
       exists: {
         field: notExists,
@@ -360,15 +368,7 @@ function parseFilterOptions(options = { from: 0, size: 100 }, skipSort = false) 
     });
   }
   if (minTimestamp) {
-    if (!body.query) {
-      body.query = {};
-    }
-    if (!body.query.bool) {
-      body.query.bool = {};
-    }
-    if (!body.query.bool.must) {
-      body.query.bool.must = [];
-    }
+    ensureBodyQueryBoolMust(body);
     body.query.bool.must.push({
       range: {
         timestamp: {
@@ -378,45 +378,29 @@ function parseFilterOptions(options = { from: 0, size: 100 }, skipSort = false) 
     });
   }
   if (range) {
-    if (!body.query) {
-      body.query = {};
-    }
-    if (!body.query.bool) {
-      body.query.bool = {};
-    }
-    if (!body.query.bool.must) {
-      body.query.bool.must = [];
-    }
+    ensureBodyQueryBoolMust(body);
     body.query.bool.must.push({
       range: range,
     });
   }
   if (q) {
-    if (!body.query) {
-      body.query = {};
-    }
-    if (!body.query.bool) {
-      body.query.bool = {};
-    }
-    if (!body.query.bool.must) {
-      body.query.bool.must = [];
-    }
+    ensureBodyQueryBoolMust(body);
     body.query.bool.must.push({
       query_string: {
         query: q,
       },
     });
   }
+  if (ids) {
+    ensureBodyQueryBoolMust(body);
+    body.query.bool.must.push({
+      ids: {
+        values: ids,
+      },
+    });
+  }
   if (scope) {
-    if (!body.query) {
-      body.query = {};
-    }
-    if (!body.query.bool) {
-      body.query.bool = {};
-    }
-    if (!body.query.bool.must) {
-      body.query.bool.must = [];
-    }
+    ensureBodyQueryBoolMust(body);
     for (const [key, value] of Object.entries(scope)) {
       const scopeTerm = { term: {} };
       // TODO: move event. prefix out of this lib

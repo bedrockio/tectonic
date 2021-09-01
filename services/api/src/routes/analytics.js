@@ -16,6 +16,7 @@ const filterOptions = {
   exists: Joi.string(),
   minTimestamp: Joi.number(),
   q: Joi.string(),
+  ids: Joi.array().items(Joi.string()),
 };
 
 function interpretError(ctx, error, searchQuery) {
