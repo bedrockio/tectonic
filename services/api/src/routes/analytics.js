@@ -23,7 +23,10 @@ function interpretError(ctx, error, searchQuery) {
   const indexNotFound = error.message.match(/index_not_found_exception/i);
 
   if (meta && meta.body && meta.body.error.reason) {
-    const message = indexNotFound ? `Elasticsearch index not found` : `Elasticsearch error: ${meta.body.error.reason}`;
+    let message = indexNotFound ? `Elasticsearch index not found` : `Elasticsearch error: ${meta.body.error.reason}`;
+    if (!indexNotFound && meta.body.error.caused_by?.type && meta.body.error.caused_by?.reason) {
+      message += `, caused by ${meta.body.error.caused_by.type}: ${meta.body.error.caused_by.reason}`;
+    }
     const status = indexNotFound ? 404 : 400;
     ctx.type = 'json';
     ctx.status = status;
