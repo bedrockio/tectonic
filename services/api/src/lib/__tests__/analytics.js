@@ -84,10 +84,11 @@ describe('analytics', () => {
     expect(result[0].topHit._id).toEqual('37d2aa7b-64a9-4e02-8980-504ad3f20a61');
     expect(result[0].topHit._source.id).toEqual('37d2aa7b-64a9-4e02-8980-504ad3f20a61');
   });
-  it('should allow term aggregations with a reference fetch', async () => {
+  it('should not allow term aggregations with a reference fetch', async () => {
     const result = await terms(testIndex, 'class-info.class-type', {
       field: 'zone-info.red-zone-time',
       operation: 'avg',
+      includeTopHit: true,
       referenceFetch: {
         sourceField: 'id',
         destinationField: 'id',
@@ -96,7 +97,8 @@ describe('analytics', () => {
     });
     expect(result[0].topHit._id).toEqual('37d2aa7b-64a9-4e02-8980-504ad3f20a61');
     expect(result[0].topHit._source.id).toEqual('37d2aa7b-64a9-4e02-8980-504ad3f20a61');
-    expect(result[0].reference.id).toEqual('37d2aa7b-64a9-4e02-8980-504ad3f20a61');
+    expect(result[0].reference).toBeUndefined();
+    // expect(result[0].reference.id).toEqual('37d2aa7b-64a9-4e02-8980-504ad3f20a61');
   });
   it('should allow time series aggregations (count)', async () => {
     const result = await timeSeries(testIndex, 'count', null, {

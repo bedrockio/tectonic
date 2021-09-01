@@ -107,7 +107,6 @@ router
         field: Joi.string().optional(),
         operation: Joi.string().optional(),
         includeTopHit: Joi.boolean().default(false).optional(),
-        referenceFetch: Joi.object().optional(),
         termsSize: Joi.number().optional(),
         debug: Joi.boolean().default(false).optional(),
       }),
@@ -121,7 +120,6 @@ router
         field,
         operation,
         includeTopHit,
-        referenceFetch,
         termsSize,
         debug,
       } = ctx.request.body;
@@ -134,7 +132,6 @@ router
         aggFieldOrder,
         operation,
         includeTopHit,
-        referenceFetch,
         termsSize,
       };
       try {

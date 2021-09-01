@@ -23,7 +23,7 @@ async function terms(index, aggField, options = undefined, returnSearchOptions =
       [options.operation || 'sum']: { field: options.field },
     };
   }
-  if (options.includeTopHit || options.referenceFetch) {
+  if (options.includeTopHit) {
     if (!additionalAggs) additionalAggs = {};
     additionalAggs['includeTopHit'] = {
       top_hits: { size: 1 },
@@ -50,19 +50,6 @@ async function terms(index, aggField, options = undefined, returnSearchOptions =
       topHit: bucket.includeTopHit ? bucket.includeTopHit.hits.hits[0] : undefined,
     };
   });
-  if (options.referenceFetch) {
-    const { sourceField, destinationIndex, destinationField } = options.referenceFetch;
-    if (!sourceField || !destinationField || !destinationIndex) {
-      throw new Error('Invalid referenceFetch need sourceField, destinationField and destinationIndex');
-    }
-    for (const hit of hits) {
-      if (!hit.topHit) continue;
-      const sourceValue = objectGet(hit.topHit._source, sourceField);
-      if (!sourceValue) continue;
-      const reference = await fetch(destinationIndex, destinationField, sourceValue);
-      hit.reference = reference;
-    }
-  }
   return hits;
 }
 
