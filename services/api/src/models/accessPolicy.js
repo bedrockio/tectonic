@@ -15,6 +15,9 @@ schema.methods.toCollectionJSON = function toCollectionJSON() {
       col.scope = JSON.parse(col.scopeString);
       delete col.scopeString;
     }
+    if (!col.scopeFields.length) delete col.scopeFields;
+    if (!col.includeFields.length) delete col.includeFields;
+    if (!col.excludeFields.length) delete col.excludeFields;
     collections.push(col);
   }
   accessPolicy.collections = collections;
