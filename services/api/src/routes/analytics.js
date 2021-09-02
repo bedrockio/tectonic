@@ -1,8 +1,14 @@
 const Router = require('@koa/router');
 const Joi = require('@hapi/joi');
 const validate = require('../utils/middleware/validate');
-const { authenticate, fetchCredential, fetchAccessPolicyCollection } = require('../lib/middleware/authenticate');
+const {
+  authenticate,
+  fetchCredential,
+  fetchCollection,
+  fetchAccessPolicyCollection,
+} = require('../lib/middleware/authenticate');
 const { terms, timeSeries, timeMap, search, stats, cardinality, getCollectionIndex } = require('../lib/analytics');
+const { interpretAnalyticsError, checkFieldInclusion, checkFilterTermsInclusion } = require('../lib/middleware/utils');
 
 const router = new Router();
 
@@ -18,48 +24,10 @@ const filterOptions = {
   ids: Joi.array().items(Joi.string()),
 };
 
-function interpretError(ctx, error, searchQuery) {
-  const { meta } = error;
-  const indexNotFound = error.message.match(/index_not_found_exception/i);
-
-  if (meta && meta.body && meta.body.error.reason) {
-    let message = indexNotFound ? `Elasticsearch index not found` : `Elasticsearch error: ${meta.body.error.reason}`;
-    if (!indexNotFound && meta.body.error.caused_by?.type && meta.body.error.caused_by?.reason) {
-      message += `, caused by ${meta.body.error.caused_by.type}: ${meta.body.error.caused_by.reason}`;
-    }
-    const status = indexNotFound ? 404 : 400;
-    ctx.type = 'json';
-    ctx.status = status;
-    ctx.body = {
-      error: { message, status, searchQuery },
-    };
-  } else {
-    throw error;
-  }
-}
-
-function checkFieldInclusion(ctx, fieldName, fieldValue, includeFields = [], excludeFields = []) {
-  if (includeFields.length && !includeFields.includes(fieldValue)) {
-    ctx.throw(401, `${fieldName} '${fieldValue}' is not included`);
-  }
-  if (excludeFields.length && excludeFields.includes(fieldValue)) {
-    ctx.throw(401, `${fieldName} '${fieldValue}' is excluded`);
-  }
-}
-
-function checkFilterTermsInclusion(ctx, terms, includeFields, excludeFields) {
-  if (terms && terms.length) {
-    for (const term of terms) {
-      for (const key of Object.keys(term)) {
-        checkFieldInclusion(ctx, 'Filter term', key, includeFields, excludeFields);
-      }
-    }
-  }
-}
-
 router
   .use(authenticate({ types: ['access', 'user', 'application'] }))
   .use(fetchCredential)
+  .use(fetchCollection)
   .use(fetchAccessPolicyCollection)
   .post(
     '/terms',
@@ -114,7 +82,7 @@ router
         ctx.body = body;
       } catch (err) {
         const searchQuery = await terms(index, aggField, options, true);
-        interpretError(ctx, err, searchQuery);
+        interpretAnalyticsError(ctx, err, searchQuery);
       }
     }
   )
@@ -157,7 +125,7 @@ router
         ctx.body = body;
       } catch (err) {
         const searchQuery = await timeSeries(index, operation, field, options, true);
-        interpretError(ctx, err, searchQuery);
+        interpretAnalyticsError(ctx, err, searchQuery);
       }
     }
   )
@@ -197,7 +165,7 @@ router
         ctx.body = body;
       } catch (err) {
         const searchQuery = await timeMap(index, options, true);
-        interpretError(ctx, err, searchQuery);
+        interpretAnalyticsError(ctx, err, searchQuery);
       }
     }
   )
@@ -239,7 +207,7 @@ router
         ctx.body = body;
       } catch (err) {
         const searchQuery = await search(index, options, true);
-        interpretError(ctx, err, searchQuery);
+        interpretAnalyticsError(ctx, err, searchQuery);
       }
     }
   )
@@ -274,7 +242,7 @@ router
         ctx.body = body;
       } catch (err) {
         const searchQuery = await stats(index, fields, filter, true);
-        interpretError(ctx, err, searchQuery);
+        interpretAnalyticsError(ctx, err, searchQuery);
       }
     }
   )
@@ -309,7 +277,7 @@ router
         ctx.body = body;
       } catch (err) {
         const searchQuery = await cardinality(index, fields, filter, true);
-        interpretError(ctx, err, searchQuery);
+        interpretAnalyticsError(ctx, err, searchQuery);
       }
     }
   );

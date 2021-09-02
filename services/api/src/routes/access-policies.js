@@ -1,9 +1,10 @@
 const Router = require('@koa/router');
 const Joi = require('@hapi/joi');
 const validate = require('../utils/middleware/validate');
-const { authenticate } = require('../lib/middleware/authenticate');
+const { authenticate, fetchCredential } = require('../lib/middleware/authenticate');
 const { NotFoundError } = require('../utils/errors');
-const { AccessPolicy, Collection } = require('../models');
+const { AccessPolicy } = require('../models');
+const { validateCollections } = require('../lib/middleware/utils');
 
 const router = new Router();
 
@@ -16,36 +17,9 @@ const collectionSchema = Joi.object({
   excludeFields: Joi.array().items(Joi.string()).optional(),
 });
 
-function validateScope(scope) {
-  if (typeof scope != 'object') return false;
-  for (const key in scope) {
-    if (typeof key != 'string') return false;
-    if (typeof scope[key] == 'object') return false;
-  }
-  return true;
-}
-
-async function validateCollections(ctx, collections) {
-  const updatedCollections = [];
-  for (const col of collections) {
-    const collection = await Collection.findByIdOrName(col.collection);
-    if (!collection) ctx.throw(401, `collection '${col.collection}' doesn't exist`);
-    col.collectionName = collection.name;
-    delete col.collection;
-    updatedCollections.push(col);
-    if (col.scope) {
-      if (!validateScope(col.scope)) {
-        ctx.throw(401, `scope should be an object max 1 level deep and with string keys`);
-      }
-      col.scopeString = JSON.stringify(col.scope);
-      delete col.scope;
-    }
-  }
-  return updatedCollections;
-}
-
 router
   .use(authenticate({ types: ['user', 'application'] }))
+  .use(fetchCredential)
   .param('policyId', async (id, ctx, next) => {
     const policy = await AccessPolicy.findById(id);
     ctx.state.policy = policy;

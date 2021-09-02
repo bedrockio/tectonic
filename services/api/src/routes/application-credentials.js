@@ -1,7 +1,7 @@
 const Router = require('@koa/router');
 const Joi = require('@hapi/joi');
 const validate = require('../utils/middleware/validate');
-const { authenticate } = require('../lib/middleware/authenticate');
+const { authenticate, fetchCredential } = require('../lib/middleware/authenticate');
 const { NotFoundError } = require('../utils/errors');
 const { ApplicationCredential } = require('../models');
 const { createCredentialToken } = require('../lib/tokens');
@@ -10,6 +10,7 @@ const router = new Router();
 
 router
   .use(authenticate({ types: ['user', 'application'] }))
+  .use(fetchCredential)
   .param('credential', async (idOrName, ctx, next) => {
     const applicationCredential = await ApplicationCredential.findByIdOrName(idOrName);
     ctx.state.applicationCredential = applicationCredential;

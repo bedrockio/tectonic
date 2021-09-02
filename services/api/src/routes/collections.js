@@ -1,7 +1,7 @@
 const Router = require('@koa/router');
 const Joi = require('@hapi/joi');
 const validate = require('../utils/middleware/validate');
-const { authenticate } = require('../lib/middleware/authenticate');
+const { authenticate, fetchCredential } = require('../lib/middleware/authenticate');
 const { NotFoundError } = require('../utils/errors');
 const { Collection, Batch } = require('../models');
 const { ensureCollectionIndex, getMapping, getCollectionIndex, deleteIndex } = require('../lib/analytics');
@@ -11,6 +11,7 @@ const router = new Router();
 
 router
   .use(authenticate({ types: ['user', 'application'] }))
+  .use(fetchCredential)
   .param('collectionId', async (id, ctx, next) => {
     const collection = await Collection.findByIdOrName(id);
     ctx.state.collection = collection;

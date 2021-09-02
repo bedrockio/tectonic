@@ -8,7 +8,12 @@ const { memorySizeOf, chunkedAsyncMap } = require('../lib/events');
 const { bulkErrorLog, bulkIndexBatchEvents } = require('../lib/analytics');
 const { storeBatchEvents } = require('../lib/batch');
 const { createHash } = require('crypto');
-const { authenticate, fetchCredential } = require('../lib/middleware/authenticate');
+const {
+  authenticate,
+  fetchCredential,
+  fetchCollection,
+  checkCollectionWriteAccess,
+} = require('../lib/middleware/authenticate');
 const { logger } = require('@bedrockio/instrumentation');
 
 const PUBSUB_RAW_EVENTS_TOPIC = config.get('PUBSUB_RAW_EVENTS_TOPIC');
@@ -20,46 +25,11 @@ const router = new Router();
 
 const eventSchema = Joi.object({}).unknown(); // unknown: to allow any aother field
 
-async function checkCollectionAccess(ctx, next) {
-  const { collection } = ctx.request.body;
-  let dbCollection;
-  try {
-    dbCollection = await Collection.findByIdOrName(collection);
-  } catch (e) {
-    console.error(e);
-    ctx.throw(401, `Collection ${collection} not valid`);
-  }
-  if (!dbCollection) {
-    ctx.throw(401, `Collection '${collection}' could not be found`);
-  }
-  const collectionId = dbCollection.id;
-  ctx.state.collection = dbCollection;
-
-  // Give admin user and application credential full access
-  if (ctx.state.authUser || ctx.state.authApplicationCredential) {
-    return next();
-  }
-
-  // Check Access credential
-  const { accessPolicy } = ctx.state.authAccessCredential;
-  if (!accessPolicy || !accessPolicy.collections || !Array.isArray(accessPolicy.collections)) {
-    ctx.throw(401, `AccessCredential is missing valid accessPolicy`);
-  }
-  const accessPolicyCollection = accessPolicy.collections.find(
-    ({ collectionId: cid }) => collectionId == cid.toString()
-  );
-  if (!accessPolicyCollection) {
-    ctx.throw(401, `AccessPolicy has no access to collection: ${dbCollection.name} (${collectionId})`);
-  }
-  if (accessPolicyCollection.permission != 'read-write') {
-    ctx.throw(401, `AccessPolicy has no read-write permission to collection: ${dbCollection.name} (${collectionId})`);
-  }
-  return next();
-}
-
 router
   .use(authenticate({ types: ['access', 'user', 'application'] }))
   .use(fetchCredential)
+  .use(fetchCollection)
+  .use(checkCollectionWriteAccess)
   .post(
     '/',
     validate({
@@ -68,7 +38,6 @@ router
         events: Joi.array().items(eventSchema).min(1).required(),
       }),
     }),
-    checkCollectionAccess,
     async (ctx) => {
       const { events } = ctx.request.body;
       const collection = ctx.state.collection;

@@ -2,10 +2,11 @@ const Router = require('@koa/router');
 const Joi = require('@hapi/joi');
 const validate = require('../utils/middleware/validate');
 const mongoose = require('mongoose');
-const { authenticate } = require('../lib/middleware/authenticate');
+const { authenticate, fetchCredential } = require('../lib/middleware/authenticate');
 const { NotFoundError } = require('../utils/errors');
 const { AccessCredential, AccessPolicy } = require('../models');
 const { createCredentialToken } = require('../lib/tokens');
+const { checkScopeValues } = require('../lib/middleware/utils');
 
 const router = new Router();
 
@@ -22,35 +23,9 @@ const accessCredentialSchema = Joi.object({
     .optional(),
 });
 
-function checkScopeValues(ctx, accessPolicy, scopeValues) {
-  const missingFields = getMissingFields(accessPolicy, scopeValues);
-  if (missingFields && missingFields.length) {
-    ctx.throw(401, `scopeValues missing fields: '${missingFields.join(', ')}'`);
-  }
-}
-
-function getMissingFields(accessPolicy, scopeValues) {
-  const scopeFields = new Set();
-  for (let collection of accessPolicy.collections) {
-    for (let field of collection.scopeFields) {
-      scopeFields.add(field);
-    }
-  }
-
-  if (scopeFields.size == 0) return false;
-  if (!scopeValues || scopeValues.length == 0) return Array.from(scopeFields);
-
-  const scopeValuesFields = scopeValues.map(({ field }) => field);
-  const missingFields = [];
-  for (let field of scopeFields) {
-    if (!scopeValuesFields.includes(field)) missingFields.push(field);
-  }
-  if (missingFields.length) return missingFields;
-  return false;
-}
-
 router
   .use(authenticate({ types: ['user', 'application'] }))
+  .use(fetchCredential)
   .param('credential', async (idOrName, ctx, next) => {
     const accessCredential = await AccessCredential.findByIdOrName(idOrName);
     ctx.state.accessCredential = accessCredential;

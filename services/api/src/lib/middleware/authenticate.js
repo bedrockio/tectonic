@@ -70,7 +70,7 @@ async function fetchApplicationCredential(ctx, next) {
     if (!ctx.state.jwt.credentialId) ctx.throw(401, 'credentialId is missing in associated token');
     ctx.state.authApplicationCredential = await ApplicationCredential.findById(ctx.state.jwt.credentialId);
     if (!ctx.state.authApplicationCredential)
-      ctx.throw(401, 'applicatioCredential associated to token could not not be found');
+      ctx.throw(401, 'applicationCredential associated to token could not not be found');
   }
   await next();
 }
@@ -96,18 +96,34 @@ async function fetchCredential(ctx, next) {
   ctx.throw(401, 'Correct type is missing in associated token');
 }
 
-async function fetchAccessPolicyCollection(ctx, next) {
+async function fetchCollection(ctx, next) {
   const { collection } = ctx.request.body;
   if (!collection || typeof collection !== 'string') {
     ctx.throw(401, `Collection body string paramater is missing`);
   }
-  const { Collection } = mongoose.models;
-  const dbCollection = await Collection.findByIdOrName(collection);
+  let dbCollection;
+  try {
+    const { Collection } = mongoose.models;
+    dbCollection = await Collection.findByIdOrName(collection);
+  } catch (e) {
+    console.error(e);
+    ctx.throw(401, `Collection ${collection} not valid`);
+  }
   if (!dbCollection) {
     ctx.throw(401, `Collection '${collection}' could not be found`);
   }
-  const collectionId = dbCollection.id;
-  const collectionName = dbCollection.name;
+  ctx.state.collection = dbCollection;
+  return next();
+}
+
+async function fetchAccessPolicyCollection(ctx, next) {
+  const collection = ctx.state.collection;
+  if (!collection) {
+    ctx.throw(401, `Collection state not fetched`);
+  }
+
+  const collectionId = collection.id;
+  const collectionName = collection.name;
 
   // Give admin user and application credential full access
   if (ctx.state.authUser || ctx.state.authApplicationCredential) {
@@ -154,9 +170,40 @@ async function fetchAccessPolicyCollection(ctx, next) {
   return next();
 }
 
+async function checkCollectionWriteAccess(ctx, next) {
+  const collection = ctx.state.collection;
+  if (!collection) {
+    ctx.throw(401, `Collection ${collection} state not fetched`);
+  }
+
+  const collectionId = collection.id;
+  const collectionName = collection.name;
+
+  // Give admin user and application credential full access
+  if (ctx.state.authUser || ctx.state.authApplicationCredential) {
+    return next();
+  }
+
+  // Check Access credential
+  const { accessPolicy } = ctx.state.authAccessCredential;
+  if (!accessPolicy || !accessPolicy.collections || !Array.isArray(accessPolicy.collections)) {
+    ctx.throw(401, `AccessCredential is missing valid accessPolicy`);
+  }
+  const accessPolicyCollection = accessPolicy.collections.find(({ collectionName: cname }) => collectionName == cname);
+  if (!accessPolicyCollection) {
+    ctx.throw(401, `AccessPolicy has no access to collection: ${collectionName} (${collectionId})`);
+  }
+  if (accessPolicyCollection.permission != 'read-write') {
+    ctx.throw(401, `AccessPolicy has no read-write permission to collection: ${collectionName} (${collectionId})`);
+  }
+  return next();
+}
+
 module.exports = {
   authenticate,
   fetchUser,
   fetchCredential,
   fetchAccessPolicyCollection,
+  fetchCollection,
+  checkCollectionWriteAccess,
 };

@@ -1,7 +1,7 @@
 const Router = require('@koa/router');
 const Joi = require('@hapi/joi');
 const validate = require('../utils/middleware/validate');
-const { authenticate } = require('../lib/middleware/authenticate');
+const { authenticate, fetchCredential } = require('../lib/middleware/authenticate');
 const { NotFoundError } = require('../utils/errors');
 const { Batch, Collection } = require('../models');
 
@@ -9,6 +9,7 @@ const router = new Router();
 
 router
   .use(authenticate({ types: ['user', 'application'] }))
+  .use(fetchCredential)
   .param('batchId', async (id, ctx, next) => {
     const batch = await Batch.findById(id);
     ctx.state.batch = batch;
