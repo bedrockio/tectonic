@@ -96,8 +96,67 @@ async function fetchCredential(ctx, next) {
   ctx.throw(401, 'Correct type is missing in associated token');
 }
 
+async function fetchAccessPolicyCollection(ctx, next) {
+  const { collection } = ctx.request.body;
+  if (!collection || typeof collection !== 'string') {
+    ctx.throw(401, `Collection body string paramater is missing`);
+  }
+  const { Collection } = mongoose.models;
+  const dbCollection = await Collection.findByIdOrName(collection);
+  if (!dbCollection) {
+    ctx.throw(401, `Collection '${collection}' could not be found`);
+  }
+  const collectionId = dbCollection.id;
+  const collectionName = dbCollection.name;
+
+  // Give admin user and application credential full access
+  if (ctx.state.authUser || ctx.state.authApplicationCredential) {
+    ctx.state.accessPolicyCollection = {
+      collectionId,
+    };
+    return next();
+  }
+
+  // Check Access credential
+  const { accessPolicy, scopeValues } = ctx.state.authAccessCredential;
+  if (!accessPolicy || !accessPolicy.collections || !Array.isArray(accessPolicy.collections)) {
+    ctx.throw(401, `AccessCredential is missing valid accessPolicy`);
+  }
+  const accessPolicyCollection = accessPolicy.collections.find(({ collectionName: cname }) => collectionName == cname);
+  if (!accessPolicyCollection) {
+    ctx.throw(401, `AccessPolicy has no access to collection: ${collectionName} (${collectionId})`);
+  }
+  if (accessPolicyCollection.scopeString) {
+    accessPolicyCollection.scope = JSON.parse(accessPolicyCollection.scopeString);
+  }
+
+  // Add collectionId field, because only colletionName is stored in the AccessPolicy model collections
+  accessPolicyCollection.collectionId = collectionId;
+
+  // check scopeFields
+  if (accessPolicyCollection.scopeFields && accessPolicyCollection.scopeFields.length != 0) {
+    if (!scopeValues || !scopeValues.length) {
+      ctx.throw(401, `Missing scopeValues on access credential`);
+    }
+    for (const scopeField of accessPolicyCollection.scopeFields) {
+      const scopeValue = scopeValues.find(({ field }) => scopeField == field);
+      if (!scopeValue || !scopeValue.value) {
+        ctx.throw(401, `Missing scopeValues for field '${scopeField}'`);
+      }
+
+      // Add to scope
+      if (!accessPolicyCollection.scope) accessPolicyCollection.scope = {};
+      accessPolicyCollection.scope[scopeField] = scopeValue.value;
+    }
+  }
+
+  ctx.state.accessPolicyCollection = accessPolicyCollection;
+  return next();
+}
+
 module.exports = {
   authenticate,
   fetchUser,
   fetchCredential,
+  fetchAccessPolicyCollection,
 };

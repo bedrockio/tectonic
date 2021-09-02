@@ -1,9 +1,8 @@
 const Router = require('@koa/router');
 const Joi = require('@hapi/joi');
 const validate = require('../utils/middleware/validate');
-const { authenticate, fetchCredential } = require('../lib/middleware/authenticate');
+const { authenticate, fetchCredential, fetchAccessPolicyCollection } = require('../lib/middleware/authenticate');
 const { terms, timeSeries, timeMap, search, stats, cardinality, getCollectionIndex } = require('../lib/analytics');
-const { Collection } = require('../models');
 
 const router = new Router();
 
@@ -39,63 +38,10 @@ function interpretError(ctx, error, searchQuery) {
   }
 }
 
-async function checkCollectionAccess(ctx, next) {
-  const { collection } = ctx.request.body;
-  const dbCollection = await Collection.findByIdOrName(collection);
-  if (!dbCollection) {
-    ctx.throw(401, `Collection '${collection}' could not be found`);
-  }
-  const collectionId = dbCollection.id;
-  const collectionName = dbCollection.name;
-
-  // Give admin user and application credential full access
-  if (ctx.state.authUser || ctx.state.authApplicationCredential) {
-    ctx.state.accessPolicyCollection = {
-      collectionId,
-    };
-    return next();
-  }
-
-  // Check Access credential
-  const { accessPolicy, scopeValues } = ctx.state.authAccessCredential;
-  if (!accessPolicy || !accessPolicy.collections || !Array.isArray(accessPolicy.collections)) {
-    ctx.throw(401, `AccessCredential is missing valid accessPolicy`);
-  }
-  const accessPolicyCollection = accessPolicy.collections.find(({ collectionName: cname }) => collectionName == cname);
-  if (!accessPolicyCollection) {
-    ctx.throw(401, `AccessPolicy has no access to collection: ${collectionName} (${collectionId})`);
-  }
-  if (accessPolicyCollection.scopeString) {
-    accessPolicyCollection.scope = JSON.parse(accessPolicyCollection.scopeString);
-  }
-
-  // Add collectionId field, because only colletionName is stored in the AccessPolicy model collections
-  accessPolicyCollection.collectionId = collectionId;
-
-  // check scopeFields
-  if (accessPolicyCollection.scopeFields && accessPolicyCollection.scopeFields.length != 0) {
-    if (!scopeValues || !scopeValues.length) {
-      ctx.throw(401, `Missing scopeValues on access credential`);
-    }
-    for (const scopeField of accessPolicyCollection.scopeFields) {
-      const scopeValue = scopeValues.find(({ field }) => scopeField == field);
-      if (!scopeValue || !scopeValue.value) {
-        ctx.throw(401, `Missing scopeValues for field '${scopeField}'`);
-      }
-
-      // Add to scope
-      if (!accessPolicyCollection.scope) accessPolicyCollection.scope = {};
-      accessPolicyCollection.scope[scopeField] = scopeValue.value;
-    }
-  }
-
-  ctx.state.accessPolicyCollection = accessPolicyCollection;
-  return next();
-}
-
 router
   .use(authenticate({ types: ['access', 'user', 'application'] }))
   .use(fetchCredential)
+  .use(fetchAccessPolicyCollection)
   .post(
     '/terms',
     validate({
@@ -111,7 +57,7 @@ router
         debug: Joi.boolean().default(false).optional(),
       }),
     }),
-    checkCollectionAccess,
+    // checkCollectionAccess,
     async (ctx) => {
       const {
         filter = {},
@@ -162,7 +108,6 @@ router
         debug: Joi.boolean().default(false).optional(),
       }),
     }),
-    checkCollectionAccess,
     async (ctx) => {
       const { filter = {}, operation, field, interval, dateField, timeZone, debug } = ctx.request.body;
       const { collectionId, scope } = ctx.state.accessPolicyCollection;
@@ -200,7 +145,6 @@ router
         debug: Joi.boolean().default(false).optional(),
       }),
     }),
-    checkCollectionAccess,
     async (ctx) => {
       const { filter = {}, interval, dateField, timeZone, debug } = ctx.request.body;
       const { collectionId, scope } = ctx.state.accessPolicyCollection;
@@ -235,7 +179,6 @@ router
         debug: Joi.boolean().default(false).optional(),
       }),
     }),
-    checkCollectionAccess,
     async (ctx) => {
       const { filter = {}, debug } = ctx.request.body;
       // console.info('filter', filter);
@@ -272,7 +215,6 @@ router
         debug: Joi.boolean().default(false).optional(),
       }),
     }),
-    checkCollectionAccess,
     async (ctx) => {
       const { filter = {}, fields = [], debug } = ctx.request.body;
       const { collectionId, scope } = ctx.state.accessPolicyCollection;
@@ -302,7 +244,6 @@ router
         debug: Joi.boolean().default(false).optional(),
       }),
     }),
-    checkCollectionAccess,
     async (ctx) => {
       const { filter = {}, fields, debug } = ctx.request.body;
       const { collectionId, scope } = ctx.state.accessPolicyCollection;
