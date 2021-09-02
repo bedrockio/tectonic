@@ -25,7 +25,10 @@ async function ensureCollection(tectonicCollectionName, description, timeField, 
     }),
     headers,
   });
-  return await response.json();
+  const { error } = await response.json();
+  if (error) {
+    throw new Error('[ensureCollection] ' + error.message);
+  }
 }
 
 async function collectEvents(tectonicCollectionName, events) {
