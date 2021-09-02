@@ -38,6 +38,25 @@ function interpretError(ctx, error, searchQuery) {
   }
 }
 
+function checkFieldInclusion(ctx, fieldName, fieldValue, includeFields = [], excludeFields = []) {
+  if (includeFields.length && !includeFields.includes(fieldValue)) {
+    ctx.throw(401, `${fieldName} '${fieldValue}' is not included`);
+  }
+  if (excludeFields.length && excludeFields.includes(fieldValue)) {
+    ctx.throw(401, `${fieldName} '${fieldValue}' is excluded`);
+  }
+}
+
+function checkFilterTermsInclusion(ctx, terms, includeFields, excludeFields) {
+  if (terms && terms.length) {
+    for (const term of terms) {
+      for (const key of Object.keys(term)) {
+        checkFieldInclusion(ctx, 'Filter term', key, includeFields, excludeFields);
+      }
+    }
+  }
+}
+
 router
   .use(authenticate({ types: ['access', 'user', 'application'] }))
   .use(fetchCredential)
@@ -68,7 +87,10 @@ router
         termsSize,
         debug,
       } = ctx.request.body;
-      const { collectionId, scope } = ctx.state.accessPolicyCollection;
+      const { collectionId, scope, includeFields, excludeFields } = ctx.state.accessPolicyCollection;
+
+      checkFieldInclusion(ctx, 'aggField', aggField, includeFields, excludeFields);
+      checkFilterTermsInclusion(ctx, filter.terms, includeFields, excludeFields);
 
       const index = getCollectionIndex(collectionId);
       filter.scope = scope; // Each scope key-value pair is added as ES bool.must.term
@@ -79,6 +101,8 @@ router
         operation,
         includeTopHit,
         termsSize,
+        includeFields,
+        excludeFields,
       };
       try {
         const body = {};
@@ -110,13 +134,17 @@ router
     }),
     async (ctx) => {
       const { filter = {}, operation, field, interval, dateField, timeZone, debug } = ctx.request.body;
-      const { collectionId, scope } = ctx.state.accessPolicyCollection;
+      const { collectionId, scope, includeFields, excludeFields } = ctx.state.accessPolicyCollection;
+
+      if (field) checkFieldInclusion(ctx, 'Field', field, includeFields, excludeFields);
+      checkFilterTermsInclusion(ctx, filter.terms, includeFields, excludeFields);
+
       const index = getCollectionIndex(collectionId);
-      filter.scope = scope; // Each scope key-value pair is added as ES bool.must.term
       const options = {
         interval,
         dateField,
         timeZone,
+        scope,
         ...filter,
       };
       try {
@@ -147,13 +175,16 @@ router
     }),
     async (ctx) => {
       const { filter = {}, interval, dateField, timeZone, debug } = ctx.request.body;
-      const { collectionId, scope } = ctx.state.accessPolicyCollection;
+      const { collectionId, scope, includeFields, excludeFields } = ctx.state.accessPolicyCollection;
+
+      checkFilterTermsInclusion(ctx, filter.terms, includeFields, excludeFields);
+
       const index = getCollectionIndex(collectionId);
-      filter.scope = scope; // Each scope key-value pair is added as ES bool.must.term
       const options = {
         interval,
         dateField,
         timeZone,
+        scope,
         ...filter,
       };
       try {
@@ -182,6 +213,9 @@ router
     async (ctx) => {
       const { filter = {}, debug } = ctx.request.body;
       const { collectionId, scope, includeFields, excludeFields } = ctx.state.accessPolicyCollection;
+
+      checkFilterTermsInclusion(ctx, filter.terms, includeFields, excludeFields);
+
       const index = getCollectionIndex(collectionId);
       const options = {
         scope,
@@ -221,7 +255,13 @@ router
     }),
     async (ctx) => {
       const { filter = {}, fields = [], debug } = ctx.request.body;
-      const { collectionId, scope } = ctx.state.accessPolicyCollection;
+      const { collectionId, scope, includeFields, excludeFields } = ctx.state.accessPolicyCollection;
+
+      for (const field of fields) {
+        checkFieldInclusion(ctx, 'Field', field, includeFields, excludeFields);
+      }
+      checkFilterTermsInclusion(ctx, filter.terms, includeFields, excludeFields);
+
       const index = getCollectionIndex(collectionId);
       filter.scope = scope; // Each scope key-value pair is added as ES bool.must.term
       try {
@@ -250,7 +290,13 @@ router
     }),
     async (ctx) => {
       const { filter = {}, fields, debug } = ctx.request.body;
-      const { collectionId, scope } = ctx.state.accessPolicyCollection;
+      const { collectionId, scope, includeFields, excludeFields } = ctx.state.accessPolicyCollection;
+
+      for (const field of fields) {
+        checkFieldInclusion(ctx, 'Field', field, includeFields, excludeFields);
+      }
+      checkFilterTermsInclusion(ctx, filter.terms, includeFields, excludeFields);
+
       const index = getCollectionIndex(collectionId);
       filter.scope = scope; // Each scope key-value pair is added as ES bool.must.term
       try {
