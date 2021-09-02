@@ -57,7 +57,6 @@ router
         debug: Joi.boolean().default(false).optional(),
       }),
     }),
-    // checkCollectionAccess,
     async (ctx) => {
       const {
         filter = {},
@@ -70,6 +69,7 @@ router
         debug,
       } = ctx.request.body;
       const { collectionId, scope } = ctx.state.accessPolicyCollection;
+
       const index = getCollectionIndex(collectionId);
       filter.scope = scope; // Each scope key-value pair is added as ES bool.must.term
       const options = {
@@ -181,17 +181,21 @@ router
     }),
     async (ctx) => {
       const { filter = {}, debug } = ctx.request.body;
-      // console.info('filter', filter);
       const { collectionId, scope, includeFields, excludeFields } = ctx.state.accessPolicyCollection;
       const index = getCollectionIndex(collectionId);
-      filter.scope = scope; // Each scope key-value pair is added as ES bool.must.term
+      const options = {
+        scope,
+        includeFields,
+        excludeFields,
+        ...filter,
+      };
       try {
         const body = { meta: {} };
         if (debug) {
-          const searchQuery = await search(index, filter, includeFields, excludeFields, true);
+          const searchQuery = await search(index, options, true);
           body.meta.searchQuery = searchQuery;
         }
-        const data = await search(index, filter, includeFields, excludeFields, false);
+        const data = await search(index, options, false);
         const hits = data?.hits?.hits.map(({ _id, _source }) => {
           return { _id, _source };
         });
@@ -200,7 +204,7 @@ router
         if (data?.took) body.meta.took = data.took;
         ctx.body = body;
       } catch (err) {
-        const searchQuery = await search(index, filter, includeFields, excludeFields, true);
+        const searchQuery = await search(index, options, true);
         interpretError(ctx, err, searchQuery);
       }
     }

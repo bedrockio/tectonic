@@ -10,29 +10,38 @@ const elasticsearchClient = new elasticsearch.Client({
   log: 'error',
 });
 
-async function terms(index, aggField, options = undefined, returnSearchOptions = false) {
+async function terms(index, aggField, options = {}, returnSearchOptions = false) {
   const body = parseFilterOptions(options, true);
-  if (!options) options = {};
+  const { field, includeTopHit, includeFields, excludeFields } = options;
   body.from = 0;
   body.size = 0;
   let additionalAggs = undefined;
-  if (options.field) {
+  if (field) {
     if (!additionalAggs) additionalAggs = {};
     additionalAggs['fieldOperation'] = {
-      [options.operation || 'sum']: { field: options.field },
+      [options.operation || 'sum']: { field },
     };
   }
-  if (options.includeTopHit) {
+  if (includeTopHit) {
     if (!additionalAggs) additionalAggs = {};
     additionalAggs['includeTopHit'] = {
       top_hits: { size: 1 },
     };
+    if ((includeFields && includeFields.length) || (excludeFields && excludeFields.length)) {
+      additionalAggs['includeTopHit'].top_hits._source = {};
+    }
+    if (includeFields && includeFields.length) {
+      additionalAggs['includeTopHit'].top_hits._source.includes = includeFields;
+    }
+    if (excludeFields && excludeFields.length) {
+      additionalAggs['includeTopHit'].top_hits._source.excludes = excludeFields;
+    }
   }
   body.aggs = {
     aggField: {
       terms: {
         field: aggField,
-        order: options.field ? { fieldOperation: options.aggFieldOrder || 'desc' } : undefined,
+        order: field ? { fieldOperation: options.aggFieldOrder || 'desc' } : undefined,
         size: options.termsSize || 10,
       },
       aggs: additionalAggs,
@@ -233,8 +242,9 @@ async function cardinality(index, fields, options = undefined, returnSearchOptio
   return stats;
 }
 
-async function search(index, options = undefined, includeFields, excludeFields, returnSearchOptions = false) {
+async function search(index, options = {}, returnSearchOptions = false) {
   const body = parseFilterOptions(options);
+  const { includeFields, excludeFields } = options;
   if (((includeFields && includeFields.length) || (excludeFields && excludeFields.length)) && !body._source) {
     body._source = {};
   }
@@ -301,7 +311,7 @@ function ensureBodyQueryBoolMustNot(body) {
   }
 }
 
-function parseFilterOptions(options = { from: 0, size: 100 }, skipSort = false) {
+function parseFilterOptions(options = {}, skipSort = false) {
   const sort = [
     {
       [options.dateField || 'ingestedAt']: {
