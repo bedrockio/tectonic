@@ -154,7 +154,7 @@ describe('/1/access-credentials', () => {
         { headers }
       );
       expect(response.status).toBe(401);
-      expect(getParsedErrorMessage(response)).toBe("scopeValues missing fields: 'organizationId, credentialId'");
+      expect(getParsedErrorMessage(response)).toBe("scopeValues missing fields: 'credentialId,organizationId'");
       // PUT should be the same as POST
       const responsePUT = await request(
         'PUT',
@@ -163,7 +163,7 @@ describe('/1/access-credentials', () => {
         { headers }
       );
       expect(responsePUT.status).toBe(401);
-      expect(getParsedErrorMessage(responsePUT)).toBe("scopeValues missing fields: 'organizationId, credentialId'");
+      expect(getParsedErrorMessage(responsePUT)).toBe("scopeValues missing fields: 'credentialId,organizationId'");
     });
   });
 

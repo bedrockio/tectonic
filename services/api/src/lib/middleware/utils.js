@@ -52,7 +52,7 @@ async function validateCollections(ctx, collections) {
   const updatedCollections = [];
   for (const col of collections) {
     const collection = await Collection.findByIdOrName(col.collection);
-    if (!collection) ctx.throw(401, `collection '${col.collection}' doesn't exist`);
+    if (!collection) ctx.throw(401, `collection '${col.collection}' does not exist`);
     col.collectionName = collection.name;
     delete col.collection;
     updatedCollections.push(col);
@@ -65,13 +65,6 @@ async function validateCollections(ctx, collections) {
     }
   }
   return updatedCollections;
-}
-
-function checkScopeValues(ctx, accessPolicy, scopeValues) {
-  const missingFields = getMissingFields(accessPolicy, scopeValues);
-  if (missingFields && missingFields.length) {
-    ctx.throw(401, `scopeValues missing fields: '${missingFields.join(', ')}'`);
-  }
 }
 
 function getMissingFields(accessPolicy, scopeValues) {
@@ -92,6 +85,13 @@ function getMissingFields(accessPolicy, scopeValues) {
   }
   if (missingFields.length) return missingFields;
   return false;
+}
+
+function checkScopeValues(ctx, accessPolicy, scopeValues) {
+  const missingFields = getMissingFields(accessPolicy, scopeValues);
+  if (missingFields && missingFields.length) {
+    ctx.throw(401, `scopeValues missing fields: '${missingFields.sort().join(',')}'`);
+  }
 }
 
 module.exports = {
