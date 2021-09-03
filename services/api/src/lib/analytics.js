@@ -319,7 +319,20 @@ function parseFilterOptions(options = {}, skipSort = false) {
       },
     },
   ];
-  const { from = 0, size = 100, terms, excludeTerms, exists, notExists, minTimestamp, q, range, ids, scope } = options;
+  const {
+    from = 0,
+    size = 100,
+    terms,
+    excludeTerms,
+    exists,
+    notExists,
+    minTimestamp,
+    q,
+    range,
+    ranges,
+    ids,
+    scope,
+  } = options;
   const body = {
     sort: skipSort ? undefined : sort,
     from,
@@ -377,6 +390,14 @@ function parseFilterOptions(options = {}, skipSort = false) {
     ensureBodyQueryBoolMust(body);
     body.query.bool.must.push({
       range: range,
+    });
+  }
+  if (ranges) {
+    ensureBodyQueryBoolMust(body);
+    ranges.forEach((range) => {
+      body.query.bool.must.push({
+        range: range,
+      });
     });
   }
   if (q) {

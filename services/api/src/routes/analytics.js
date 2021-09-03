@@ -17,6 +17,7 @@ const filterOptions = {
   size: Joi.number().positive().default(100),
   terms: Joi.array().items(Joi.object()),
   range: Joi.object(),
+  ranges: Joi.array().items(Joi.object()),
   notExists: Joi.string(),
   exists: Joi.string(),
   minTimestamp: Joi.number(),
