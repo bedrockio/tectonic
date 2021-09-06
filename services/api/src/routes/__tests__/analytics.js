@@ -69,9 +69,9 @@ describe('/1/analytics', () => {
     it('should create correct mapping', async () => {
       const mapping = await getMapping(index);
       //console.info(JSON.stringify(mapping, null, 2));
-      expect(mapping[index].mappings.properties.ingestedAt.type).toBe('date');
-      expect(mapping[index].mappings.properties.event.properties.updatedAt.type).toBe('date');
-      expect(mapping[index].mappings.properties.event.properties.messageId.type).toBe('keyword');
+      expect(mapping[index].mappings.properties._tectonic.properties.ingestedAt.type).toBe('date');
+      expect(mapping[index].mappings.properties.updatedAt.type).toBe('date');
+      expect(mapping[index].mappings.properties.messageId.type).toBe('keyword');
     });
   });
 
@@ -147,7 +147,7 @@ describe('/1/analytics', () => {
         collections: [
           {
             collectionName,
-            excludeFields: ['event.messageId', 'event.params', 'batchId', 'doesNotExist', 'event.doesNotExist'],
+            excludeFields: ['messageId', 'params', '_tectonic.batchId', 'doesNotExist'],
           },
         ],
       });
@@ -168,14 +168,12 @@ describe('/1/analytics', () => {
       const hit = response.body.data[0]._source;
       // defined
       expect(response.body.data[0]._id).toBeDefined();
-      expect(hit.event).toBeDefined();
-      expect(hit.event.destination).toBeDefined();
+      expect(hit.destination).toBeDefined();
       // undefined
-      expect(hit.batchId).toBeUndefined();
-      expect(hit.event.messageId).toBeUndefined();
-      expect(hit.event.params).toBeUndefined();
+      expect(hit._tectonic.batchId).toBeUndefined();
+      expect(hit.messageId).toBeUndefined();
+      expect(hit.params).toBeUndefined();
       expect(hit.doesNotExist).toBeUndefined();
-      expect(hit.event.doesNotExist).toBeUndefined();
     });
 
     it('should work with fields.includes', async () => {
@@ -186,7 +184,7 @@ describe('/1/analytics', () => {
         collections: [
           {
             collectionName,
-            includeFields: ['event.messageId', 'event.params', 'batchId', 'doesNotExist', 'event.doesNotExist'],
+            includeFields: ['messageId', 'params', '_tectonic.batchId', 'doesNotExist'],
           },
         ],
       });
@@ -206,15 +204,13 @@ describe('/1/analytics', () => {
       expect(response.body.data.length).toBe(1);
       const hit = response.body.data[0]._source;
       // undefined
-      expect(hit.event.destination).toBeUndefined();
+      expect(hit.destination).toBeUndefined();
       expect(hit.doesNotExist).toBeUndefined();
-      expect(hit.event.doesNotExist).toBeUndefined();
       // defined
       expect(response.body.data[0]._id).toBeDefined();
-      expect(hit.event).toBeDefined();
-      expect(hit.batchId).toBeDefined();
-      expect(hit.event.messageId).toBeDefined();
-      expect(hit.event.params).toBeDefined();
+      expect(hit._tectonic.batchId).toBeDefined();
+      expect(hit.messageId).toBeDefined();
+      expect(hit.params).toBeDefined();
 
       const responseDebug = await request(
         'POST',
@@ -224,11 +220,11 @@ describe('/1/analytics', () => {
       );
       expect(responseDebug.body.meta).toBeDefined();
       expect(responseDebug.body.meta.searchQuery.body).toStrictEqual({
-        sort: [{ ingestedAt: { order: 'desc' } }],
+        sort: [{ '_tectonic.ingestedAt': { order: 'desc' } }],
         from: 0,
         size: 1,
         _source: {
-          includes: ['event.messageId', 'event.params', 'batchId', 'doesNotExist', 'event.doesNotExist'],
+          includes: ['messageId', 'params', '_tectonic.batchId', 'doesNotExist'],
         },
       });
     });
@@ -256,7 +252,7 @@ describe('/1/analytics', () => {
       const meta = response.body.meta;
       expect(meta.searchQuery.index).toBe(index);
       expect(meta.searchQuery.body).toStrictEqual({
-        sort: [{ ingestedAt: { order: 'desc' } }],
+        sort: [{ '_tectonic.ingestedAt': { order: 'desc' } }],
         from: 0,
         size: 100,
       });
@@ -282,7 +278,7 @@ describe('/1/analytics', () => {
       expect(response.status).toBe(404);
       expect(error.searchQuery.index).not.toBe(index);
       expect(error.searchQuery.body).toStrictEqual({
-        sort: [{ ingestedAt: { order: 'desc' } }],
+        sort: [{ '_tectonic.ingestedAt': { order: 'desc' } }],
         from: 0,
         size: 100,
       });

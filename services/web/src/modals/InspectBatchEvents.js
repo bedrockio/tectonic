@@ -29,7 +29,7 @@ export default class InspectBatchEvents extends React.Component {
         body: {
           collection: batch.collectionId,
           filter: {
-            terms: [{ batchId: batch.id }],
+            terms: [{ '_tectonic.batchId': batch.id }],
           },
         },
       });

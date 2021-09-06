@@ -67,7 +67,7 @@ async function timeSeries(index, operation, field, options = undefined, returnSe
   body.size = 0;
   const { dateField, interval, timeZone } = options;
   const date_histogram = {
-    field: dateField || 'ingestedAt',
+    field: dateField || '_tectonic.ingestedAt',
     interval: interval || '1d',
     min_doc_count: 0,
   };
@@ -133,7 +133,7 @@ async function timeMap(index, options = undefined, returnSearchOptions = false) 
   body.size = 0;
   const { dateField, interval, timeZone } = options;
   const date_histogram = {
-    field: dateField || 'ingestedAt',
+    field: dateField || '_tectonic.ingestedAt',
     interval: interval || '1d',
     min_doc_count: 0,
   };
@@ -314,7 +314,7 @@ function ensureBodyQueryBoolMustNot(body) {
 function parseFilterOptions(options = {}, skipSort = false) {
   const sort = [
     {
-      [options.dateField || 'ingestedAt']: {
+      [options.dateField || '_tectonic.ingestedAt']: {
         order: 'desc',
       },
     },
@@ -420,8 +420,7 @@ function parseFilterOptions(options = {}, skipSort = false) {
     ensureBodyQueryBoolMust(body);
     for (const [key, value] of Object.entries(scope)) {
       const scopeTerm = { term: {} };
-      // TODO: move event. prefix out of this lib
-      scopeTerm.term[`event.${key}`] = value;
+      scopeTerm.term[key] = value;
       body.query.bool.must.push(scopeTerm);
     }
   }
@@ -530,13 +529,35 @@ const getCollectionIndex = (collectionId) => {
 const ensureCollectionIndex = async (collection, collectionIndexName) => {
   const collectionId = collection.id;
   const properties = {
-    ingestedAt: {
-      type: 'date',
+    _tectonic: {
+      properties: {
+        batchId: {
+          type: 'text',
+          fields: {
+            keyword: {
+              type: 'keyword',
+              ignore_above: 256,
+            },
+          },
+        },
+        collectionId: {
+          type: 'text',
+          fields: {
+            keyword: {
+              type: 'keyword',
+              ignore_above: 256,
+            },
+          },
+        },
+        ingestedAt: {
+          type: 'date',
+        },
+      },
     },
   };
   if (collection.timeField) {
     properties.event = { properties: {} };
-    properties.event.properties[collection.timeField] = { type: 'date' };
+    properties[collection.timeField] = { type: 'date' };
   }
   let index = getCollectionIndex(collectionId);
   if (collectionIndexName) index += `-${collectionIndexName}`;
@@ -567,12 +588,18 @@ const bulkIndexBatchEvents = async (batchEvents) => {
     const { collectionId, id: batchId, ingestedAt } = batch;
     const index = { _index: getCollectionIndex(collectionId) };
     if (event.id) index._id = event.id;
-    if (event._id) index._id = event._id;
-    const doc = {
+    if (event._id) {
+      index._id = event._id;
+      delete event._id;
+    }
+    const _tectonic = {
       collectionId,
       batchId,
       ingestedAt,
-      event,
+    };
+    const doc = {
+      _tectonic,
+      ...event,
     };
     return [{ index }, doc];
   });

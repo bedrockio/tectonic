@@ -21,7 +21,7 @@ const indexEvents = async () => {
   let i = 0;
   const bulkEvents = [];
   for (const event of events) {
-    event.ingestedAt = Date.parse(event['date-created']);
+    event._tectonic = { ingestedAt: Date.parse(event['date-created']) };
     event.createdAt = new Date(event.ingestedAt); // used in for timeseries field
     if (i === 0) {
       event.deletedAt = new Date();
