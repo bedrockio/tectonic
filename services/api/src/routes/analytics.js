@@ -8,7 +8,12 @@ const {
   fetchAccessPolicyCollection,
 } = require('../lib/middleware/authenticate');
 const { terms, timeSeries, timeMap, search, stats, cardinality, getCollectionIndex } = require('../lib/analytics');
-const { interpretAnalyticsError, checkFieldInclusion, checkFilterTermsInclusion } = require('../lib/middleware/utils');
+const {
+  interpretAnalyticsError,
+  checkFieldInclusion,
+  checkFilterTermsInclusion,
+  checkTerms,
+} = require('../lib/middleware/utils');
 
 const router = new Router();
 
@@ -60,6 +65,7 @@ router
 
       checkFieldInclusion(ctx, 'aggField', aggField, includeFields, excludeFields);
       checkFilterTermsInclusion(ctx, filter.terms, includeFields, excludeFields);
+      checkTerms(ctx, filter.terms);
 
       const index = getCollectionIndex(collectionId);
       filter.scope = scope; // Each scope key-value pair is added as ES bool.must.term
@@ -107,6 +113,7 @@ router
 
       if (field) checkFieldInclusion(ctx, 'Field', field, includeFields, excludeFields);
       checkFilterTermsInclusion(ctx, filter.terms, includeFields, excludeFields);
+      checkTerms(ctx, filter.terms);
 
       const index = getCollectionIndex(collectionId);
       const options = {
@@ -147,6 +154,7 @@ router
       const { collectionId, scope, includeFields, excludeFields } = ctx.state.accessPolicyCollection;
 
       checkFilterTermsInclusion(ctx, filter.terms, includeFields, excludeFields);
+      checkTerms(ctx, filter.terms);
 
       const index = getCollectionIndex(collectionId);
       const options = {
@@ -184,6 +192,7 @@ router
       const { collectionId, scope, includeFields, excludeFields } = ctx.state.accessPolicyCollection;
 
       checkFilterTermsInclusion(ctx, filter.terms, includeFields, excludeFields);
+      checkTerms(ctx, filter.terms);
 
       const index = getCollectionIndex(collectionId);
       const options = {
@@ -230,6 +239,7 @@ router
         checkFieldInclusion(ctx, 'Field', field, includeFields, excludeFields);
       }
       checkFilterTermsInclusion(ctx, filter.terms, includeFields, excludeFields);
+      checkTerms(ctx, filter.terms);
 
       const index = getCollectionIndex(collectionId);
       filter.scope = scope; // Each scope key-value pair is added as ES bool.must.term
@@ -265,6 +275,7 @@ router
         checkFieldInclusion(ctx, 'Field', field, includeFields, excludeFields);
       }
       checkFilterTermsInclusion(ctx, filter.terms, includeFields, excludeFields);
+      checkTerms(ctx, filter.terms);
 
       const index = getCollectionIndex(collectionId);
       filter.scope = scope; // Each scope key-value pair is added as ES bool.must.term

@@ -48,6 +48,23 @@ function validateScope(scope) {
   return true;
 }
 
+function validateTerms(terms = []) {
+  for (const term of terms) {
+    if (typeof term != 'object') return false;
+    for (const key in term) {
+      if (typeof key != 'string') return false;
+      if (typeof term[key] == 'object') return false;
+    }
+  }
+  return true;
+}
+
+function checkTerms(ctx, terms) {
+  if (!validateTerms(terms)) {
+    ctx.throw(401, `terms should be array with objects of max 1 level deep and with string keys`);
+  }
+}
+
 async function validateCollections(ctx, collections) {
   const updatedCollections = [];
   for (const col of collections) {
@@ -100,4 +117,5 @@ module.exports = {
   checkFilterTermsInclusion,
   validateCollections,
   checkScopeValues,
+  checkTerms,
 };

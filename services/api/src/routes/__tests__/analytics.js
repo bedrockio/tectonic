@@ -75,6 +75,119 @@ describe('/1/analytics', () => {
     });
   });
 
+  describe('POST /terms', () => {
+    it('should allow analytics terms for correct policy', async () => {
+      const collectionId = testCollection.id;
+      const collectionName = testCollection.name;
+      const accessPolicy = await AccessPolicy.create({
+        name: 'access-test-policy',
+        collections: [{ collectionName }],
+      });
+      const accessCredential = await AccessCredential.create({
+        name: 'access-cred',
+        accessPolicy,
+      });
+      const headers = { Authorization: `Bearer ${createCredentialToken(accessCredential)}` };
+
+      const response = await request(
+        'POST',
+        '/1/analytics/terms',
+        {
+          collection: collectionId,
+          aggField: 'params.connectorId',
+          filter: { terms: [{ destination: 'centralsystem' }] },
+        },
+        { headers }
+      );
+      expect(response.status).toBe(200);
+      expect(response.body.data.length).toBe(4);
+      expect(response.body.data.find(({ key }) => key == 1).count).toBe(5);
+    });
+
+    it('should fail with incorrect filter terms', async () => {
+      const collectionId = testCollection.id;
+      const collectionName = testCollection.name;
+      const accessPolicy = await AccessPolicy.create({
+        name: 'access-test-policy',
+        collections: [{ collectionName }],
+      });
+      const accessCredential = await AccessCredential.create({
+        name: 'access-cred',
+        accessPolicy,
+      });
+      const headers = { Authorization: `Bearer ${createCredentialToken(accessCredential)}` };
+
+      const response = await request(
+        'POST',
+        '/1/analytics/terms',
+        {
+          collection: collectionId,
+          aggField: 'params.connectorId',
+          filter: { terms: [{ destination: { centralsystem: 'deep' } }] },
+        },
+        { headers }
+      );
+      expect(response.status).toBe(401);
+      expect(response.body.error.message).toBe(
+        'terms should be array with objects of max 1 level deep and with string keys'
+      );
+    });
+
+    it('should fail with non included aggField', async () => {
+      const collectionId = testCollection.id;
+      const collectionName = testCollection.name;
+      const accessPolicy = await AccessPolicy.create({
+        name: 'access-test-policy',
+        collections: [{ collectionName, includeFields: ['destination'] }],
+      });
+      const accessCredential = await AccessCredential.create({
+        name: 'access-cred',
+        accessPolicy,
+      });
+      const headers = { Authorization: `Bearer ${createCredentialToken(accessCredential)}` };
+
+      const response = await request(
+        'POST',
+        '/1/analytics/terms',
+        {
+          collection: collectionId,
+          aggField: 'params.connectorId',
+          filter: { terms: [{ destination: 'centralsystem' }] },
+        },
+        { headers }
+      );
+      expect(response.status).toBe(401);
+      expect(response.body.error.message).toBe("aggField 'params.connectorId' is not included");
+    });
+
+    it('should fail with non included terms', async () => {
+      const collectionId = testCollection.id;
+      const collectionName = testCollection.name;
+      const accessPolicy = await AccessPolicy.create({
+        name: 'access-test-policy',
+        collections: [{ collectionName, includeFields: ['params.connectorId'] }],
+      });
+      const accessCredential = await AccessCredential.create({
+        name: 'access-cred',
+        accessPolicy,
+      });
+      const headers = { Authorization: `Bearer ${createCredentialToken(accessCredential)}` };
+
+      const response = await request(
+        'POST',
+        '/1/analytics/terms',
+        {
+          collection: collectionId,
+          aggField: 'params.connectorId',
+          filter: { terms: [{ destination: 'centralsystem' }] },
+        },
+        { headers }
+      );
+      expect(response.status).toBe(401);
+      expect(response.body.error.message).toBe("Filter term 'destination' is not included");
+    });
+  });
+
   describe('POST /search', () => {
     it('should allow analytics search for correct policy', async () => {
       const collectionId = testCollection.id;
