@@ -21,12 +21,20 @@ function interpretAnalyticsError(ctx, error, searchQuery) {
 }
 
 function checkFieldInclusion(ctx, fieldName, fieldValue, includeFields = [], excludeFields = []) {
-  if (includeFields.length && !includeFields.includes(fieldValue)) {
+  if (
+    includeFields.length &&
+    !includeFields.includes(fieldValue) &&
+    !includeFields.find((field) => fieldValue.startsWith(`${field}.`))
+  ) {
     ctx.throw(401, `${fieldName} '${fieldValue}' is not included`);
   }
-  if (excludeFields.length && excludeFields.includes(fieldValue)) {
+  if (
+    excludeFields.length &&
+    (excludeFields.includes(fieldValue) || excludeFields.find((field) => fieldValue.startsWith(`${field}.`)))
+  ) {
     ctx.throw(401, `${fieldName} '${fieldValue}' is excluded`);
   }
+  return true;
 }
 
 function checkFilterTermsInclusion(ctx, terms, includeFields, excludeFields) {
@@ -37,6 +45,7 @@ function checkFilterTermsInclusion(ctx, terms, includeFields, excludeFields) {
       }
     }
   }
+  return true;
 }
 
 function validateScope(scope) {

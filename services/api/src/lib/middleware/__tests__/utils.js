@@ -4,7 +4,7 @@ const { checkFieldInclusion, checkFilterTermsInclusion, validateCollections, che
 
 describe('checkfieldInclusion', () => {
   it('should trigger an error if the field is not whitelisted or excluded', async () => {
-    expect.assertions(3);
+    expect.assertions(5);
     let ctx = context();
     await expect(async () => {
       checkFieldInclusion(ctx, 'aggField', 'event.nope', ['event.id']);
@@ -15,12 +15,16 @@ describe('checkfieldInclusion', () => {
     await expect(async () => {
       checkFieldInclusion(ctx, 'aggField', 'event.nope', ['event.nope'], ['event.nope']);
     }).rejects.toHaveProperty('message', "aggField 'event.nope' is excluded");
+    await expect(async () => {
+      checkFieldInclusion(ctx, 'aggField', 'event.nope', [], ['event']);
+    }).rejects.toHaveProperty('message', "aggField 'event.nope' is excluded");
+    await expect(checkFieldInclusion(ctx, 'aggField', 'event.nope', ['event'], [])).toBe(true);
   });
 });
 
 describe('checkfilterTermsInclusion', () => {
   it('should trigger an error if one of the filter terms is not whitelisted or excluded', async () => {
-    expect.assertions(3);
+    expect.assertions(5);
     let ctx = context();
     const terms = [{ 'event.nope': 'something' }];
     await expect(async () => {
@@ -32,6 +36,10 @@ describe('checkfilterTermsInclusion', () => {
     await expect(async () => {
       checkFilterTermsInclusion(ctx, terms, ['event.nope'], ['event.nope']);
     }).rejects.toHaveProperty('message', "Filter term 'event.nope' is excluded");
+    await expect(async () => {
+      checkFilterTermsInclusion(ctx, terms, [], ['event']);
+    }).rejects.toHaveProperty('message', "Filter term 'event.nope' is excluded");
+    await expect(checkFilterTermsInclusion(ctx, terms, ['event'], [])).toBe(true);
   });
 });
 
