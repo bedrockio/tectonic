@@ -51,7 +51,7 @@ describe('checkfilterTermsInclusion', () => {
 
 describe('checkfilterInclusion', () => {
   it('should trigger an error if one of the filter terms is not whitelisted or excluded', async () => {
-    expect.assertions(7);
+    expect.assertions(11);
     let ctx = context();
     const terms = [{ 'event.nope': 'something' }];
     const filter = { terms };
@@ -76,6 +76,19 @@ describe('checkfilterInclusion', () => {
     await expect(async () => {
       checkFilterInclusion(ctx, { notExists: 'event.nope' }, [], ['event']);
     }).rejects.toHaveProperty('message', "Filter notExists 'event.nope' is excluded");
+    // range and ranges
+    await expect(async () => {
+      checkFilterInclusion(ctx, { range: { 'event.nope': { gte: 'nope' } } }, [], ['event']);
+    }).rejects.toHaveProperty('message', "Filter range 'event.nope' is excluded");
+    await expect(async () => {
+      checkFilterInclusion(ctx, { range: { 'event.nope': { gte: 'nope' } } }, ['root'], []);
+    }).rejects.toHaveProperty('message', "Filter range 'event.nope' is not included");
+    await expect(async () => {
+      checkFilterInclusion(ctx, { ranges: [{ 'event.nope': { gte: 'nope' } }] }, [], ['event']);
+    }).rejects.toHaveProperty('message', "Filter ranges 'event.nope' is excluded");
+    await expect(async () => {
+      checkFilterInclusion(ctx, { ranges: [{ 'event.nope': { gte: 'nope' } }] }, ['root'], []);
+    }).rejects.toHaveProperty('message', "Filter ranges 'event.nope' is not included");
   });
 });
 

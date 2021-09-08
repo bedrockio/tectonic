@@ -56,6 +56,18 @@ function checkFilterInclusion(ctx, filter, includeFields, excludeFields) {
   if (filter.notExists) {
     checkFieldInclusion(ctx, 'Filter notExists', filter.notExists, includeFields, excludeFields);
   }
+  if (filter.range) {
+    for (const field of Object.keys(filter.range)) {
+      checkFieldInclusion(ctx, 'Filter range', field, includeFields, excludeFields);
+    }
+  }
+  if (filter.ranges) {
+    for (const range of filter.ranges) {
+      for (const field of Object.keys(range)) {
+        checkFieldInclusion(ctx, 'Filter ranges', field, includeFields, excludeFields);
+      }
+    }
+  }
   return true;
 }
 
