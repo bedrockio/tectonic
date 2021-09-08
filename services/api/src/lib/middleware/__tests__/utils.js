@@ -1,6 +1,12 @@
 const { Collection } = require('../../../models');
 const { setupDb, teardownDb, context } = require('../../../utils/testing');
-const { checkFieldInclusion, checkFilterTermsInclusion, validateCollections, checkScopeValues } = require('../utils');
+const {
+  checkFieldInclusion,
+  checkFilterTermsInclusion,
+  validateCollections,
+  checkScopeValues,
+  checkFilterInclusion,
+} = require('../utils');
 
 describe('checkfieldInclusion', () => {
   it('should trigger an error if the field is not whitelisted or excluded', async () => {
@@ -40,6 +46,36 @@ describe('checkfilterTermsInclusion', () => {
       checkFilterTermsInclusion(ctx, terms, [], ['event']);
     }).rejects.toHaveProperty('message', "Filter term 'event.nope' is excluded");
     await expect(checkFilterTermsInclusion(ctx, terms, ['event'], [])).toBe(true);
+  });
+});
+
+describe('checkfilterInclusion', () => {
+  it('should trigger an error if one of the filter terms is not whitelisted or excluded', async () => {
+    expect.assertions(7);
+    let ctx = context();
+    const terms = [{ 'event.nope': 'something' }];
+    const filter = { terms };
+    // terms
+    await expect(async () => {
+      checkFilterInclusion(ctx, filter, ['event.id']);
+    }).rejects.toHaveProperty('message', "Filter term 'event.nope' is not included");
+    await expect(async () => {
+      checkFilterInclusion(ctx, filter, [], ['event.nope']);
+    }).rejects.toHaveProperty('message', "Filter term 'event.nope' is excluded");
+    await expect(async () => {
+      checkFilterInclusion(ctx, filter, ['event.nope'], ['event.nope']);
+    }).rejects.toHaveProperty('message', "Filter term 'event.nope' is excluded");
+    await expect(async () => {
+      checkFilterInclusion(ctx, filter, [], ['event']);
+    }).rejects.toHaveProperty('message', "Filter term 'event.nope' is excluded");
+    await expect(checkFilterInclusion(ctx, filter, ['event'], [])).toBe(true);
+    // exists and notExists
+    await expect(async () => {
+      checkFilterInclusion(ctx, { exists: 'event.nope' }, [], ['event']);
+    }).rejects.toHaveProperty('message', "Filter exists 'event.nope' is excluded");
+    await expect(async () => {
+      checkFilterInclusion(ctx, { notExists: 'event.nope' }, [], ['event']);
+    }).rejects.toHaveProperty('message', "Filter notExists 'event.nope' is excluded");
   });
 });
 

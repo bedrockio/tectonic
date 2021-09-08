@@ -48,6 +48,17 @@ function checkFilterTermsInclusion(ctx, terms, includeFields, excludeFields) {
   return true;
 }
 
+function checkFilterInclusion(ctx, filter, includeFields, excludeFields) {
+  checkFilterTermsInclusion(ctx, filter.terms, includeFields, excludeFields);
+  if (filter.exists) {
+    checkFieldInclusion(ctx, 'Filter exists', filter.exists, includeFields, excludeFields);
+  }
+  if (filter.notExists) {
+    checkFieldInclusion(ctx, 'Filter notExists', filter.notExists, includeFields, excludeFields);
+  }
+  return true;
+}
+
 function validateScope(scope) {
   if (typeof scope != 'object') return false;
   for (const key in scope) {
@@ -68,7 +79,7 @@ function validateTerms(terms = []) {
   return true;
 }
 
-function checkTerms(ctx, terms) {
+function checkTermsDepth(ctx, terms) {
   if (!validateTerms(terms)) {
     ctx.throw(401, `terms should be array with objects of max 1 level deep and with string keys`);
   }
@@ -117,7 +128,10 @@ function getMissingFields(accessPolicy, scopeValues) {
   return false;
 }
 
-function checkScopeValues(ctx, accessPolicy, scopeValues) {
+function checkScopeValues(ctx, accessPolicy, scopeValues = []) {
+  if (!accessPolicy) {
+    ctx.throw(401, `missing accessPolicy to check scopeValues`);
+  }
   if (scopeValues.length > 100) {
     ctx.throw(401, `scopeValues has more than 100 fields`);
   }
@@ -136,7 +150,8 @@ module.exports = {
   interpretAnalyticsError,
   checkFieldInclusion,
   checkFilterTermsInclusion,
+  checkFilterInclusion,
   validateCollections,
   checkScopeValues,
-  checkTerms,
+  checkTermsDepth,
 };
