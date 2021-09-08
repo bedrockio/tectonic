@@ -156,13 +156,13 @@ async function fetchAccessPolicyCollection(ctx, next) {
     }
     for (const scopeField of accessPolicyCollection.scopeFields) {
       const scopeValue = scopeValues.find(({ field }) => scopeField == field);
-      if (!scopeValue || !scopeValue.value) {
+      if (!scopeValue || !scopeValue.values) {
         ctx.throw(401, `Missing scopeValues for field '${scopeField}'`);
       }
 
-      // Add to scope
-      if (!accessPolicyCollection.scope) accessPolicyCollection.scope = {};
-      accessPolicyCollection.scope[scopeField] = scopeValue.value;
+      // Add to scopeValues
+      if (!accessPolicyCollection.scopeValues) accessPolicyCollection.scopeValues = {};
+      accessPolicyCollection.scopeValues[scopeField] = scopeValue.values;
     }
   }
 

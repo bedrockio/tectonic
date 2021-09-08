@@ -61,16 +61,17 @@ router
         termsSize,
         debug,
       } = ctx.request.body;
-      const { collectionId, scope, includeFields, excludeFields } = ctx.state.accessPolicyCollection;
+      const { collectionId, scope, scopeValues, includeFields, excludeFields } = ctx.state.accessPolicyCollection;
 
       checkFieldInclusion(ctx, 'aggField', aggField, includeFields, excludeFields);
       checkFilterInclusion(ctx, filter, includeFields, excludeFields);
       checkTermsDepth(ctx, filter.terms);
 
       const index = getCollectionIndex(collectionId);
-      filter.scope = scope; // Each scope key-value pair is added as ES bool.must.term
       const options = {
         ...filter,
+        scope,
+        scopeValues,
         field,
         aggFieldOrder,
         operation,
@@ -109,7 +110,7 @@ router
     }),
     async (ctx) => {
       const { filter = {}, operation, field, interval, dateField, timeZone, debug } = ctx.request.body;
-      const { collectionId, scope, includeFields, excludeFields } = ctx.state.accessPolicyCollection;
+      const { collectionId, scope, scopeValues, includeFields, excludeFields } = ctx.state.accessPolicyCollection;
 
       if (field) checkFieldInclusion(ctx, 'Field', field, includeFields, excludeFields);
       checkFilterInclusion(ctx, filter, includeFields, excludeFields);
@@ -121,6 +122,7 @@ router
         dateField,
         timeZone,
         scope,
+        scopeValues,
         ...filter,
       };
       try {
@@ -151,7 +153,7 @@ router
     }),
     async (ctx) => {
       const { filter = {}, interval, dateField, timeZone, debug } = ctx.request.body;
-      const { collectionId, scope, includeFields, excludeFields } = ctx.state.accessPolicyCollection;
+      const { collectionId, scope, scopeValues, includeFields, excludeFields } = ctx.state.accessPolicyCollection;
 
       checkFilterInclusion(ctx, filter, includeFields, excludeFields);
       checkTermsDepth(ctx, filter.terms);
@@ -162,6 +164,7 @@ router
         dateField,
         timeZone,
         scope,
+        scopeValues,
         ...filter,
       };
       try {
@@ -189,7 +192,7 @@ router
     }),
     async (ctx) => {
       const { filter = {}, debug } = ctx.request.body;
-      const { collectionId, scope, includeFields, excludeFields } = ctx.state.accessPolicyCollection;
+      const { collectionId, scope, scopeValues, includeFields, excludeFields } = ctx.state.accessPolicyCollection;
 
       checkFilterInclusion(ctx, filter, includeFields, excludeFields);
       checkTermsDepth(ctx, filter.terms);
@@ -197,6 +200,7 @@ router
       const index = getCollectionIndex(collectionId);
       const options = {
         scope,
+        scopeValues,
         includeFields,
         excludeFields,
         ...filter,
@@ -233,7 +237,7 @@ router
     }),
     async (ctx) => {
       const { filter = {}, fields = [], debug } = ctx.request.body;
-      const { collectionId, scope, includeFields, excludeFields } = ctx.state.accessPolicyCollection;
+      const { collectionId, scope, scopeValues, includeFields, excludeFields } = ctx.state.accessPolicyCollection;
 
       for (const field of fields) {
         checkFieldInclusion(ctx, 'Field', field, includeFields, excludeFields);
@@ -242,17 +246,21 @@ router
       checkTermsDepth(ctx, filter.terms);
 
       const index = getCollectionIndex(collectionId);
-      filter.scope = scope; // Each scope key-value pair is added as ES bool.must.term
+      const options = {
+        scope,
+        scopeValues,
+        ...filter,
+      };
       try {
         const body = {};
         if (debug) {
-          const searchQuery = await stats(index, fields, filter, true);
+          const searchQuery = await stats(index, fields, options, true);
           body.meta = { searchQuery };
         }
-        body.data = await stats(index, fields, filter, false);
+        body.data = await stats(index, fields, options, false);
         ctx.body = body;
       } catch (err) {
-        const searchQuery = await stats(index, fields, filter, true);
+        const searchQuery = await stats(index, fields, options, true);
         interpretAnalyticsError(ctx, err, searchQuery);
       }
     }
@@ -269,7 +277,7 @@ router
     }),
     async (ctx) => {
       const { filter = {}, fields, debug } = ctx.request.body;
-      const { collectionId, scope, includeFields, excludeFields } = ctx.state.accessPolicyCollection;
+      const { collectionId, scope, scopeValues, includeFields, excludeFields } = ctx.state.accessPolicyCollection;
 
       for (const field of fields) {
         checkFieldInclusion(ctx, 'Field', field, includeFields, excludeFields);
@@ -278,17 +286,21 @@ router
       checkTermsDepth(ctx, filter.terms);
 
       const index = getCollectionIndex(collectionId);
-      filter.scope = scope; // Each scope key-value pair is added as ES bool.must.term
+      const options = {
+        scope,
+        scopeValues,
+        ...filter,
+      };
       try {
         const body = {};
         if (debug) {
-          const searchQuery = await cardinality(index, fields, filter, true);
+          const searchQuery = await cardinality(index, fields, options, true);
           body.meta = { searchQuery };
         }
-        body.data = await cardinality(index, fields, filter, false);
+        body.data = await cardinality(index, fields, options, false);
         ctx.body = body;
       } catch (err) {
-        const searchQuery = await cardinality(index, fields, filter, true);
+        const searchQuery = await cardinality(index, fields, options, true);
         interpretAnalyticsError(ctx, err, searchQuery);
       }
     }

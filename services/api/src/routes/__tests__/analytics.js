@@ -496,13 +496,79 @@ describe('/1/analytics', () => {
       const accessCredential = await AccessCredential.create({
         name: 'access-cred',
         accessPolicy,
-        scopeValues: [{ field: 'evseControllerId', value: '5fd6036fccd06f4d6b1d8bd2' }],
+        scopeValues: [{ field: 'evseControllerId', values: ['5fd6036fccd06f4d6b1d8bd2'] }],
       });
       const headers = { Authorization: `Bearer ${createCredentialToken(accessCredential)}` };
 
-      const response = await request('POST', '/1/analytics/search', { collection: collectionName }, { headers });
+      const response = await request(
+        'POST',
+        '/1/analytics/search',
+        { collection: collectionName, debug: true },
+        { headers }
+      );
       expect(response.status).toBe(200);
       expect(response.body.data.length).toBe(6); // ignores 4 out of 10
+      expect(response.body.meta.searchQuery.body.query).toStrictEqual({
+        bool: {
+          must: [
+            {
+              term: {
+                evseControllerId: '5fd6036fccd06f4d6b1d8bd2',
+              },
+            },
+          ],
+        },
+      });
+    });
+
+    it('should allow scopeFields analytics search with multiple scopeValues values', async () => {
+      const collectionName = testCollection.name;
+      const accessPolicy = await AccessPolicy.create({
+        name: 'access-test-policy',
+        collections: [
+          {
+            collectionName,
+            scopeFields: ['evseControllerId'],
+          },
+        ],
+      });
+      const accessCredential = await AccessCredential.create({
+        name: 'access-cred',
+        accessPolicy,
+        scopeValues: [{ field: 'evseControllerId', values: ['5fd6036fccd06f4d6b1d8bd2', '5fa1a16c41470583c056e6d4'] }],
+      });
+      const headers = { Authorization: `Bearer ${createCredentialToken(accessCredential)}` };
+
+      const response = await request(
+        'POST',
+        '/1/analytics/search',
+        { collection: collectionName, debug: true },
+        { headers }
+      );
+      expect(response.status).toBe(200);
+      expect(response.body.data.length).toBe(7); // ignores 3 out of 10
+      expect(response.body.meta.searchQuery.body.query).toStrictEqual({
+        bool: {
+          must: [
+            {
+              bool: {
+                should: [
+                  {
+                    term: {
+                      evseControllerId: '5fd6036fccd06f4d6b1d8bd2',
+                    },
+                  },
+                  {
+                    term: {
+                      evseControllerId: '5fa1a16c41470583c056e6d4',
+                    },
+                  },
+                ],
+              },
+            },
+          ],
+        },
+      });
     });
 
     it('should not allow missing scopeFields', async () => {
@@ -543,7 +609,7 @@ describe('/1/analytics', () => {
       const accessCredential = await AccessCredential.create({
         name: 'access-cred',
         accessPolicy,
-        scopeValues: [{ field: 'wrongOne', value: '5fd6036fccd06f4d6b1d8bd2' }],
+        scopeValues: [{ field: 'wrongOne', values: ['5fd6036fccd06f4d6b1d8bd2'] }],
       });
       const headers = { Authorization: `Bearer ${createCredentialToken(accessCredential)}` };
 

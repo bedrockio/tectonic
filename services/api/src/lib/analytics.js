@@ -332,6 +332,7 @@ function parseFilterOptions(options = {}, skipSort = false) {
     ranges,
     ids,
     scope,
+    scopeValues,
   } = options;
   const body = {
     sort: skipSort ? undefined : sort,
@@ -422,6 +423,24 @@ function parseFilterOptions(options = {}, skipSort = false) {
       const scopeTerm = { term: {} };
       scopeTerm.term[key] = value;
       body.query.bool.must.push(scopeTerm);
+    }
+  }
+  if (scopeValues) {
+    ensureBodyQueryBoolMust(body);
+    for (const [key, value] of Object.entries(scopeValues)) {
+      if (value.length == 1) {
+        const scopeTerm = { term: {} };
+        scopeTerm.term[key] = value[0];
+        body.query.bool.must.push(scopeTerm);
+      } else if (value.length > 1) {
+        const boolShould = { bool: { should: [] } };
+        for (const v of value) {
+          const scopeTerm = { term: {} };
+          scopeTerm.term[key] = v;
+          boolShould.bool.should.push(scopeTerm);
+        }
+        body.query.bool.must.push(boolShould);
+      }
     }
   }
   // console.log(JSON.stringify(body, null, 2));

@@ -17,7 +17,7 @@ const accessCredentialSchema = Joi.object({
     .items(
       Joi.object({
         field: Joi.string().required(),
-        value: Joi.string().required(),
+        values: Joi.array().items(Joi.string()).min(1).required(),
       })
     )
     .optional(),
