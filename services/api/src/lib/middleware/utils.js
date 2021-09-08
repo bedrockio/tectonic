@@ -118,6 +118,9 @@ function getMissingFields(accessPolicy, scopeValues) {
 }
 
 function checkScopeValues(ctx, accessPolicy, scopeValues) {
+  if (scopeValues.length > 100) {
+    ctx.throw(401, `scopeValues has more than 100 fields`);
+  }
   const fields = scopeValues.map(({ field }) => field);
   const fieldsSet = new Set(fields);
   if (fields.length > fieldsSet.size) {

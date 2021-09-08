@@ -100,7 +100,7 @@ describe('checkScopeValues', () => {
     ],
   };
   it('should trigger an error if scopeValues are missing', async () => {
-    expect.assertions(4);
+    expect.assertions(5);
     let ctx = context();
 
     const scopeValues = [{ field: 'organizationId', value: '123' }];
@@ -122,5 +122,12 @@ describe('checkScopeValues', () => {
         { field: 'userId', value: '' }, // duplicate not allowed
       ]);
     }).rejects.toHaveProperty('message', 'scopeValues has duplicate fields');
+    await expect(async () => {
+      const scopeValuesBig = [];
+      for (let index = 0; index < 101; index++) {
+        scopeValuesBig.push({ field: `big${index}`, value: index });
+      }
+      checkScopeValues(ctx, accessPolicy, scopeValuesBig);
+    }).rejects.toHaveProperty('message', 'scopeValues has more than 100 fields');
   });
 });
