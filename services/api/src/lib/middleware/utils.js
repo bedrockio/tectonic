@@ -103,17 +103,26 @@ function getMissingFields(accessPolicy, scopeValues) {
 
   if (scopeFields.size == 0) return false;
   if (!scopeValues || scopeValues.length == 0) return Array.from(scopeFields);
+  const scopeValueObject = {};
+  for (const { field, value } of scopeValues) {
+    scopeValueObject[field] = value;
+  }
 
   const scopeValuesFields = scopeValues.map(({ field }) => field);
   const missingFields = [];
   for (let field of scopeFields) {
-    if (!scopeValuesFields.includes(field)) missingFields.push(field);
+    if (scopeValueObject[field] === '' || !scopeValuesFields.includes(field)) missingFields.push(field);
   }
   if (missingFields.length) return missingFields;
   return false;
 }
 
 function checkScopeValues(ctx, accessPolicy, scopeValues) {
+  const fields = scopeValues.map(({ field }) => field);
+  const fieldsSet = new Set(fields);
+  if (fields.length > fieldsSet.size) {
+    ctx.throw(401, `scopeValues has duplicate fields`);
+  }
   const missingFields = getMissingFields(accessPolicy, scopeValues);
   if (missingFields && missingFields.length) {
     ctx.throw(401, `scopeValues missing fields: '${missingFields.sort().join(',')}'`);
