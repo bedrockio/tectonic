@@ -1,7 +1,6 @@
 const fs = require('fs');
 const elasticsearch = require('@elastic/elasticsearch');
 const config = require('@bedrockio/config');
-const { createHash } = require('crypto');
 const { logger } = require('@bedrockio/instrumentation');
 const ENV_NAME = config.get('ENV_NAME');
 
@@ -451,59 +450,6 @@ async function refreshIndex(index) {
   await elasticsearchClient.indices.refresh({ index });
 }
 
-async function ensureIndex(index, { recreate = false } = {}) {
-  const existsResult = await elasticsearchClient.indices.exists({ index });
-  if (recreate && existsResult.statusCode === 200) {
-    await elasticsearchClient.indices.delete({ index });
-  }
-  const existsResult2 = await elasticsearchClient.indices.exists({ index });
-  if (!(existsResult2.statusCode === 200)) {
-    const defaultDynamicMapping = {
-      dynamic_templates: [
-        {
-          strings_as_keywords: {
-            match_mapping_type: 'string',
-            mapping: {
-              type: 'keyword',
-            },
-          },
-        },
-      ],
-      properties: {
-        'time-stamp': {
-          type: 'long',
-        },
-        timestamp: {
-          type: 'date',
-        },
-      },
-    };
-    await elasticsearchClient.indices.create({
-      index,
-      body: {
-        mappings: defaultDynamicMapping,
-      },
-    });
-  }
-}
-
-async function indexEvent(index, event, { idField = null, refresh = false } = {}) {
-  let id = idField ? event[idField] : event.id;
-  if (!id) {
-    const md5 = createHash('md5');
-    md5.update(JSON.stringify(event));
-    id = md5.digest('hex');
-    event.id = id;
-  }
-  // console.log(index, type, id, event);
-  await elasticsearchClient.index({
-    index,
-    id: id,
-    body: event,
-    refresh,
-  });
-}
-
 function loadJsonStreamFile(path) {
   return fs
     .readFileSync(path)
@@ -671,9 +617,7 @@ module.exports = {
   get,
   fetch,
   elasticsearchClient,
-  indexEvent,
   refreshIndex,
-  ensureIndex,
   loadJsonStreamFile,
   listIndices,
   indexExists,

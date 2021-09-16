@@ -7,17 +7,23 @@ const {
   loadJsonStreamFile,
   stats,
   cardinality,
-  ensureIndex,
+  ensureCollectionIndex,
+  getCollectionIndex,
   elasticsearchClient,
+  deleteIndex,
 } = require('./../analytics');
 
-const testIndex = 'tectonic-analytics-test';
+const collectionId = 'analytics';
+const testIndex = getCollectionIndex(collectionId);
 
 jest.setTimeout(40 * 1000);
 
 const indexEvents = async () => {
   const events = loadJsonStreamFile(__dirname + '/fixtures/analytics/performance-member-summary.ndjson');
-  await ensureIndex(testIndex, { recreate: true });
+  const collection = {
+    id: collectionId,
+  };
+  await ensureCollectionIndex(collection);
   let i = 0;
   const bulkEvents = [];
   for (const event of events) {
@@ -40,6 +46,7 @@ const indexEvents = async () => {
 };
 
 beforeAll(async () => {
+  await deleteIndex(testIndex);
   await indexEvents(testIndex);
 });
 
