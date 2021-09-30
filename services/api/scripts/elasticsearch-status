@@ -1,0 +1,29 @@
+#!/usr/bin/env node
+
+const process = require('process');
+const { logger } = require('@bedrockio/instrumentation');
+const { getStats } = require('../src/lib/analytics');
+const { sleep } = require('../src/utils/sleep');
+
+async function run() {
+  try {
+    const { cluster_name, indices, status } = await getStats();
+    logger.info(`Elasticsearch cluster "${cluster_name}" has ${indices?.count || 0} indices and status "${status}" `);
+  } catch (e) {
+    logger.error(e.message);
+    logger.warn('Could not fetch Elasticsearch stats. Sleep and retry in 60 seconds...');
+    await sleep(60 * 1000);
+    const { cluster_name, indices, status } = await getStats();
+    logger.info(`Elasticsearch cluster "${cluster_name}" has ${indices?.count || 0} indices and status "${status}" `);
+  }
+}
+
+run()
+  .then(() => {
+    process.exit(0);
+  })
+  .catch((error) => {
+    logger.error(`Fatal error: ${error.message}, exiting.`);
+    console.warn(error.stack);
+    process.exit(1);
+  });

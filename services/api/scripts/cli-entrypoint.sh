@@ -4,7 +4,10 @@ echo "" > /service/crontab.log
 echo "=> Waiting for mongo:27017"
 ./scripts/wait-for-it.sh 'mongo:27017' -t 60
 echo "=> Waiting for elasticsearch:9200"
-./scripts/wait-for-it.sh 'elasticsearch:9200' -t 60
+./scripts/wait-for-it.sh 'elasticsearch:9200' -t 120
+
+# elasticsearch status is fetched and retried after 60 seconds of sleep
+./scripts/elasticsearch-status
 
 ./scripts/fixtures/load
 ./scripts/initialize-pubsub

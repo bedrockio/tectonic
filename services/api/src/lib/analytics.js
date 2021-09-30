@@ -607,6 +607,11 @@ async function getMapping(index) {
   return body;
 }
 
+async function getStats() {
+  const { body } = await elasticsearchClient.cluster.stats({});
+  return body;
+}
+
 module.exports = {
   terms,
   timeSeries,
@@ -628,4 +633,5 @@ module.exports = {
   getCollectionIndex,
   ensureAlias,
   getMapping,
+  getStats,
 };

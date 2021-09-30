@@ -9,6 +9,7 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 const { initialize: initPubSub } = require('./lib/pubsub');
+const { getStats } = require('./lib/analytics');
 const { initialize: initDB } = require('./utils/database');
 const { createFixtures } = require('./fixtures');
 // const { createCredentialToken } = require('./lib/tokens');
@@ -34,6 +35,8 @@ module.exports = (async () => {
     logger.info(`Started on port //${HOST}:${PORT}`);
     if (ENV_NAME === 'development') {
       logger.info('-----------------------------------------------------------------');
+      const { cluster_name, indices, status } = await getStats();
+      logger.info(`Elasticsearch cluster "${cluster_name}" has ${indices?.count || 0} indices and status "${status}" `);
       await createFixtures();
       try {
         await initPubSub();
