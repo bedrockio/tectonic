@@ -166,18 +166,34 @@ async function timeMap(index, options = undefined, returnSearchOptions = false) 
   const searchOptions = { index, body };
   if (returnSearchOptions) return searchOptions;
   const result = await elasticsearchClient.search(searchOptions);
-  return result.body.aggregations.dayOfWeekDistribution.buckets.map(({ key, doc_count, hourDistribution }) => {
-    return {
-      dayOfWeek: parseInt(key, 10),
+  const daysOfWeekIndex = {};
+  const hoursIndex = {};
+  result.body.aggregations.dayOfWeekDistribution.buckets.forEach(({ key, doc_count, hourDistribution }) => {
+    const dayOfWeek = parseInt(key, 10);
+    daysOfWeekIndex[dayOfWeek] = {
+      dayOfWeek,
       count: doc_count || 0,
-      hours: hourDistribution.buckets.map(({ key, doc_count }) => {
-        return {
-          hour: parseInt(key, 10),
-          count: doc_count || 0,
-        };
-      }),
     };
+    hoursIndex[dayOfWeek] = {};
+    hourDistribution.buckets.forEach(({ key, doc_count }) => {
+      const hour = parseInt(key, 10);
+      hoursIndex[dayOfWeek][hour] = {
+        hour,
+        count: doc_count || 0,
+      };
+    });
   });
+  const dayOfWeekObjects = [];
+  for (let dayOfWeek = 0; 7 > dayOfWeek; dayOfWeek++) {
+    const dayOfWeekObject = daysOfWeekIndex[dayOfWeek] || { dayOfWeek, count: 0 };
+    dayOfWeekObject.hours = [];
+    for (let hour = 0; 24 > hour; hour++) {
+      const hourObject = (hoursIndex[dayOfWeek] || {})[hour] || { hour, count: 0 };
+      dayOfWeekObject.hours.push(hourObject);
+    }
+    dayOfWeekObjects.push(dayOfWeekObject);
+  }
+  return dayOfWeekObjects;
 }
 
 async function stats(index, fields, options = undefined, returnSearchOptions = false) {
