@@ -111,3 +111,26 @@ bedrock cloud build # select all services
 ./docker-push api # pushes only the api service with the 'latest' tag
 ./docker-push api latest # same as above
 ```
+
+### Rollout Tectonic
+
+Install [tectonic-cli](https://github.com/bedrockio/tectonic-cli):
+
+```bash
+curl -s https://gist.githubusercontent.com/beatlevic/80c45c040bdb46c180af7b5557e1fca6/raw/1efebb3b17578e0a3849994dddd6fbb91055ddc8/install | bash
+```
+
+Create a new Tectonic environment:
+
+```bash
+tectonic create
+```
+
+Rollout deployment with latest version:
+
+```bash
+tectonic cloud authorize # Authorize tectonic environment or pass environment:
+# tectonic cloud authorize production
+tectonic cloud rollout # select environment and services to rollout or pass environment and service:
+# tectonic cloud rollout production api
+```
