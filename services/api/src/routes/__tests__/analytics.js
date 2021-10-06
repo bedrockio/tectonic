@@ -157,7 +157,9 @@ describe('/1/analytics', () => {
         { headers }
       );
       expect(response.status).toBe(401);
-      expect(response.body.error.message).toBe("aggField 'params.connectorId' is not included");
+      expect(response.body.error.message).toBe(
+        "aggField 'params.connectorId' is not an allowed field as it is not included in access policy includeFields"
+      );
     });
 
     it('should fail with non included terms', async () => {
@@ -184,7 +186,9 @@ describe('/1/analytics', () => {
         { headers }
       );
       expect(response.status).toBe(401);
-      expect(response.body.error.message).toBe("Filter term 'destination' is not included");
+      expect(response.body.error.message).toBe(
+        "Filter term 'destination' is not an allowed field as it is not included in access policy includeFields"
+      );
     });
   });
 

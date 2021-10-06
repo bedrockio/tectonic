@@ -26,13 +26,19 @@ function checkFieldInclusion(ctx, fieldName, fieldValue, includeFields = [], exc
     !includeFields.includes(fieldValue) &&
     !includeFields.find((field) => fieldValue.startsWith(`${field}.`))
   ) {
-    ctx.throw(401, `${fieldName} '${fieldValue}' is not included`);
+    ctx.throw(
+      401,
+      `${fieldName} '${fieldValue}' is not an allowed field as it is not included in access policy includeFields`
+    );
   }
   if (
     excludeFields.length &&
     (excludeFields.includes(fieldValue) || excludeFields.find((field) => fieldValue.startsWith(`${field}.`)))
   ) {
-    ctx.throw(401, `${fieldName} '${fieldValue}' is excluded`);
+    ctx.throw(
+      401,
+      `${fieldName} '${fieldValue}' is not an allowed field as it is excluded by access policy excludeFields`
+    );
   }
   return true;
 }

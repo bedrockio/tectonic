@@ -14,16 +14,28 @@ describe('checkfieldInclusion', () => {
     let ctx = context();
     await expect(async () => {
       checkFieldInclusion(ctx, 'aggField', 'event.nope', ['event.id']);
-    }).rejects.toHaveProperty('message', "aggField 'event.nope' is not included");
+    }).rejects.toHaveProperty(
+      'message',
+      "aggField 'event.nope' is not an allowed field as it is not included in access policy includeFields"
+    );
     await expect(async () => {
       checkFieldInclusion(ctx, 'aggField', 'event.nope', [], ['event.nope']);
-    }).rejects.toHaveProperty('message', "aggField 'event.nope' is excluded");
+    }).rejects.toHaveProperty(
+      'message',
+      "aggField 'event.nope' is not an allowed field as it is excluded by access policy excludeFields"
+    );
     await expect(async () => {
       checkFieldInclusion(ctx, 'aggField', 'event.nope', ['event.nope'], ['event.nope']);
-    }).rejects.toHaveProperty('message', "aggField 'event.nope' is excluded");
+    }).rejects.toHaveProperty(
+      'message',
+      "aggField 'event.nope' is not an allowed field as it is excluded by access policy excludeFields"
+    );
     await expect(async () => {
       checkFieldInclusion(ctx, 'aggField', 'event.nope', [], ['event']);
-    }).rejects.toHaveProperty('message', "aggField 'event.nope' is excluded");
+    }).rejects.toHaveProperty(
+      'message',
+      "aggField 'event.nope' is not an allowed field as it is excluded by access policy excludeFields"
+    );
     await expect(checkFieldInclusion(ctx, 'aggField', 'event.nope', ['event'], [])).toBe(true);
   });
 });
@@ -35,16 +47,28 @@ describe('checkfilterTermsInclusion', () => {
     const terms = [{ 'event.nope': 'something' }];
     await expect(async () => {
       checkFilterTermsInclusion(ctx, terms, ['event.id']);
-    }).rejects.toHaveProperty('message', "Filter term 'event.nope' is not included");
+    }).rejects.toHaveProperty(
+      'message',
+      "Filter term 'event.nope' is not an allowed field as it is not included in access policy includeFields"
+    );
     await expect(async () => {
       checkFilterTermsInclusion(ctx, terms, [], ['event.nope']);
-    }).rejects.toHaveProperty('message', "Filter term 'event.nope' is excluded");
+    }).rejects.toHaveProperty(
+      'message',
+      "Filter term 'event.nope' is not an allowed field as it is excluded by access policy excludeFields"
+    );
     await expect(async () => {
       checkFilterTermsInclusion(ctx, terms, ['event.nope'], ['event.nope']);
-    }).rejects.toHaveProperty('message', "Filter term 'event.nope' is excluded");
+    }).rejects.toHaveProperty(
+      'message',
+      "Filter term 'event.nope' is not an allowed field as it is excluded by access policy excludeFields"
+    );
     await expect(async () => {
       checkFilterTermsInclusion(ctx, terms, [], ['event']);
-    }).rejects.toHaveProperty('message', "Filter term 'event.nope' is excluded");
+    }).rejects.toHaveProperty(
+      'message',
+      "Filter term 'event.nope' is not an allowed field as it is excluded by access policy excludeFields"
+    );
     await expect(checkFilterTermsInclusion(ctx, terms, ['event'], [])).toBe(true);
   });
 });
@@ -58,37 +82,67 @@ describe('checkfilterInclusion', () => {
     // terms
     await expect(async () => {
       checkFilterInclusion(ctx, filter, ['event.id']);
-    }).rejects.toHaveProperty('message', "Filter term 'event.nope' is not included");
+    }).rejects.toHaveProperty(
+      'message',
+      "Filter term 'event.nope' is not an allowed field as it is not included in access policy includeFields"
+    );
     await expect(async () => {
       checkFilterInclusion(ctx, filter, [], ['event.nope']);
-    }).rejects.toHaveProperty('message', "Filter term 'event.nope' is excluded");
+    }).rejects.toHaveProperty(
+      'message',
+      "Filter term 'event.nope' is not an allowed field as it is excluded by access policy excludeFields"
+    );
     await expect(async () => {
       checkFilterInclusion(ctx, filter, ['event.nope'], ['event.nope']);
-    }).rejects.toHaveProperty('message', "Filter term 'event.nope' is excluded");
+    }).rejects.toHaveProperty(
+      'message',
+      "Filter term 'event.nope' is not an allowed field as it is excluded by access policy excludeFields"
+    );
     await expect(async () => {
       checkFilterInclusion(ctx, filter, [], ['event']);
-    }).rejects.toHaveProperty('message', "Filter term 'event.nope' is excluded");
+    }).rejects.toHaveProperty(
+      'message',
+      "Filter term 'event.nope' is not an allowed field as it is excluded by access policy excludeFields"
+    );
     await expect(checkFilterInclusion(ctx, filter, ['event'], [])).toBe(true);
     // exists and notExists
     await expect(async () => {
       checkFilterInclusion(ctx, { exists: 'event.nope' }, [], ['event']);
-    }).rejects.toHaveProperty('message', "Filter exists 'event.nope' is excluded");
+    }).rejects.toHaveProperty(
+      'message',
+      "Filter exists 'event.nope' is not an allowed field as it is excluded by access policy excludeFields"
+    );
     await expect(async () => {
       checkFilterInclusion(ctx, { notExists: 'event.nope' }, [], ['event']);
-    }).rejects.toHaveProperty('message', "Filter notExists 'event.nope' is excluded");
+    }).rejects.toHaveProperty(
+      'message',
+      "Filter notExists 'event.nope' is not an allowed field as it is excluded by access policy excludeFields"
+    );
     // range and ranges
     await expect(async () => {
       checkFilterInclusion(ctx, { range: { 'event.nope': { gte: 'nope' } } }, [], ['event']);
-    }).rejects.toHaveProperty('message', "Filter range 'event.nope' is excluded");
+    }).rejects.toHaveProperty(
+      'message',
+      "Filter range 'event.nope' is not an allowed field as it is excluded by access policy excludeFields"
+    );
     await expect(async () => {
       checkFilterInclusion(ctx, { range: { 'event.nope': { gte: 'nope' } } }, ['root'], []);
-    }).rejects.toHaveProperty('message', "Filter range 'event.nope' is not included");
+    }).rejects.toHaveProperty(
+      'message',
+      "Filter range 'event.nope' is not an allowed field as it is not included in access policy includeFields"
+    );
     await expect(async () => {
       checkFilterInclusion(ctx, { ranges: [{ 'event.nope': { gte: 'nope' } }] }, [], ['event']);
-    }).rejects.toHaveProperty('message', "Filter ranges 'event.nope' is excluded");
+    }).rejects.toHaveProperty(
+      'message',
+      "Filter ranges 'event.nope' is not an allowed field as it is excluded by access policy excludeFields"
+    );
     await expect(async () => {
       checkFilterInclusion(ctx, { ranges: [{ 'event.nope': { gte: 'nope' } }] }, ['root'], []);
-    }).rejects.toHaveProperty('message', "Filter ranges 'event.nope' is not included");
+    }).rejects.toHaveProperty(
+      'message',
+      "Filter ranges 'event.nope' is not an allowed field as it is not included in access policy includeFields"
+    );
   });
 });
 
