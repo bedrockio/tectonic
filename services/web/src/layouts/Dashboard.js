@@ -45,6 +45,11 @@ export default class DashboardLayout extends React.Component {
                     <Icon name="cube" />
                     Applications
                   </Sidebar.Link>
+
+                  <Sidebar.Link to="/components">
+                    <Icon name="chart-pie" />
+                    Components
+                  </Sidebar.Link>
                 </Protected>
               </Layout.Group>
               <Layout.Group>

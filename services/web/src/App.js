@@ -28,7 +28,7 @@ const App = () => (
     <Protected path="/applications/:id?" allowed={ApplicationCredentials} />
     <Protected path="/settings" allowed={Settings} exact />
     <Protected path="/users/:id?" allowed={Users} />
-    <Route path="/docs/ui" component={Components} exact />
+    <Protected path="/components" allowed={Components} exact />
     <Route path="/docs/:id?" component={Docs} />
     <Route path="/logout" component={Logout} exact />
     <AuthSwitch path="/login" loggedOut={Login} loggedIn={() => <Redirect to="/" />} exact />
