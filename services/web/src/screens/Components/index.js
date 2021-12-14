@@ -1,33 +1,6 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
-import {
-  Breadcrumb,
-  Button,
-  Card,
-  Container,
-  Divider,
-  Dropdown,
-  Form,
-  Grid,
-  Header,
-  Icon,
-  Input,
-  Label,
-  Menu,
-  Message,
-  Progress,
-  Ref,
-  Segment,
-  Statistic,
-  Table,
-  TextArea,
-} from 'semantic';
+import { Form, Grid } from 'semantic';
 import { screen } from 'helpers';
-import { Layout } from 'components/Layout';
-import Breadcrumbs from 'components/Breadcrumbs';
-import { Menu as ResponsiveMenu } from 'components/Responsive';
-import { JumpLink } from 'components/Link';
-import CodeBlock from 'components/CodeBlock';
 import { request } from 'utils/api';
 import SearchDropdown from 'components/SearchDropdown';
 import CodeAndPreview from './CodeAndPreview';
