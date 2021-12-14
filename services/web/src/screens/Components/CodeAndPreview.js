@@ -6,9 +6,8 @@ import { API_URL } from 'utils/env';
 import { TectonicProvider, AggregateTimeSeries, SeriesChart } from 'react-tectonic';
 
 export default class Components extends React.Component {
-  state = {};
   render() {
-    const { collection } = this.state;
+    const { collection } = this.props;
     return (
       <div style={{ width: '100%' }}>
         <Segment style={{ height: `${window.innerHeight * 0.45}px` }}>
@@ -25,7 +24,7 @@ export default class Components extends React.Component {
                   title={collection.name}
                   titleAlign="center"
                   chartType="bar"
-                  height={250}
+                  height={500}
                   valueField="count"
                 />
               </AggregateTimeSeries>
