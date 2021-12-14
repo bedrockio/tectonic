@@ -18,7 +18,6 @@ export default class Components extends React.Component {
                 <Form.Field>
                   <label>Collection</label>
                   <SearchDropdown
-                    valueField="name"
                     value={this.state.collection}
                     name="collection"
                     onChange={(e, { value }) => {

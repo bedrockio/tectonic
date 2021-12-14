@@ -63,7 +63,6 @@ export default class EditAccessPolicy extends React.Component {
         <Form.Field required>
           <label>Collection</label>
           <SearchDropdown
-            valueField="name"
             value={collection}
             name="collection"
             onChange={(e, { value }) => {
