@@ -592,17 +592,21 @@ const bulkIndexBatchEvents = async (batchEvents) => {
 
 const bulkErrorLog = async (bulkResult, events) => {
   if (!bulkResult || !bulkResult.body || !bulkResult.body.items) {
-    logger.error('Missing bulkResult.body.items');
+    logger.error('BULKERROR: Missing bulkResult.body.items');
     return;
   }
   const items = bulkResult.body.items;
   if (events.length != items.length) {
-    logger.error('Events.length does not equal items length');
+    logger.error('BULKERROR: Events.length does not equal items length');
     return;
   }
+  if (bulkResult.body.errors) {
+    logger.error('BULKERRORS:');
+  }
   items.forEach((item, index) => {
-    if (item.index.status == 400) {
-      logger.error({ event: events[index], error: item.index.error });
+    const { error, status } = item.index;
+    if (item.index.error) {
+      logger.error({ event: events[index], error, status });
     }
   });
 };
