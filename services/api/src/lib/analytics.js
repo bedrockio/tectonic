@@ -604,9 +604,9 @@ const bulkErrorLog = async (bulkResult, events) => {
     logger.error('BULKERRORS:');
   }
   items.forEach((item, index) => {
-    const { error, status } = item.index;
+    const { error, status, _index } = item.index;
     if (item.index.error) {
-      logger.error({ event: events[index], error, status });
+      logger.error({ event: events[index], error, status, index: _index });
     }
   });
 };
