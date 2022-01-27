@@ -4,7 +4,7 @@ const validate = require('../utils/middleware/validate');
 const { authenticate, fetchCredential } = require('../lib/middleware/authenticate');
 const { NotFoundError } = require('../utils/errors');
 const { Collection, Batch } = require('../models');
-const { ensureCollectionIndex, getMapping, getCollectionIndex, deleteIndex } = require('../lib/analytics');
+const { ensureCollectionIndex, getMapping, getCollectionIndex, deleteIndex, getCount } = require('../lib/analytics');
 const { logger } = require('@bedrockio/instrumentation');
 
 const router = new Router();
@@ -63,15 +63,23 @@ router
   )
   .get('/:collectionId', async (ctx) => {
     const { collection } = await ctx.state;
+    const collectionIndex = getCollectionIndex(collection.id);
     let mapping = {};
+    let count = -1;
     try {
-      mapping = await getMapping(getCollectionIndex(collection.id));
+      mapping = await getMapping(collectionIndex);
     } catch (e) {
       logger.warn('Could not retrieve mapping');
     }
+    try {
+      const result = await getCount(collectionIndex);
+      count = result.count;
+    } catch (e) {
+      logger.warn('Could not retrieve count');
+    }
 
     ctx.body = {
-      data: { ...collection.toObject(), mapping },
+      data: { ...collection.toObject(), mapping, count },
     };
   })
   .get('/:collectionId/last-entry-at', async (ctx) => {

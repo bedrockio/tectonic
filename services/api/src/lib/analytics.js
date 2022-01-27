@@ -627,6 +627,13 @@ async function getMapping(index) {
   return body;
 }
 
+async function getCount(index) {
+  const { body } = await elasticsearchClient.count({
+    index,
+  });
+  return body;
+}
+
 async function getStats() {
   const { body } = await elasticsearchClient.cluster.stats({});
   return body;
@@ -653,5 +660,6 @@ module.exports = {
   getCollectionIndex,
   ensureAlias,
   getMapping,
+  getCount,
   getStats,
 };
