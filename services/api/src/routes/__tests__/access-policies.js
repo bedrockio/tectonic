@@ -131,6 +131,65 @@ describe('/1/access-policies', () => {
       expect(response2.body.data.name).toBe(name2);
     });
 
+    it('should be able to update collections on access-policy with put', async () => {
+      const collection1 = await Collection.create({
+        name: 'access-policy-collections-1-test',
+      });
+      const collection2 = await Collection.create({
+        name: 'access-policy-collections-2-test',
+      });
+      const systemId = '5fd6036fccd06f4d6b1d8bd2';
+
+      const name = 'access-policy-collections-test';
+      await AccessPolicy.create({ name });
+
+      const headers = await getHeaders();
+      // pre-existing name:
+      const response = await request(
+        'PUT',
+        '/1/access-policies',
+        {
+          name,
+          collections: [
+            {
+              collection: collection1.name, // fetch by name
+              scope: { systemId },
+              includeFields: ['id'],
+            },
+          ],
+        },
+        { headers }
+      );
+      expect(response.error).toBe(false);
+      expect(response.status).toBe(200);
+
+      const response2 = await request(
+        'PUT',
+        '/1/access-policies',
+        {
+          name,
+          collections: [
+            {
+              collection: collection1.name, // fetch by name
+              scope: { systemId },
+              includeFields: ['id', 'createdAt'],
+            },
+            {
+              collection: collection2.name, // fetch by name
+              scope: { systemId },
+              includeFields: ['id', 'createdAt'],
+            },
+          ],
+        },
+        { headers }
+      );
+      expect(response2.error).toBe(false);
+      expect(response2.status).toBe(200);
+      //console.log(JSON.stringify(response2.body, null, 2));
+      expect(response2.body.data.collections.length).toBe(2);
+      expect(response2.body.data.collections[0].includeFields).toStrictEqual(['id', 'createdAt']);
+    });
+
     it('should not be able to create access-policy with nested scope object', async () => {
       const collection = await Collection.create({
         name: 'access-policy-collection-test',
