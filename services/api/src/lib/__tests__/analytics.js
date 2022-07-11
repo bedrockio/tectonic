@@ -188,4 +188,33 @@ describe('analytics', () => {
     const event = await fetch(testIndex, 'member-info.member-uuid', '78b7257a-49bb-48ae-a1d1-0252f9430e1f');
     expect(event['member-info']['member-uuid']).toBe('78b7257a-49bb-48ae-a1d1-0252f9430e1f');
   });
+  it('should allow search of events and filter multiple values', async () => {
+    const { hits } = await search(testIndex, {
+      terms: [{ isFirstFive: true }, { 'member-info.member-firstname': ['BRITTANYB2', 'nope'] }],
+    });
+    expect(hits.total.value).toBe(1);
+    const searchOptions = await search(
+      testIndex,
+      {
+        terms: [{ isFirstFive: true }, { 'member-info.member-firstname': ['BRITTANYB2', 'nope'] }],
+      },
+      true
+    );
+    expect(searchOptions.body.query).toStrictEqual({
+      bool: {
+        must: [
+          {
+            term: {
+              isFirstFive: true,
+            },
+          },
+          {
+            terms: {
+              'member-info.member-firstname': ['BRITTANYB2', 'nope'],
+            },
+          },
+        ],
+      },
+    });
+  });
 });

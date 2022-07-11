@@ -358,9 +358,17 @@ function parseFilterOptions(options = {}, skipSort = false) {
     body.query = {
       bool: {
         must: terms.map((term) => {
-          return {
-            term,
-          };
+          const termValues = Object.values(term);
+          // Support terms with multiple values (array)
+          if (termValues?.length && Array.isArray(termValues[0])) {
+            return {
+              terms: term,
+            };
+          } else {
+            return {
+              term,
+            };
+          }
         }),
       },
     };
