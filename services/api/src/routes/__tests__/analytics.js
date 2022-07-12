@@ -104,6 +104,64 @@ describe('/1/analytics', () => {
       expect(response.body.data.find(({ key }) => key == 1).count).toBe(5);
     });
 
+    it('should allow analytics multi terms for correct policy', async () => {
+      const collectionId = testCollection.id;
+      const collectionName = testCollection.name;
+      const accessPolicy = await AccessPolicy.create({
+        name: 'access-test-policy',
+        collections: [{ collectionName }],
+      });
+      const accessCredential = await AccessCredential.create({
+        name: 'access-cred',
+        accessPolicy,
+      });
+      const headers = { Authorization: `Bearer ${createCredentialToken(accessCredential)}` };
+
+      const response = await request(
+        'POST',
+        '/1/analytics/terms',
+        {
+          collection: collectionId,
+          aggField: 'params.connectorId',
+          filter: { terms: [{ destination: ['centralsystem', 'somethingelse'] }] },
+        },
+        { headers }
+      );
+      expect(response.status).toBe(200);
+      expect(response.body.data.length).toBe(4);
+      expect(response.body.data.find(({ key }) => key == 1).count).toBe(5);
+
+      const response2 = await request(
+        'POST',
+        '/1/analytics/terms',
+        {
+          collection: collectionId,
+          aggField: 'params.connectorId',
+          filter: { terms: [{ destination: ['centralsystem', { somethingelse: 'nope' }] }] },
+        },
+        { headers }
+      );
+      expect(response2.status).toBe(401);
+      expect(response2.text).toBe(
+        '{"error":{"message":"terms should be array with objects of max 1 level deep and with string keys","status":401}}'
+      );
+
+      const response3 = await request(
+        'POST',
+        '/1/analytics/terms',
+        {
+          collection: collectionId,
+          aggField: 'params.connectorId',
+          filter: { terms: [{ destination: { somethingelse: 'nope' } }] },
+        },
+        { headers }
+      );
+      expect(response3.status).toBe(401);
+      expect(response3.text).toBe(
+        '{"error":{"message":"terms should be array with objects of max 1 level deep and with string keys","status":401}}'
+      );
+    });
+
     it('should fail with incorrect filter terms', async () => {
       const collectionId = testCollection.id;
       const collectionName = testCollection.name;

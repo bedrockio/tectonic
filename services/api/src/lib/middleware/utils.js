@@ -91,6 +91,9 @@ function validateTerms(terms = []) {
     if (typeof term != 'object') return false;
     for (const key in term) {
       if (typeof key != 'string') return false;
+      if (Array.isArray(term[key])) {
+        return term[key].every((i) => typeof i === 'string');
+      }
       if (typeof term[key] == 'object') return false;
     }
   }
