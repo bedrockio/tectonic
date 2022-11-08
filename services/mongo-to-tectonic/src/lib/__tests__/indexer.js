@@ -1,9 +1,10 @@
 const { connect, disconnect } = require('./../mongodb');
-const { indexMongodbCollection, sanitizeDocuments } = require('./../indexer');
+const { indexMongodbCollection, sanitizeDocuments, readCursor } = require('./../indexer');
 
 let db;
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
-jest.setTimeout(20 * 1000);
+jest.setTimeout(300 * 1000);
 
 beforeAll(async () => {
   db = await connect({ database: 'bedrock_test' });
@@ -56,5 +57,38 @@ describe('indexer', () => {
         name: '123',
       },
     ]);
+  });
+  it.skip('should cursor find lots of documents', async () => {
+    const collection = db.collection('products2');
+    await collection.deleteMany({});
+    for (item of Array(201)) {
+      let objects = [];
+      for (let i = 0; 500 > i; i++) {
+        objects.push(createObject());
+      }
+      await collection.insertMany(objects);
+    }
+    const batchSize = 1000;
+    //.noCursorTimeout() // Not available
+    const cursor = collection.find({}, { timeout: false }).sort([
+      ['updatedAt', -1],
+      ['_id', 1],
+    ]);
+    const total = await collection.countDocuments();
+    const numBatches = Math.ceil(total / batchSize);
+    const batches = new Array(numBatches);
+    console.log(`Collecting total ${total} with batchSize ${batchSize}`);
+    let read = 0;
+    for (const batch of batches) {
+      const result = await readCursor(cursor, batchSize);
+      if (result.length) {
+        read += result.length;
+      }
+      if (read == 50000) {
+        console.log('50k done...');
+      }
+      await sleep(1000);
+    }
+    expect(read).toBe(100500);
   });
 });
