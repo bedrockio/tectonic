@@ -69,7 +69,6 @@ describe('indexer', () => {
       await collection.insertMany(objects);
     }
     const batchSize = 1000;
-    //.noCursorTimeout() // Not available
     const cursor = collection.find({}, { timeout: false }).sort([
       ['updatedAt', -1],
       ['_id', 1],
@@ -89,6 +88,7 @@ describe('indexer', () => {
       }
       await sleep(1000);
     }
+    await cursor.close();
     expect(read).toBe(100500);
   });
 });

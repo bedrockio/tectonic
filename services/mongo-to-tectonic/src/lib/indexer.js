@@ -113,6 +113,7 @@ async function syncMongodbCollection(
       numCollected += result.length;
     }
     if (process.env.NODE_ENV == 'development') process.stdout.write('*');
+    await cursor.close();
   }
   return { total, numCollected, duration: Date.now() - startTs };
 }
