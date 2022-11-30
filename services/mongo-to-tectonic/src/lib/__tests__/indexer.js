@@ -31,8 +31,52 @@ function createObject() {
 }
 
 describe('indexer', () => {
+  it('should sanitize documents', () => {
+    const docs = [{ email: 'test@test.com', name: '123' }];
+    expect(sanitizeDocuments('users', docs, ['users.email'])).toEqual([
+      {
+        name: '123',
+      },
+    ]);
+  });
+  it('should cursor find lots of documents', async () => {
+    const collection = db.collection('products2');
+    await collection.deleteMany({});
+    const arraySize = Math.floor(Math.random() * 100) + 100;
+    const loops = Math.floor(Math.random() * 400) + 100;
+    const itemCount = arraySize * loops;
+    for (item of Array(arraySize)) {
+      let objects = [];
+      for (let i = 0; loops > i; i++) {
+        objects.push(createObject());
+      }
+      await collection.insertMany(objects);
+    }
+    const batchSize = 1000;
+    const cursor = collection.find({}, { timeout: false }).sort([
+      ['updatedAt', -1],
+      ['_id', 1],
+    ]);
+    const total = await collection.countDocuments();
+    const numBatches = Math.ceil(total / batchSize);
+    const batches = new Array(numBatches);
+    console.log(`Collecting total ${total} with batchSize ${batchSize}: ${numBatches} batches`);
+    let read = 0;
+    for (const batch of batches) {
+      const result = await readCursor(cursor, batchSize);
+      if (result.length) {
+        read += result.length;
+      }
+      await sleep(Math.floor(Math.random() * 100));
+    }
+    await cursor.close();
+    expect(read).toBe(itemCount);
+  });
+});
+
+describe.skip('indexer integration', () => {
   // Add as integration test
-  it.skip('should index data from MongoDB', async () => {
+  it('should index data from MongoDB', async () => {
     const collection = db.collection('products');
     await collection.deleteMany({});
     const objects = [];
@@ -49,46 +93,5 @@ describe('indexer', () => {
     const { numIndexed: numIndexed2, total: total2 } = await indexMongodbCollection(db, 'products');
     expect(numIndexed2).toBe(2);
     expect(total2).toBe(2);
-  });
-  it('should sanitize documents', () => {
-    const docs = [{ email: 'test@test.com', name: '123' }];
-    expect(sanitizeDocuments('users', docs, ['users.email'])).toEqual([
-      {
-        name: '123',
-      },
-    ]);
-  });
-  it.skip('should cursor find lots of documents', async () => {
-    const collection = db.collection('products2');
-    await collection.deleteMany({});
-    for (item of Array(201)) {
-      let objects = [];
-      for (let i = 0; 500 > i; i++) {
-        objects.push(createObject());
-      }
-      await collection.insertMany(objects);
-    }
-    const batchSize = 1000;
-    const cursor = collection.find({}, { timeout: false }).sort([
-      ['updatedAt', -1],
-      ['_id', 1],
-    ]);
-    const total = await collection.countDocuments();
-    const numBatches = Math.ceil(total / batchSize);
-    const batches = new Array(numBatches);
-    console.log(`Collecting total ${total} with batchSize ${batchSize}`);
-    let read = 0;
-    for (const batch of batches) {
-      const result = await readCursor(cursor, batchSize);
-      if (result.length) {
-        read += result.length;
-      }
-      if (read == 50000) {
-        console.log('50k done...');
-      }
-      await sleep(1000);
-    }
-    await cursor.close();
-    expect(read).toBe(100500);
   });
 });
