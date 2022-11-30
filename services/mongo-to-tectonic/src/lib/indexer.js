@@ -133,6 +133,7 @@ async function autoIndexMongodbCollections(db, collectionNames, collectionNamesH
   logger.info(`Starting auto indexing for MongoDB collections: ${collectionNames.join(',')}`);
   return new Promise((resolve, reject) => {
     async function run() {
+      logger.info(`Run for ${collectionNames.length} collections`);
       for (const collectionName of collectionNames) {
         try {
           const result = await indexMongodbCollection(db, collectionName, {
