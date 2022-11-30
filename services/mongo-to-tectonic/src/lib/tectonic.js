@@ -1,5 +1,4 @@
 const config = require('@bedrockio/config');
-const fetch = require('node-fetch');
 const { logger } = require('@bedrockio/instrumentation');
 
 const TECTONIC_URL = config.get('TECTONIC_URL');
