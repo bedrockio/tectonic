@@ -87,13 +87,10 @@ async function syncMongodbCollection(
   if (total > 0) {
     logger.info(`Collecting ${collectionName} (total: ${total})`);
     const batchSize = 1000;
-    const cursor = collection
-      .find(query, { timeout: false })
-      .noCursorTimeout()
-      .sort([
-        [MONGO_UPDATED_AT_FIELD, -1],
-        ['_id', 1],
-      ]);
+    const cursor = collection.find(query, { timeout: false }).sort([
+      [MONGO_UPDATED_AT_FIELD, -1],
+      ['_id', 1],
+    ]);
 
     const numBatches = Math.ceil(total / batchSize);
     const batches = new Array(numBatches);
