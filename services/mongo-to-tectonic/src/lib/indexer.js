@@ -155,37 +155,6 @@ async function autoIndexMongodbCollections(db, collectionNames, collectionNamesH
   });
 }
 
-function autoIndexMongodbCollectionsParallel(db, collectionNames, collectionNamesHistorical, intervalSeconds = 30) {
-  logger.info(`Starting auto indexing for MongoDB collections: ${collectionNames.join(',')}`);
-  return new Promise((resolve, reject) => {
-    function run() {
-      const jobs = collectionNames.map((collectionName) => {
-        return indexMongodbCollection(db, collectionName, {
-          enableHistorical: collectionNamesHistorical.includes(collectionName),
-        });
-      });
-      Promise.all(jobs)
-        .then((results) => {
-          results.forEach((result) => {
-            if (result.total > 0) {
-              logger.info(
-                `Detected ${result.total} new documents in collection ${result.collectionName}: numCollected=${result.numCollected}, duration=${result.duration}ms`
-              );
-            }
-          });
-          setTimeout(run, intervalSeconds * 1000);
-        })
-        .catch((error) => {
-          console.error(`Error while running auto index jobs: ${error.message}`);
-          console.error(error.stack);
-          console.error(JSON.stringify(error));
-          reject(error);
-        });
-    }
-    run();
-  });
-}
-
 module.exports = {
   indexMongodbCollection,
   autoIndexMongodbCollections,
