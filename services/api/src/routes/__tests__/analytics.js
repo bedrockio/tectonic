@@ -75,6 +75,37 @@ describe('/1/analytics', () => {
     });
   });
 
+  describe('POST /time-map', () => {
+    it('should allow analytics time-map for correct policy', async () => {
+      const collectionId = testCollection.id;
+      const collectionName = testCollection.name;
+      const accessPolicy = await AccessPolicy.create({
+        name: 'access-test-policy',
+        collections: [{ collectionName }],
+      });
+      const accessCredential = await AccessCredential.create({
+        name: 'access-cred',
+        accessPolicy,
+      });
+      const headers = { Authorization: `Bearer ${createCredentialToken(accessCredential)}` };
+
+      const response = await request(
+        'POST',
+        '/1/analytics/time-map',
+        {
+          collection: collectionId,
+          dateField: 'createdAt',
+          timeZone: 'Europe/Stockholm',
+        },
+        { headers }
+      );
+      expect(response.status).toBe(200);
+      expect(response.body.data.length).toBe(7);
+      expect(response.body.data[0].count).toBe(10);
+      expect(response.body.data[0].hours[14].count).toBe(1);
+    });
+  });
+
   describe('POST /terms', () => {
     it('should allow analytics terms for correct policy', async () => {
       const collectionId = testCollection.id;
@@ -99,6 +130,7 @@ describe('/1/analytics', () => {
         },
         { headers }
       );
+
       expect(response.status).toBe(200);
       expect(response.body.data.length).toBe(4);
       expect(response.body.data.find(({ key }) => key == 1).count).toBe(5);

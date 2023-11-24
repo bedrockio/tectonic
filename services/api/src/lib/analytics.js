@@ -132,7 +132,7 @@ async function timeMap(index, options = undefined, returnSearchOptions = false) 
   body.size = 0;
   const { dateField, interval, timeZone } = options;
   const date_histogram = {
-    field: dateField || '_tectonic.ingestedAt',
+    field: dateField,
     interval: interval || '1d',
     min_doc_count: 0,
   };
@@ -141,13 +141,14 @@ async function timeMap(index, options = undefined, returnSearchOptions = false) 
     date_histogram.time_zone = timeZone;
   }
 
-  const safeDateField = dateField.replace(/[^a-zA-Z0-9.]/g, '');
+  const safeDateField = dateField ? dateField.replace(/[^a-zA-Z0-9.]/g, '') : '_tectonic.ingestedAt';
+
   body.aggs = {
     dayOfWeekDistribution: {
       terms: {
         script: {
           lang: 'painless',
-          source: `doc['${safeDateField}'].value.getDayOfWeekEnum().getValue()`,
+          source: `doc['${safeDateField}'].value.getDayOfWeekEnum().getDisplayName(TextStyle.FULL, Locale.ROOT)`,
         },
       },
       aggs: {
@@ -155,7 +156,9 @@ async function timeMap(index, options = undefined, returnSearchOptions = false) 
           terms: {
             script: {
               lang: 'painless',
-              source: `doc['${safeDateField}'].value.getHour()`,
+              source: `Instant.ofEpochMilli(doc['${safeDateField}'].value.millis).atZone(ZoneId.of('${
+                timeZone || 'UTC'
+              }')).getHour()`,
             },
             size: 25,
           },
@@ -165,13 +168,17 @@ async function timeMap(index, options = undefined, returnSearchOptions = false) 
   };
   const searchOptions = { index, body };
   if (returnSearchOptions) return searchOptions;
+
   const result = await elasticsearchClient.search(searchOptions);
   const daysOfWeekIndex = {};
   const hoursIndex = {};
+
+  const isoDayOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
   result.body.aggregations.dayOfWeekDistribution.buckets.forEach(({ key, doc_count, hourDistribution }) => {
-    const dayOfWeek = parseInt(key, 10);
+    const dayOfWeek = isoDayOfWeek.indexOf(key);
     daysOfWeekIndex[dayOfWeek] = {
       dayOfWeek,
+      day: key,
       count: doc_count || 0,
     };
     hoursIndex[dayOfWeek] = {};
@@ -183,12 +190,13 @@ async function timeMap(index, options = undefined, returnSearchOptions = false) 
       };
     });
   });
+
   const dayOfWeekObjects = [];
-  for (let dayOfWeek = 0; 7 > dayOfWeek; dayOfWeek++) {
-    const dayOfWeekObject = daysOfWeekIndex[dayOfWeek] || { dayOfWeek, count: 0 };
+  for (let index = 0; 7 > index; index++) {
+    const dayOfWeekObject = daysOfWeekIndex[index] || { dayOfWeek: index, day: isoDayOfWeek[index], count: 0 };
     dayOfWeekObject.hours = [];
     for (let hour = 0; 24 > hour; hour++) {
-      const hourObject = (hoursIndex[dayOfWeek] || {})[hour] || { hour, count: 0 };
+      const hourObject = (hoursIndex[index] || {})[hour] || { hour, count: 0 };
       dayOfWeekObject.hours.push(hourObject);
     }
     dayOfWeekObjects.push(dayOfWeekObject);

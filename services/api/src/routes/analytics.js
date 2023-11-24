@@ -146,7 +146,7 @@ router
         collection: Joi.string().required(),
         filter: Joi.object(filterOptions),
         interval: Joi.string().optional(),
-        dateField: Joi.string().optional(),
+        dateField: Joi.string(),
         timeZone: Joi.string().optional(),
         debug: Joi.boolean().default(false).optional(),
       }),
