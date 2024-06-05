@@ -26,7 +26,7 @@
     "@shelf/jest-mongodb": "^2.0.0",
     "eslint": "^7.13.0",
     "eslint-config-prettier": "^6.15.0",
-    "eslint-plugin-jest": "^24.1.2",
+    "eslint-plugin-jest": "^24.7.0",
     "jest": "^26.1.0",
     "joi-to-json-schema": "^3.4.0",
     "juice": "^7.0.0",
