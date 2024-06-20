@@ -18,28 +18,23 @@
   },
   "dependencies": {
     "@bedrockio/config": "^2.1.1",
-    "@bedrockio/instrumentation": "^1.4.9",
+    "@bedrockio/instrumentation": "^1.4.18",
     "lodash": "^4.17.21",
     "mongodb": "^3.6.10"
   },
   "devDependencies": {
-    "@shelf/jest-mongodb": "^2.0.0",
+    "@shelf/jest-mongodb": "^4.3.2",
     "eslint": "^7.13.0",
     "eslint-config-prettier": "^6.15.0",
     "eslint-plugin-jest": "^24.1.2",
     "jest": "^28.0.0",
     "joi-to-json-schema": "^3.4.0",
     "juice": "^7.0.0",
-    "mongodb-memory-server": "2.9.1",
+    "mongodb-memory-server": "^9.3.0",
     "pre-commit": "1.2.2",
     "prettier": "^2.8.8",
     "prettier-eslint": "^11.0.0",
     "supertest": "3.0.0"
-  },
-  "jest": {
-    "setupFiles": [
-      "<rootDir>/src/test-helpers/setup-tests.js"
-    ]
   },
   "prettier": {
     "singleQuote": true,
@@ -47,7 +42,7 @@
     "printWidth": 120
   },
   "volta": {
-    "node": "14.20.1",
+    "node": "20.14.0",
     "yarn": "1.22.5"
   }
 }
