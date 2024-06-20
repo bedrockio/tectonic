@@ -1,4 +1,4 @@
-FROM node:14.21.0-alpine
+FROM node:20.14-alpine
 
 # Yarn will not install any package listed in devDependencies if the NODE_ENV environment variable is set to production. Use this flag to instruct Yarn to ignore NODE_ENV and take its production-or-not status from this flag instead.
 ARG NODE_ENV=production
