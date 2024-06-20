@@ -20,7 +20,7 @@
     "@bedrockio/config": "^2.1.1",
     "@bedrockio/instrumentation": "^1.4.18",
     "lodash": "^4.17.21",
-    "mongodb": "^3.6.10"
+    "mongodb": "^3.7.4"
   },
   "devDependencies": {
     "@shelf/jest-mongodb": "^4.3.2",
