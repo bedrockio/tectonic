@@ -1,7 +1,12 @@
 const config = require('@bedrockio/config');
 const { logger } = require('@bedrockio/instrumentation');
 const { unset } = require('lodash');
-const { collectEvents, getLastEntryAt, getTectonicCollectionName } = require('./tectonic');
+const {
+  collectEvents,
+  getLastEntryAt,
+  getTectonicCollectionName,
+  getTectonicHistoricalCollectionName,
+} = require('./tectonic');
 
 const MONGO_UPDATED_AT_FIELD = config.get('MONGO_UPDATED_AT_FIELD');
 const MONGO_EXCLUDE_ATTRIBUTES = config.get('MONGO_EXCLUDE_ATTRIBUTES');
@@ -11,9 +16,13 @@ async function readCursor(cursor, limit) {
   const docs = [];
   const items = new Array(limit);
   for (const item of items) {
-    const doc = await cursor.next();
-    if (!doc) break;
-    docs.push(doc);
+    if (!cursor.closed && (await cursor.hasNext())) {
+      const doc = await cursor.next();
+      if (!doc) break;
+      docs.push(doc);
+    } else {
+      break;
+    }
   }
   return docs;
 }
