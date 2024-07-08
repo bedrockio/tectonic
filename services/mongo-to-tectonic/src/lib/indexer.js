@@ -16,7 +16,7 @@ async function readCursor(cursor, limit) {
   const docs = [];
   const items = new Array(limit);
   for (const item of items) {
-    if (!cursor.closed && (await cursor.hasNext())) {
+    if (!cursor.isClosed() && (await cursor.hasNext())) {
       const doc = await cursor.next();
       if (!doc) break;
       docs.push(doc);
