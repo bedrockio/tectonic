@@ -11,6 +11,7 @@ const {
 const MONGO_UPDATED_AT_FIELD = config.get('MONGO_UPDATED_AT_FIELD');
 const MONGO_EXCLUDE_ATTRIBUTES = config.get('MONGO_EXCLUDE_ATTRIBUTES');
 const MONGO_VERSION_FIELD = config.get('MONGO_VERSION_FIELD');
+const BATCH_SIZE = config.has('BATCH_SIZE') ? config.get('BATCH_SIZE', 'number') : 1000;
 
 async function readCursor(cursor, limit) {
   const docs = [];
@@ -59,6 +60,9 @@ async function collectDocuments(tectonicCollectionName, documents) {
   } catch (e) {
     logger.error(e);
     logger.warn(`Could not collect events into Tectonic collection: ${tectonicCollectionName}`);
+    if (events.length) {
+      logger.warn(`First Document Id ${events[0]?.id} Last Document Id ${events[events.length - 1]?.id}`);
+    }
   }
 }
 
@@ -95,7 +99,7 @@ async function syncMongodbCollection(
   let numCollected = 0;
   if (total > 0) {
     logger.info(`Collecting ${collectionName} (total: ${total})`);
-    const batchSize = 1000;
+    const batchSize = BATCH_SIZE;
     const cursor = collection.find(query, { timeout: false, noCursorTimeout: true }).sort([
       [MONGO_UPDATED_AT_FIELD, -1],
       ['_id', 1],
