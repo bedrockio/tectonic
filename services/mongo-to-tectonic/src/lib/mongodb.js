@@ -19,7 +19,7 @@ async function connect(options = {}) {
   return new Promise((accept, reject) => {
     client.connect(function (err) {
       if (err) return reject(err);
-      logger.info(`Connected successfully to MongoDB server: ${MONGO_URI}`);
+      // logger.info(`Connected successfully to MongoDB server: ${MONGO_URI}`);
       const db = client.db(options.database);
       accept(db);
     });
